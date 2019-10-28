@@ -1,14 +1,12 @@
-import React, { Component} from 'react';
+import React from 'react';
 import './App.css';
 
-class App extends Component{
-    render() {
-        return (
-            <div className="App">
-                <h1>Hello, World!</h1>
-            </div>
-        );
-    }
-}
+const App = ({ numberOfClicks, onClick }) => (
+    <div className="App">
+        <h1>Hello, World!</h1>
+        <h2>Number of clicks: {numberOfClicks}</h2>
+        <button onClick={e => { e.preventDefault(); onClick(); } }>Click me</button>
+    </div>
+);
 
 export default App;
