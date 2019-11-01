@@ -63,8 +63,6 @@ This time, two new lines appear on the console. The first line contains the text
 
 Our second code line was a so-called *function call* - we asked an object defined under the name `console` to execute its `log` function. Within the parentheses, we passed our variable *str* as a parameter to this function, and the function used the value of this variable to print it to the console window.
 
-
-
     let nothing = null;
     let func = (param_one, param_two) => param_one + param_two;
     let obj = { number => 2, str = 'Hello' };
