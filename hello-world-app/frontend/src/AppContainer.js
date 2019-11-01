@@ -1,18 +1,15 @@
-import { Component } from 'react';
 import { connect } from 'react-redux';
-import { clickAction } from './state';
+import { retrieveBackendDataThunkCreator } from './state';
 import App from "./App";
 
-const mapStateToProps = (state, ownProps) => ({
-    numberOfClicks: state.numberOfClicks
-});
+const mapStateToProps = (state) => (state);
 
 const mapDispatchToProps = (dispatch) => ({
-    onClick: () => {
-        dispatch(clickAction)
+    onClick: (numberOfClicks) => {
+        dispatch(retrieveBackendDataThunkCreator(numberOfClicks))
     }
 });
 
-const AppContainer = connect(mapStateToProps, mapDispatchToProps)(App)
+const AppContainer = connect(mapStateToProps, mapDispatchToProps)(App);
 
 export default AppContainer;
