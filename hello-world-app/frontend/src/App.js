@@ -1,11 +1,13 @@
 import React from 'react';
 import './App.css';
 
-const App = ({ numberOfClicks, onClick }) => (
+const App = ({ numberOfClicks, onClick, additionalText }) => (
     <div className="App">
         <h1>Hello, World!</h1>
-        <h2>Number of clicks: {numberOfClicks}</h2>
-        <button onClick={e => { e.preventDefault(); onClick(); } }>Click me</button>
+        <button onClick={e => { e.preventDefault(); onClick(); } }>Load additional text</button>
+        <h3>Additional text (click to load):</h3>
+        <h4>{additionalText}</h4>
+        <div>Number of clicks: {numberOfClicks}</div>
     </div>
 );
 
