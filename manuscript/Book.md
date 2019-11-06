@@ -43,8 +43,10 @@ We can run other expressions that evaluate to values of other types:
 
     >  1
     <- 1
+
     >  0.5
     <- 0.5
+
     >  true
     <- true
 
@@ -80,50 +82,145 @@ Equations are evaluated from left to right: `1 + 2 + "3"` is the string `"33"` -
 
 When comparing a value of a type other than *boolean* to a boolean value with `==`, the non-boolean value is first converted to a boolean value. For example, the number `0` becomes `false`, which is why `0 == false` evaluates to `true`, while `1 == false` evaluates to `false` - that's because `0` is translated into `false`, and `1` is translated into `true`.
 
-You can do these translations explicitly, through *type casting*. To do so, use one of the following expressions:
+You can do these translations explicitly, through *type casting*. To do so, use one of the following:
 
-- `Boolean(val)` transforms `val` into a *boolean* value
-- `Number(val)` transforms `val` into a *number* value
-- `String(val)` transforms `val` into a *string* value
+- `Boolean(expression)` transforms `expression` into a *boolean* value
+- `Number(expression)` transforms `expression` into a *number* value
+- `String(expression)` transforms `expression` into a *string* value
 
-For example, `Boolean(0)` and `Boolean("")` translate into `false`, while `Boolean(1)`, `Boolean("1")` - **and** `Boolean("0")`! - all translate into `true`.
+For example, `Boolean(0)` and `Boolean("")` translate into `false`, while `Boolean(1)`, `Boolean("1")` - **and** `Boolean("0")`! - all translate into `true`. You can type cast more complex expressions, of course - `Number("1" + 2)` will result in a value `12` of type *number*.
 
 Because keeping all these type coercion rules in mind isn't easy, and because not all of them are straight-forward, it really is recommended to always use the `===` comparison operator, which doesn't do any kind of type coercion and, as explained, compares value *and* type.
 
-Let's now write a more complex JavaScript expression. Please enter and run `let str = "hello"` in the console.
+Let's now write a more complex JavaScript expression. Please enter and run `let a = "hello"` in the console.
 
-What we just did was a so-called *variable declaration and assignment* - we *declared* the existance of a new variable named `str`, and *assigned* it the value `"hello"`. In JavaScript, as in all other programming languages, variables act as containers for values. It's like using an envelope that has "str" written on it and putting a letter with the text "hello" into this envelope.
+What we just did was a so-called *variable declaration and assignment* - we *declared* the existance of a new variable named `a`, and *assigned* it the value `"hello"`. In JavaScript, as in all other programming languages, variables act as containers for values. It's like using an envelope that has "a" written on it and putting a letter with the text "hello" into this envelope.
 
 It's important to understand that when the JavaScript interpreter evaluates this single expression, it actually performs **two** things: first, a variable is *declared*, that is, the variable name is from then on known to the JavaScript interpreter. Afterwards, an initial value is then *assigned* to the newly defined variable, making the value accessible under the name of the variable.
 
-In other words, the result of expression
+In other words, the expression
 
-    let str = "hello"
+    let a = "hello"
 
-is identical to the result of these two expressions:
+is equivalent to these two expressions:
 
-    let str
-    str = "hello"
+    let a
+    a = "hello"
 
-Whatever approach you choose, `str` is now identical to the string value `"hello"` by any practical measure. `str == "hello"` is true, as is `str === "hello"`, and because `"hello" + " world"` results in `"hello world"`, so does `str + " world"`.
+Whatever approach you choose, `a` is now identical to the string value `"hello"` by any practical measure. `a == "hello"` is true, as is `a === "hello"`, and because `"hello" + " world"` results in `"hello world"`, so does `a + " world"`.
 
-Did you encounter an error while trying out the expressions starting with `let`? Something like `Uncaught SyntaxError: Identifier 'str' has already been declared"` or `SyntaxError: redeclaration of let str`? Don't worry, that's expected. Within any one JavaScript interpreter session, every variable can be declared only once. Once a variable name has been declared with `let`, it cannot be redeclared.
+Did you encounter an error while trying out the expressions starting with `let`? Something like `Uncaught SyntaxError: Identifier 'a' has already been declared"` or `SyntaxError: redeclaration of let a`? Don't worry, that's expected. Within any one JavaScript interpreter session, every variable can be declared only once. Once a variable name has been declared with `let`, it cannot be redeclared.
 
-If you want a clean slate with no variables declared, you need to close the current browser tab or window to which the console is attached, and open a new tab or window with a new console - it's not enough to close and reopen only the console.
+If you want a clean slate with no variables declared, you need reload the browser tab to which the console is attached, or open a new tab or window with a new console - it's not enough to close and reopen only the console.
 
-With this out of the way, let's further examine our first *let* expression, `let str = "hello"`.
+With this out of the way, let's further examine our first *let* expression, `let a = "hello"`.
 
-When executing this expression, the response of the interpreter isn't an echo of what we wrote, and we also didn't get back the string value `"hello"` - instead, we got back the value `undefined`. This sounds like something didn't work as intended, but that's not the case. The JavaScript interpreter again evaluated and executed our code successfully, but this time, while the value of `str` became `"hello"`, *evaluating the expression itself* did result in an entirely different value: `undefined`.
+When executing a `let` expression, the response of the interpreter isn't an echo of what we wrote, and we also didn't get back the string value `"hello"` - instead, we got back the value `undefined`:
+
+    >  let a = "hello"
+    <- undefined
+
+This sounds like something didn't work as intended, but that's not the case. The JavaScript interpreter evaluated and executed our code successfully, but this time, while the value of `a` became `"hello"`, *evaluating the expression itself* did result in an entirely different value: `undefined`.
 
 In a sense, `undefined` is JavaScript's way of saying "nothing to see here, move along".
 
 What type does the value `undefined` have? It's type is also named `undefined`, and the value `undefined` is the only value that type `undefined` offers - this clearly is a very special language construct.
 
-Let's play around a bit with with this. JavaScript ships with a function called `typeof`, and we can use it to investigate the type of a value or an expression.
+Let's play around a bit with with this. JavaScript ships with a function called `typeof`, and we can use it to investigate the type of a value or an expression. Using it, we can verify that the name of the type of value `undefined` is indeed "undefined":
 
+    >  typeof(undefined)
+    <- "undefined"
 
+Of course, we can also check the type of other values:
 
-While we cannot re-declare an already declined variable, we can re-assign new values to variables declared with `let` - even values of a different type. `"hello"` is always `"hello"` and is always a *string*, but we can assign `str` another value, for example `str = "goodbye"` and `str = 1`.
+    >  typeof("hello")
+    <- "string"
+
+    >  typeof(1)
+    <- "number"
+
+    >  typeof(true)
+    <- "boolean"
+
+Passing more complex expressions is fine, too:
+
+    >  typeof(1 + 1)
+    <- "number"
+
+    >  typeof(1 == 1)
+    <- "boolean"
+
+    >  typeof(1 + "foo")
+    <- "string"
+
+And we can check for the type of variable `a`:
+
+    >  typeof(a)
+    <- "string"
+
+Here's a catch. You can check the type of a variable that is merely *declared*, but hasn't been *assigned a value* yet:
+
+    >  let x
+    >  typeof(x)
+    <- "undefined"
+
+This shows that even a variable to which we did not yet assign any value, still has a type: *undefined*.
+
+Irritatingly, the same is true for completely undeclared variables:
+
+    >  typeof(y)
+    <- "undefined"
+
+Still, `x` and `y` are different, because only one of them is actually declared. We can make this difference visible when we try to access the value of `x` and `y` - which, by the way shows that not only does `x` have a type, it also has a value (which isn't that surprising; as we've learned, variables of type *undefined* by definition must have one and only one value: `undefined`):
+
+    >  x
+    <- undefined
+
+    > y
+    ReferenceError: y is not defined
+
+Letting the JavaScript interpreter evaluate the undeclared expression `y` correctly results in an error - as `y` is not yet declared, the interpreter doesn't know about it. Another catch, however, is that the error message states that "y is not *defined*" - which sounds very much like "y is undefined", but that's not the same thing. It would be a lot less confusing if the error message would read "y is not *declared*".
+
+So, two catches here: If the JavaScript interpreter encounters a variable name that hasn't been declared yet, it bails out (which is correct), stating that the variable has not yet been *defined* (which is confusing). However, passing an undeclared variable name to `typeof` does *not* make the JavaScript interpreter bail out (which is confusing), and returns type *undefined* - which is even more confusing.
+
+Ok, back to our new variable, `a`, which is neatly declared and neatly assigned to a value, and should therefore make for an unconfusing experience.
+
+While we cannot re-declare an already declared variable, we can re-assign new values to variables declared with `let` - even values of a different type. `"hello"` is always `"hello"` and is always a *string*, but we can assign `a` another value, for example `a = "goodbye"` and `a = 1` - this changes its value, and potentially, its type:
+
+    >  a
+    <- "hello"
+
+    >  a = "goodbye"
+    <- "goodbye"
+    >  typeof(a)
+    <- "string"
+
+    >  a = 1
+    <- 1
+    >  typeof(a)
+    <- "number"
+
+This shows one of the core properties of the JavaScript language: it is a so-called *loosely typed* or *dynamic* language - that is, the type of a variable isn't fixed, and can dynamically change during the run of an application.
+
+When we declare a variable, we can also assign it the value of an existing variable:
+
+    >  let b = "foo"
+    >  let c = b
+    >  c
+    <- "foo"
+
+Important detail: `b` and `c` now have the same value, `"foo"`, but they do not "share" this value, because ´c´ got an independent copy of `b`'s value, which can be demonstrated like this:
+
+    >  b = "bar"
+    >  c
+    <- "foo"
+
+Changing the value of `b` did **not** change the value of `c` - although `c` has been declared with `let c = b`, it is nevertheless completely independent from `b`.
+
+As stated before, variables can be used in expressions just like the values they contain would be used:
+
+    >  1 + b + c
+    <- "1barfoo"
 
 
 
@@ -142,6 +239,7 @@ Thus, we will now use JavaScript in another environment: Node.js.
 Fine, let's recap what we learned so far:
 
 - We've seen that JavaScript code consists of *expressions*, which are pieces of code that the JavaScript interpreter can evaluate and execute.
+- Simple expressions like `"hello"` can be combined into more complex expressions like `1 + "hello"`, which can be combined into ever more complex expressions like `let d = (c + "hello") * (Number(5) / 8) + "hey"`
 - One of the most simple JavaScript expressions is a *value*, e.g. `"hello"`. Every value in JavaScript has a *type*, e.g. *string*, *number*, or *boolean*
 
 
