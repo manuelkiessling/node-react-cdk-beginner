@@ -90,6 +90,8 @@ You can do these translations explicitly, through *type casting*. To do so, use 
 
 For example, `Boolean(0)` and `Boolean("")` translate into `false`, while `Boolean(1)`, `Boolean("1")` - **and** `Boolean("0")`! - all translate into `true`. You can type cast more complex expressions, of course - `Number("1" + 2)` will result in a value `12` of type *number*.
 
+Note that this introduce another important element of the JavaScript language - functions - which we are going to discuss in detail later in this book.
+
 Because keeping all these type coercion rules in mind isn't easy, and because not all of them are straight-forward, it really is recommended to always use the `===` comparison operator, which doesn't do any kind of type coercion and, as explained, compares value *and* type.
 
 Let's now write a more complex JavaScript expression. Please enter and run `let a = "hello"` in the console.
@@ -217,29 +219,41 @@ Important detail: `b` and `c` now have the same value, `"foo"`, but they do not 
 
 Changing the value of `b` did **not** change the value of `c` - although `c` has been declared with `let c = b`, it is nevertheless completely independent from `b`.
 
-As stated before, variables can be used in expressions just like the values they contain would be used:
+In addition to variables, JavaScript supports *constants*. Like variables, they act as a container for a value, making the value available under the name of the constant - however, we are forced to assign a value upon declaration, and cannot re-assign another value once the const has been declared:
 
-    >  1 + b + c
-    <- "1barfoo"
+    >  const d = "foo"
+    >  d
+    <- "foo"
 
+    > d = "bar"
+    TypeError: invalid assignment to const `d'
 
+    > const e
+    SyntaxError: missing = in const declaration
 
+Just like variables, constants can be used in expressions just like the values they contain would be used:
 
+    >  1 + d
+    <- "1foo"
+
+Fine, let's recap what we've learned so far:
+
+- Every major browsers ships with a JavaScript interpreter, and using a browser's *console* tool, we can work with this interpreter interactively.
+- JavaScript code consists of *expressions*, which are pieces of code that the JavaScript interpreter can evaluate and execute. The console tool allows us to send expressions to the JavaScript interpreter, which then prints the result of evaluating that expression back to the console.
+- Simple expressions like `"hello"` can be combined into more complex expressions like `1 + "hello"`, which can be combined into ever more complex expressions like `let d = (1 + "hello") + (Number("5") / 8) + "hey"`.
+- One of the most simple JavaScript expressions is a *value*, e.g. `"hello"`. Every value in JavaScript has a *type*, and so far, we've encountered the types *string*, *number*, *boolean*, and *undefined*.
+- Simple expressions can be combined into more complex impressions using *operators*, e.g. `+`, `-`, `*`, `/`, `==`, `===`, `<`, and `>`.
+- How these operators work depends on the type of the values involved - for example, `1 + 1` results in `2`, while `1 + "1"` results in `"11"`.
+- When combining or comparing values using these operators, *type coercion* rules are applied, which potentially translates a value with a given type into another value with another type. Because coercion rules are complex and can lead to subtle bugs when comparing only the values using the `==` operator, it's recommended to compare value and type using `===`.
+- Instead of working with values directly, we can put values into variables or constants, which act as a container for a value.
 
 
 So far for some of the most basic types of JavaScript, and how they interact. We will discover further types soon, and we will see how they play together with the types we just learned about.
 
-To do so, however, we need to switch into another JavaScript context first. Experimenting with one-liners is all nice and dandy for our first baby steps, but of course it's very limited. While it's possible to enter multiple lines of code into the console (hold SHIFT while hitting ENTER), it's not that comfortable.
+To do so, however, we need to switch into another JavaScript context first. Experimenting with one-liners is all nice and dandy for our first baby steps, but of course it's a very limited approach. While it's possible to enter multiple lines of code into the console (hold SHIFT while hitting ENTER), it's not that comfortable.
 
 Thus, we will now use JavaScript in another environment: Node.js.
 
 
-
-
-Fine, let's recap what we learned so far:
-
-- We've seen that JavaScript code consists of *expressions*, which are pieces of code that the JavaScript interpreter can evaluate and execute.
-- Simple expressions like `"hello"` can be combined into more complex expressions like `1 + "hello"`, which can be combined into ever more complex expressions like `let d = (c + "hello") * (Number(5) / 8) + "hey"`
-- One of the most simple JavaScript expressions is a *value*, e.g. `"hello"`. Every value in JavaScript has a *type*, e.g. *string*, *number*, or *boolean*
 
 
