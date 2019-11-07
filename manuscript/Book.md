@@ -284,9 +284,66 @@ There really is only one single downside regarding NVM: it is not available for 
 
 To install NVM on your Linux or macOS system, you need to first head over to https://github.com/nvm-sh/nvm. The README of this project features an *Installation and Update* section, which refers to an install script.
 
-This script is meant to be downloaded and executed on the command line. Thus, you need to launch the terminal emulator of your choice, e.g. *Terminal.app* on macOS.
+This script is meant to be downloaded and executed on the command line. Thus, you need to launch the terminal emulator of your choice, e.g. *Terminal.app* on macOS. Then, go to https://github.com/nvm-sh/nvm/blob/master/README.md and paste the *curl* or *wget* line from the *Installation and Update* section - it looks similar to this one:
 
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/vX.Y.Z/install.sh | bash
 
+with `X.Y.Z` denoting the version number of the most recent release.
+
+Please take the time to also read the additional notes further down in the README. For example, on macOS, it might be neccessary to first install the *Xcode command line tools*, or else installation of NVM might fail.
+
+You've reached your goal as soon as running `nvm --version` on the command line works without an error, and prints the version number. When talking about working on the command line, I'm going to use the following notation:
+
+     > something-to-be-entered-on-the-command-line
+
+     One or multiple lines of
+     output that result from runnning
+     the entered command line
+
+Running the `nvm --version` command line and its output therefore looks like this:
+
+    > nvm --version
+
+    0.35.0
+
+Installing NVM itself doesn't give you a Node.js setup right away. But we can now use NVM to install Node.js. There are several ways to do so, and for our first project, we are going to work with the `.nvmrc` approach.
+
+To do so, we need to create a project folder first. Find a place that suits you well - this can be your home folder, or maybe you already have a projects folder. The only thing that matters is that you should be able to create new folders and files at this location. From now on, I will assume that you are going to use your home folder, which can be reached on the command line from anywhere by simply running `cd`, as the parent folder of all project folders.
+
+Once you are there, create the project folder, and change into the new folder:
+
+    > mkdir nodejs-hello-world
+    > cd nodejs-hello-world
+
+We are going to tell NVM which version of Node.js we want to use for this project. To do so, we create a file named `.nvmrc` right in our project folder. The sole content of this file is one line that contains the Node.js version number we wish to use. This can be achieved like this:
+
+    > echo "12" > .nvmrc
+
+When running NVM while we are within the project folder, it will detect this file, read its contents, and will use the contained version number. The first thing we are going to use NVM for is to install Node.js:
+
+    > nvm install
+
+    Found '/home/manuelkiessling/nodejs-hello-world/.nvmrc' with version <12>
+    Downloading and installing node v12.13.0...
+    Downloading https://nodejs.org/dist/v12.13.0/node-v12.13.0-darwin-x64.tar.xz...
+    ######################################################################## 100.0%
+    Computing checksum with shasum -a 256
+    Checksums matched!
+    Now using node v12.13.0 (npm v6.12.0)
+
+As you can see, using `12` as the Node.js version number works as a kind of wildcard - because we only provided the first part of the three part version number, NVM automatically assumes we want the most recent version of Node.js 12.x.y, which as of this writing is 12.13.0.
+
+Version 12 of Node.js is the current Long Term Support version of Node.js, and is a very good starting point for new projects.
+
+With this, Node.js is now available on your system! You can verify this by running `node --version`:
+
+    > node --version
+
+    v12.13.0
+
+If this doesn't work as expected, or a version number other than the one you expected is shown, then run `nvm use` to ensure that for the current project, NVM has definitely switched to the intended version.
+
+Let's see what we can do with this.
 
 
 # Part 3: React - Rich web applications with JavaScript
