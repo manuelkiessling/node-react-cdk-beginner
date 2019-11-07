@@ -245,15 +245,23 @@ Fine, let's recap what we've learned so far:
 - Simple expressions can be combined into more complex impressions using *operators*, e.g. `+`, `-`, `*`, `/`, `==`, `===`, `<`, and `>`.
 - How these operators work depends on the type of the values involved - for example, `1 + 1` results in `2`, while `1 + "1"` results in `"11"`.
 - When combining or comparing values using these operators, *type coercion* rules are applied, which potentially translates a value with a given type into another value with another type. Because coercion rules are complex and can lead to subtle bugs when comparing only the values using the `==` operator, it's recommended to compare value and type using `===`.
-- Instead of working with values directly, we can put values into variables or constants, which act as a container for a value.
+- Instead of working with values directly, we can put values into *variables* or *constants*, which act as a container for a value.
+
+With this, we've reached the very first milestone of our journey, and learned about the most basic elements of the JavaScript language. There is, of course, a lot more that we need to tackle.
+
+To do so effectively, however, we need to switch into another JavaScript context first. Experimenting with one-liners is all nice and dandy for our first baby steps, but of course it's a very limited approach. Actual JavaScript applications aren't limited to single-line expressions, and while it's possible to enter multiple lines of code into the console (hold SHIFT while hitting ENTER), it's not that comfortable.
+
+Thus, we will now use JavaScript in an environment that allows us to write some first full-fledged applications: *Node.js*. This allows us to write and run code for the command line, and enables us to tackle more language constructs like *if statements*, *loops*, *functions*, and many more. We will employ these to write code that is actually useful.
+
+We will return to JavaScript in the browser, though, when we start working with React afterwards. But now, on to the command line!
 
 
-So far for some of the most basic types of JavaScript, and how they interact. We will discover further types soon, and we will see how they play together with the types we just learned about.
+# Node.js: JavaScript on the command line
 
-To do so, however, we need to switch into another JavaScript context first. Experimenting with one-liners is all nice and dandy for our first baby steps, but of course it's a very limited approach. While it's possible to enter multiple lines of code into the console (hold SHIFT while hitting ENTER), it's not that comfortable.
+## A new context
 
-Thus, we will now use JavaScript in another environment: Node.js.
+As stated before, running JavaScript code, and therefore, building JavaScript applications, is possible in several different contexts. So far, we've worked with the browser console, which is a very dynamic context where every line of code we write is directly fed into a JavaScript interpreter - but it's also a very limited context.
 
+The Node.js project takes a JavaScript interpreter (the one that ships with the Chrome browser, called *V8*), and makes it available as a stand-alone program on the command line. This allows us to not only feed single lines of code into the interpreter interactively, but whole files of JavaScript code, non-interactively.
 
-
-
+This enables application building: using the simple expressions we've already know, and some more complex ones we are going to learn about now, we can create complex programs that reliably and continuously serve a useful purpose - a *web server* is an example for such an application.
