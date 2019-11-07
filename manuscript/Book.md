@@ -345,6 +345,31 @@ If this doesn't work as expected, or a version number other than the one you exp
 
 Let's see what we can do with this.
 
+As said, Node.js is basically a JavaScript interpreter, wrapped into a command line application instead of a web browser. As such, it provides an interactive console, very much like the one we already worked with. Simply start the `node` application, and you are on a console:
+
+    > node
+
+    Welcome to Node.js v12.13.0.
+    Type ".help" for more information.
+    > let a = "hello"
+    undefined
+
+Type `.exit` if you want to leave this console.
+
+While this is certainly nice to have whenever we feel like playing around with JavaScript interactively, we wanted to get away from the console and start writing "real" JavaScript applications.
+
+To do so, we need to create our very first JavaScript code file. And this means we need to talk about code editors, because we need a tool to create our code files. JavaScript code files are simple text files, and even a very rudimentary plain text editor is perfectly capable to create these files. Nevertheless, more specialized code editors or and IDEs (Integrated Development Environments) make sense, because they make working on a large code base a lot more comfortable.
+
+There's a large choice available, and if you are already using a code editor or an IDE you feel comfortable with, just stick with it. As long as there is at least basic support for JavaScript, you're fine.
+
+In case you haven't made a decision yet, then Atom (https://atom.io/), Visual Studio Code (https://code.visualstudio.com/), or IntelliJ IDEA (https://www.jetbrains.com/idea/) are all worth a look.
+
+Whatever tool you choose, please use it to create your first file, named `index.js`, and store it within the `nodejs-hello-world` folder, with the following content:
+
+    "hello"
+
+Yeah, I know. That old `"hello"` line again. But bear with me, it's useful to demonstrate something important.
+
 
 # Part 3: React - Rich web applications with JavaScript
 
