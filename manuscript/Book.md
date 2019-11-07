@@ -1,4 +1,11 @@
-# Introduction to JavaScript
+# Part 0: Preface
+
+Nearly all relevant JavaScript projects have been developed on Linux or macOS systems and for Linux or macOS systems, which regularly creates some kind of "impedance mismatch" in terms of availability and reliability of tools for Windows.
+
+If you absolutely must use Windows for developing JavaScript applications, then don't worry, you will be just fine. Note, however, that this book will not provide the same level of hand-holding as it does for readers working on Linux or macOS. At some points, you will have to use alternatives to the tools recommended and explained here, and while the book will point you in the right direction, you will be quite a bit more on your own.
+
+
+# Part 1: Introduction to JavaScript
 
 ## Values and Types
 
@@ -92,7 +99,7 @@ For example, `Boolean(0)` and `Boolean("")` translate into `false`, while `Boole
 
 Note that this introduce another important element of the JavaScript language - functions - which we are going to discuss in detail later in this book.
 
-Because keeping all these type coercion rules in mind isn't easy, and because not all of them are straight-forward, it really is recommended to always use the `===` comparison operator, which doesn't do any kind of type coercion and, as explained, compares value *and* type.
+Because keeping all these type coercion rules in mind isn't easy, and because not all of them are straightforward, it really is recommended to always use the `===` comparison operator, which doesn't do any kind of type coercion and, as explained, compares value *and* type.
 
 Let's now write a more complex JavaScript expression. Please enter and run `let a = "hello"` in the console.
 
@@ -256,7 +263,7 @@ Thus, we will now use JavaScript in an environment that allows us to write some 
 We will return to JavaScript in the browser, though, when we start working with React afterwards. But now, on to the command line!
 
 
-# Node.js: JavaScript on the command line
+# Part 2: Node.js - JavaScript on the command line
 
 ## A new context
 
@@ -264,4 +271,25 @@ As stated before, running JavaScript code, and therefore, building JavaScript ap
 
 The Node.js project takes a JavaScript interpreter (the one that ships with the Chrome browser, called *V8*), and makes it available as a stand-alone program on the command line. This allows us to not only feed single lines of code into the interpreter interactively, but whole files of JavaScript code, non-interactively.
 
-This enables application building: using the simple expressions we've already know, and some more complex ones we are going to learn about now, we can create complex programs that reliably and continuously serve a useful purpose - a *web server* is an example for such an application.
+This enables application building: using the simple expressions we already know, and some more complex ones we are going to learn about now, we can create complex programs that reliably and continuously serve a useful purpose - from simple command line tools to full-fledged server applications.
+
+Being able to build useful server applications is an important building block of knowledge on our journey, because it allows us to provide an HTTP-based REST API for the React-based Single-Page Application we are going to build in the third part of this book.
+
+
+## Setting things up
+
+In order to be able to create Node.js applications, we need to set up some applications on our development system. Right now, the single best way to do this is to use a project called *NVM*, the Node Version Manager. It's a very useful utility from the Node.js ecosystem which allows to install and manage Node.js installations on your local system through a single command line tool. Among other things, it allows to easily switch between different versions of Node.js as needed - for example, you might want to generally use the latest version of Node.js on your system, but need to use an older version only for a certain project in a certain folder. NVM makes this straightforward.
+
+There really is only one single downside regarding NVM: it is not available for the Windows platform. However, an alternative implementation exists at https://github.com/coreybutler/nvm-windows, which provides a similar experience.
+
+To install NVM on your Linux or macOS system, you need to first head over to https://github.com/nvm-sh/nvm. The README of this project features an *Installation and Update* section, which refers to an install script.
+
+This script is meant to be downloaded and executed on the command line. Thus, you need to launch the terminal emulator of your choice, e.g. *Terminal.app* on macOS.
+
+
+
+
+# Part 3: React - Rich web applications with JavaScript
+
+
+# Part 4: CDK - Deploy and run your applications on AWS, the serverless way
