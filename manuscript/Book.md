@@ -297,7 +297,7 @@ You've reached your goal as soon as running `nvm --version` on the command line 
      > something-to-be-entered-on-the-command-line
 
      One or multiple lines of
-     output that result from runnning
+     output that results from runnning
      the entered command line
 
 Running the `nvm --version` command line and its output therefore looks like this:
@@ -368,7 +368,78 @@ Whatever tool you choose, please use it to create your first file, named `index.
 
     "hello"
 
-Yeah, I know. That old `"hello"` line again. But bear with me, it's useful to demonstrate something important.
+Yeah, I know. That old `"hello"` line again. But bear with me, it's useful to demonstrate something important. Our JavaScript expression is now stored in the file, and where the embedded interpreter of the console executed any expression immediately for us, we now need to do this explicitly ourselves by running our file through the `node` program, like this:
+
+    > node index.js
+
+The result is... literally nothing. A JavaScript console would have printed the result of evaluating the expression. But when feeding the file containing the expression into Node.js, we see nothing. Is the expression really evaluated? We can test this by intentionally creating an invalid expression - simply remove the second quotation marks:
+
+    "hello
+
+and run the file again:
+
+    > node index.js
+
+    /home/manuelkiessling/nodejs-hello-world/nodejs-hello-world/index.js:1
+    "hello
+    ^^^^^^
+
+    SyntaxError: Invalid or unexpected token
+        at wrapSafe (internal/modules/cjs/loader.js:891:16)
+        at Module._compile (internal/modules/cjs/loader.js:941:27)
+        at Object.Module._extensions..js (internal/modules/cjs/loader.js:1011:10)
+        at Module.load (internal/modules/cjs/loader.js:822:32)
+        at Function.Module._load (internal/modules/cjs/loader.js:730:14)
+        at Function.Module.runMain (internal/modules/cjs/loader.js:1051:12)
+        at internal/main/run_main_module.js:16:11
+
+Fine, this proves that our code reaches a JavaScript interpreter. But why don't we see any output?
+
+The reason is that an interactive JavaScript console does the additional work of printing any expression's result back to us - but now we don't have a console, only a "pure" JavaScript interpreter, and we need to do the outputting ourselves. To do so, we can use method `log` of object `console`. Neither *objects* nor *methods* have not yet been introduced properly, but we need to change our file's content like this:
+
+    console.log("hello")
+
+Now the result of the expression is printed on the command line:
+
+    > node index.js
+
+    hello
+
+Great, this mystery is solved.
+
+Enough with the one-liners, though - let's write a more complex program with the elements we already know:
+
+    let a = "hello";
+    console.log(a);
+
+    let b = 1;
+    console.log(a + b);
+
+and run it:
+
+    > node index.js
+
+    hello
+    hello1
+
+Nice. You may have noticed that I suddenly started to put a semicolon `;` at the end of each line. This isn't strictly neccessary, because most of the time JavaScript knows how to detect automatically that an expression has ended, even if it goes over multiple lines. But ending every expression with a semicolon explicitly removes any ambiguity, and is the dominant code style. We will stick to it in this book.
+
+Let's use our new multi-line freedom to write a very first *control structure*:
+
+    let n = 10;
+
+    if (n > 0) {
+        console.log("a is a positive number.");
+    }
+
+    if (n < 0) {
+        console.log("a is a negative number.");
+    }
+
+The output, of course, is `a is a positive number.`.
+
+
+
 
 
 # Part 3: React - Rich web applications with JavaScript
