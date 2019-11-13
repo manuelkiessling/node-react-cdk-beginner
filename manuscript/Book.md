@@ -67,6 +67,30 @@ The plus sign `+` has an obvious meaning when dealing with values of type *numbe
 
 The *boolean* type has only two possible values, `true` and `false`, and is used, as its name implies, for boolean operations. For example, boolean operations can result from comparing numbers: `1 == 1` will return `true`, as does `1 < 2`, while `1 == 2` and `1 > 2` will return `false`.
 
+We can combine multiple simple boolean expressions into a large boolean expression, by combining the simple expressions with *boolean operators*. The boolean *and*, expressed with `&&`, results in `true` if both sides of the expression are themselves `true`:
+
+    1 == 1 && 2 == 2
+
+results in `true`, while
+
+    1 == 1 && 2 == 3
+
+results in `false`.
+
+The other operator is `||`, which expresses the boolean *or*. It resolves to `true` if at least one side of the expression is `true`, and to `false` only if both sides resolve to `false`:
+
+    >  1 == 1 || 2 == 2
+    <- true
+
+    >  1 == 2 || 2 == 2
+    <- true
+
+    >  1 == 1 || 2 == 3
+    <- true
+
+    >  1 == 2 || 2 == 3
+    <- false
+
 Note how we use `==` for comparison, while we used `=` for assignment.
 
 But there is another comparison operator, which is useful when we compare values of different types: `0 == 0` is of course `true`, but `0 == ""` is also true. This might not be what you want, because the number `0` and the empty string `""` are two different things - we probably agree that an empty string is something different than the number zero.
@@ -97,7 +121,7 @@ You can do these translations explicitly, through *type casting*. To do so, use 
 
 For example, `Boolean(0)` and `Boolean("")` translate into `false`, while `Boolean(1)`, `Boolean("1")` - **and** `Boolean("0")`! - all translate into `true`. You can type cast more complex expressions, of course - `Number("1" + 2)` will result in a value `12` of type *number*.
 
-Note that this introduce another important element of the JavaScript language - functions - which we are going to discuss in detail later in this book.
+Note that this introduces another important element of the JavaScript language - functions - which we are going to discuss in detail later in this book.
 
 Because keeping all these type coercion rules in mind isn't easy, and because not all of them are straightforward, it really is recommended to always use the `===` comparison operator, which doesn't do any kind of type coercion and, as explained, compares value *and* type.
 
@@ -429,16 +453,24 @@ Let's use our new multi-line freedom to write a very first *control structure*:
     let n = 10;
 
     if (n > 0) {
-        console.log("a is a positive number.");
+        console.log("n is a positive number.");
     }
 
-    if (n < 0) {
-        console.log("a is a negative number.");
-    }
+The output, of course, is `n is a positive number.`.
 
-The output, of course, is `a is a positive number.`.
+Let's dissect this code. So far, every JavaScript expression we've fed into a console or into Node.js has been executed - a control structure like this `if` statement potentially results in some part of code not being executed. If we set `n` to `-5`, then the line `console.log("a is a positive number.");` will not be executed.
 
+This is because if statements introduce a so-called *block* (the part in parentheses `{` and `}`), and define a *condition* that must evaluate to `true` for the code in the block to be evaluated. The condition is the part in parentheses `(` and `)` that follows the `if` keyword. The condition may contain any valid JavaScript boolean expression - the only thing that's relevant is that the interpreter must be able to decide if the condition is `true` or `false` - in the latter case, the code in the block is simply skipped:
 
+    if (1 === 1)      -> true  -> code in block is executed
+    if ("a" === "a")  -> true  -> code in block is executed
+    if (true)         -> true  -> code in block is executed
+    if (1 + 2 === 3)  -> true  -> code in block is executed
+
+    if (1 === 2)      -> false -> code in block is skipped
+    if (1 === "1")    -> false -> code in block is skipped
+    if (false)        -> false -> code in block is skipped
+    if (1 + 2 === 4)  -> false -> code in block is skipped
 
 
 
