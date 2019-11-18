@@ -67,7 +67,7 @@ The plus sign `+` has an obvious meaning when dealing with values of type *numbe
 
 The *boolean* type has only two possible values, `true` and `false`, and is used, as its name implies, for boolean operations. For example, boolean operations can result from comparing numbers: `1 == 1` will return `true`, as does `1 < 2`, while `1 == 2` and `1 > 2` will return `false`.
 
-We can combine multiple simple boolean expressions into a large boolean expression, by combining the simple expressions with *boolean operators*. The boolean *and*, expressed with `&&`, results in `true` if both sides of the expression are themselves `true`:
+We can combine multiple simple boolean expressions into larger and more complex boolean expressions by combining simple expressions with *boolean operators*. The boolean *and*, expressed with `&&`, results in `true` if both sides of the expression are themselves `true`:
 
     1 == 1 && 2 == 2
 
@@ -91,9 +91,25 @@ The other operator is `||`, which expresses the boolean *or*. It resolves to `tr
     >  1 == 2 || 2 == 3
     <- false
 
-Note how we use `==` for comparison, while we used `=` for assignment.
+And finally, there's `!`, which can be used to "invert" a boolean expression - `true` becomes `false` and vice versa. This applies to simple and complex boolean expressions alike, but we need to put every part of a boolean expression into parentheses if we want to invert a complex expression:
 
-But there is another comparison operator, which is useful when we compare values of different types: `0 == 0` is of course `true`, but `0 == ""` is also true. This might not be what you want, because the number `0` and the empty string `""` are two different things - we probably agree that an empty string is something different than the number zero.
+    >  !true
+    <- false
+
+    >  !(1 == 1)
+    <- false
+
+    >  !(1 == 2 || 2 == 3)
+    <- true
+
+    >  !(1 == 1) || 2 == 3
+    <- false
+
+That last one is a good litmus test to see if we understand how boolean expressions work. As this is an "or" expression using `||`, it's enough to make it `true` if one side of it is `true`. The expression on the left, `1 == 1`, is `true`, but because it is inverted with `!` before the `||` comparison is done, the left side of the "or" expression is `false`.
+
+Note how we use `==` for value comparison, while we used `=` for assignment.
+
+And there is a second comparison operator, which is useful when we compare values of different types: `0 == 0` is of course `true`, but `0 == ""` is also true. This might not be what you want, because the number `0` and the empty string `""` are two different things - we probably agree that an empty string is something different than the number zero.
 
 In order to make sure that the two things we compare have the same value *and* also have the same type, we can use the `===` operator, which checks for type *and* value. Because comparisons with `==` are less strict, they are a common source of confusing bugs. It's therefore recommended to always compare using `===`, unless you know precisely that you want a less strict comparison.
 
@@ -460,17 +476,39 @@ The output, of course, is `n is a positive number.`.
 
 Let's dissect this code. So far, every JavaScript expression we've fed into a console or into Node.js has been executed - a control structure like this `if` statement potentially results in some part of code not being executed. If we set `n` to `-5`, then the line `console.log("a is a positive number.");` will not be executed.
 
-This is because if statements introduce a so-called *block* (the part in parentheses `{` and `}`), and define a *condition* that must evaluate to `true` for the code in the block to be evaluated. The condition is the part in parentheses `(` and `)` that follows the `if` keyword. The condition may contain any valid JavaScript boolean expression - the only thing that's relevant is that the interpreter must be able to decide if the condition is `true` or `false` - in the latter case, the code in the block is simply skipped:
+This is because if statements introduce a so-called *block* (the part in parentheses `{` and `}`), and define a *condition* that must evaluate to `true` for the code in the block to be evaluated. The condition is the part in parentheses `(` and `)` that follows the `if` keyword. The condition may contain any valid JavaScript boolean expression - the only thing that's relevant is that the interpreter must be able to decide if the condition is `true` or `false`.
 
-    if (1 === 1)      -> true  -> code in block is executed
-    if ("a" === "a")  -> true  -> code in block is executed
-    if (true)         -> true  -> code in block is executed
-    if (1 + 2 === 3)  -> true  -> code in block is executed
+These conditions all resolve to `true`, and therefore, the block following the `if` statement will be executed:
 
-    if (1 === 2)      -> false -> code in block is skipped
-    if (1 === "1")    -> false -> code in block is skipped
-    if (false)        -> false -> code in block is skipped
-    if (1 + 2 === 4)  -> false -> code in block is skipped
+    if (1 === 1)
+    if ("a" === "a")
+    if (true)
+    if (1 + 2 === 3)
+    if (1 + 2 === 3 && 4 + 5 === 9)
+
+And these conditions all resolve to `false`, and therefore, the block following the `if` statement will not be executed:
+
+    if (1 === 2)
+    if (1 === "1")
+    if (false)
+    if (1 + 2 === 4 || 4 + 5 ==== 8)
+
+Only identifying positive numbers is a bit boring, so let's extend our application to identify all possible cases:
+
+    let n = 10;
+
+    if (n > 0) {
+        console.log("n is a positive number.");
+    }
+
+    if (n < 0) {
+        console.log("n is a negative number.");
+    }
+
+    if (n === 0) {
+        console.log("n is neither positive nor negative.");
+    }
+
 
 
 
