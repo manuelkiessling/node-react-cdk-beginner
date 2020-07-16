@@ -9,7 +9,7 @@ If you absolutely must use Windows for developing JavaScript applications, then 
 
 ## Values and Types
 
-Starting to write JavaScript code is really simple. All we need is an environment which allows to interpret and run the JavaScript code that we write. There are several environments we can choose from, and we will learn about the different environments that are able to handle our code, but for now we will start with one that is readily available for us: the web browser.
+Starting to write JavaScript code is really simple. All we need is an environment which allows to interpret and run the JavaScript code that we write. There are several environments we can choose from, and we will learn about the different environments that are able to handle our code, but for now we will start with one that is readily available to us: the web browser.
 
 All mainstream web browsers - Chrome, Firefox, Internet Explorer, Edge, Safari, Opera, to name the most famous ones - are able to run JavaScript code, and we can use them for our first experiments.
 
@@ -173,7 +173,7 @@ This sounds like something didn't work as intended, but that's not the case. The
 
 In a sense, `undefined` is JavaScript's way of saying "nothing to see here, move along".
 
-What type does the value `undefined` have? It's type is also named `undefined`, and the value `undefined` is the only value that type `undefined` offers - this clearly is a very special language construct.
+What type does the value `undefined` have? Its type is also named `undefined`, and the value `undefined` is the only value that type `undefined` offers - this clearly is a very special language construct.
 
 Let's play around a bit with with this. JavaScript ships with a function called `typeof`, and we can use it to investigate the type of a value or an expression. Using it, we can verify that the name of the type of value `undefined` is indeed "undefined":
 
@@ -220,7 +220,7 @@ Irritatingly, the same is true for completely undeclared variables:
     >  typeof(y)
     <- "undefined"
 
-Still, `x` and `y` are different, because only one of them is actually declared. We can make this difference visible when we try to access the value of `x` and `y` - which, by the way shows that not only does `x` have a type, it also has a value (which isn't that surprising; as we've learned, variables of type *undefined* by definition must have one and only one value: `undefined`):
+Still, `x` and `y` are different, because only one of them is actually declared. We can make this difference visible when we try to access the value of `x` and `y` - which, by the way, shows that not only does `x` have a type, it also has a value (which isn't that surprising; as we've learned, variables of type *undefined* by definition must have one and only one value: `undefined`):
 
     >  x
     <- undefined
