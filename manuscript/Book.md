@@ -9,7 +9,7 @@ If you absolutely must use Windows for developing JavaScript applications, then 
 
 ## Values and Types
 
-Starting to write JavaScript code is really simple. All we need is an environment which allows to interpret and run the JavaScript code that we write. There are several environments we can choose from, and we will learn about the different environments that are able to handle our code, but for now we will start with one that is readily available to us: the web browser.
+Starting to write JavaScript code is really simple. All we need is an environment which is able to interpret and run the JavaScript code that we write. There are several environments we can choose from, and we will learn about the different environments that are able to handle our code, but for now we will start with one that is readily available to us: the web browser.
 
 All mainstream web browsers - Chrome, Firefox, Internet Explorer, Edge, Safari, Opera, to name the most famous ones - are able to run JavaScript code, and we can use them for our first experiments.
 
@@ -19,9 +19,9 @@ After opening the browser, you don't need to surf to any specific webpage. Inste
 
 In Firefox, hit CTRL-SHIFT-K (or, on macOS, ALT-CMD-K) to open the console. In Chrome, use CTRL-SHIFT-I (or, on macOS, ALT-CMD-I) to open the Developer Tools, and then click on the "Console" tab within the newly opened pane to access the console.
 
-When reaching the console, it's possible that it is already filled with some warning and error messages. That's not a problem - simply ignore these. Both browsers also provide a button which empties the console. It's a trashcan icon in Firefox, and a circle-with-a-diagonal-line icon in Chrome.
+When reaching the console, it's possible that it is already filled with some warning and error messages. That's not a problem - simply ignore these. Both browsers also provide a button which empties the console. It's a trashcan icon in Firefox, similar to 🗑, and a circle-with-a-diagonal-line icon in Chrome, similar to ⃠.
 
-The console offers you a prompt which allows you to type in text, as can be seen in the following screenshot:
+The console offers a prompt which allows you to type in text, as can be seen in the following screenshot:
 
 @TODO: Add screenshot
 
@@ -31,7 +31,7 @@ This enables us to run our very first JavaScript code.
 
 To do so, type the following at the console input prompt: `"hello"`, and then hit the ENTER key. Note the quotation marks - these are important!
 
-As a result, the console will print our text back to us - in this case, it's `<- "hello"`. The left arrow isn't actually part of the response - it simply denotes that this is a reply from the JavaScript interpreter.
+As a result, the console will print our text back to us - in this case, it's `<- "hello"`. The left arrow, `<-`, isn't actually part of the response - it simply denotes that this is a response from the JavaScript interpreter.
 
 Right now, the content of your console should look like this:
 
