@@ -289,9 +289,9 @@ Fine, let's recap what we've learned so far:
 - JavaScript code consists of *expressions*, which are pieces of code that the JavaScript interpreter can evaluate and execute. The console tool allows us to send expressions to the JavaScript interpreter, which then prints the result of evaluating that expression back to the console.
 - Simple expressions like `"hello"` can be combined into more complex expressions like `1 + "hello"`, which can be combined into ever more complex expressions like `let d = (1 + "hello") + (Number("5") / 8) + "hey"`.
 - One of the most simple JavaScript expressions is a *value*, e.g. `"hello"`. Every value in JavaScript has a *type*, and so far, we've encountered the types *string*, *number*, *boolean*, and *undefined*.
-- Simple expressions can be combined into more complex impressions using *operators*, e.g. `+`, `-`, `*`, `/`, `==`, `===`, `<`, and `>`.
+- Simple expressions can be combined into more complex expressions using *operators*, e.g. `+`, `-`, `*`, `/`, `==`, `===`, `<`, and `>`.
 - How these operators work depends on the type of the values involved - for example, `1 + 1` results in `2`, while `1 + "1"` results in `"11"`.
-- When combining or comparing values using these operators, *type coercion* rules are applied, which potentially translates a value with a given type into another value with another type. Because coercion rules are complex and can lead to subtle bugs when comparing only the values using the `==` operator, it's recommended to compare value and type using `===`.
+- When combining or comparing values using these operators, *type coercion* rules are applied, which potentially translate a value with a given type into another value with another type. Because coercion rules are complex and can lead to subtle bugs when comparing only the values using the `==` operator, it's recommended to compare value and type using `===`.
 - Instead of working with values directly, we can put values into *variables* or *constants*, which act as a container for a value.
 
 With this, we've reached the very first milestone of our journey, and learned about the most basic elements of the JavaScript language. There is, of course, a lot more that we need to tackle.
@@ -318,7 +318,7 @@ Being able to build useful server applications is an important building block of
 
 ## Setting things up
 
-In order to be able to create Node.js applications, we need to set up some applications on our development system. Right now, the single best way to do this is to use a project called *NVM*, the Node Version Manager. It's a very useful utility from the Node.js ecosystem which allows to install and manage Node.js installations on your local system through a single command line tool. Among other things, it allows to easily switch between different versions of Node.js as needed - for example, you might want to generally use the latest version of Node.js on your system, but need to use an older version only for a certain project in a certain folder. NVM makes this straightforward.
+In order to be able to create Node.js applications, we need to set up some applications on our development system. Right now, the single best way to do this is to use a project called *NVM*, the Node Version Manager. It's a very useful utility from the Node.js ecosystem which allows to install and manage Node.js installations on your local system through a single command line tool. Among other things, it allows to easily switch between different versions of Node.js as needed - for example, you might want to generally use the latest version of Node.js on your system, but you may also need to use an older version only for a certain project in a certain folder. NVM makes this straightforward.
 
 There really is only one single downside regarding NVM: it is not available for the Windows platform. However, an alternative implementation exists at https://github.com/coreybutler/nvm-windows, which provides a similar experience.
 
@@ -332,7 +332,7 @@ with `X.Y.Z` denoting the version number of the most recent release.
 
 Please take the time to also read the additional notes further down in the README. For example, on macOS, it might be neccessary to first install the *Xcode command line tools*, or else installation of NVM might fail.
 
-You've reached your goal as soon as running `nvm --version` on the command line works without an error, and prints the version number. When talking about working on the command line, I'm going to use the following notation:
+You've reached your goal as soon as running `nvm --version` on the terminal command line works without an error, and prints the version number. When talking about working on the command line, I'm going to use the following notation:
 
      > something-to-be-entered-on-the-command-line
 
@@ -348,7 +348,7 @@ Running the `nvm --version` command line and its output therefore looks like thi
 
 Installing NVM itself doesn't give you a Node.js setup right away. But we can now use NVM to install Node.js. There are several ways to do so, and for our first project, we are going to work with the `.nvmrc` approach.
 
-To do so, we need to create a project folder first. Find a place that suits you well - this can be your home folder, or maybe you already have a projects folder. The only thing that matters is that you should be able to create new folders and files at this location. From now on, I will assume that you are going to use your home folder, which can be reached on the command line from anywhere by simply running `cd`, as the parent folder of all project folders.
+To do so, we need to create a project folder first. Find a place that suits you well - this can be your home folder, or maybe you already have a projects folder. The only thing that matters is that you should be able to create new folders and files at this location. From now on, I will assume that you are going to use your home folder (which can be reached on the command line from anywhere by simply running `cd`) as the parent folder of all Node.js project folders.
 
 Once you are there, create the project folder, and change into the new folder:
 
@@ -357,48 +357,48 @@ Once you are there, create the project folder, and change into the new folder:
 
 We are going to tell NVM which version of Node.js we want to use for this project. To do so, we create a file named `.nvmrc` right in our project folder. The sole content of this file is one line that contains the Node.js version number we wish to use. This can be achieved like this:
 
-    > echo "12" > .nvmrc
+    > echo "14" > .nvmrc
 
 When running NVM while we are within the project folder, it will detect this file, read its contents, and will use the contained version number. The first thing we are going to use NVM for is to install Node.js:
 
     > nvm install
 
-    Found '/home/manuelkiessling/nodejs-hello-world/.nvmrc' with version <12>
-    Downloading and installing node v12.13.0...
-    Downloading https://nodejs.org/dist/v12.13.0/node-v12.13.0-darwin-x64.tar.xz...
+    Found '/home/manuelkiessling/nodejs-hello-world/.nvmrc' with version <14>
+    Downloading and installing node v14.6.0...
+    Downloading https://nodejs.org/dist/v14.6.0/node-v14.6.0-darwin-x64.tar.xz...
     ######################################################################## 100.0%
     Computing checksum with shasum -a 256
     Checksums matched!
-    Now using node v12.13.0 (npm v6.12.0)
+    Now using node v14.6.0 (npm v6.14.6)
 
-As you can see, using `12` as the Node.js version number works as a kind of wildcard - because we only provided the first part of the three part version number, NVM automatically assumes we want the most recent version of Node.js 12.x.y, which as of this writing is 12.13.0.
+As you can see, using `14` as the Node.js version number works as a kind of wildcard - because we only provided the first part of the three part version number, NVM automatically assumes we want the most recent version of Node.js 14.x.y, which as of this writing is 14.6.0.
 
-Version 12 of Node.js is the current Long Term Support version of Node.js, and is a very good starting point for new projects.
+Version 14 of Node.js is the current Long Term Support (LTS) version of Node.js, and is a very good starting point for new projects. You can find the current "LTS" and "Current" versions of Node.js at https://nodejs.org.
 
 With this, Node.js is now available on your system! You can verify this by running `node --version`:
 
     > node --version
 
-    v12.13.0
+    v14.6.0
 
 If this doesn't work as expected, or a version number other than the one you expected is shown, then run `nvm use` to ensure that for the current project, NVM has definitely switched to the intended version.
 
 Let's see what we can do with this.
 
-As said, Node.js is basically a JavaScript interpreter, wrapped into a command line application instead of a web browser. As such, it provides an interactive console, very much like the one we already worked with. Simply start the `node` application, and you are on a console:
+As said, Node.js is basically a JavaScript interpreter[^note1], wrapped into a command line application instead of a web browser. As such, it provides an interactive console, very much like the one we already worked with. Simply start the `node` application, and you are on a console:
 
     > node
 
-    Welcome to Node.js v12.13.0.
+    Welcome to Node.js v14.6.0.
     Type ".help" for more information.
     > let a = "hello"
     undefined
 
-Type `.exit` if you want to leave this console.
+Type `.exit` or hit CTRL-D if you want to leave this console.
 
 While this is certainly nice to have whenever we feel like playing around with JavaScript interactively, we wanted to get away from the console and start writing "real" JavaScript applications.
 
-To do so, we need to create our very first JavaScript code file. And this means we need to talk about code editors, because we need a tool to create our code files. JavaScript code files are simple text files, and even a very rudimentary plain text editor is perfectly capable to create these files. Nevertheless, more specialized code editors or and IDEs (Integrated Development Environments) make sense, because they make working on a large code base a lot more comfortable.
+To do so, we need to create our very first JavaScript code file. And this means we need to talk about code editors, because we need a tool to create our code files. JavaScript code files are simple text files, and even a very rudimentary plain text editor is perfectly capable to create these files. Nevertheless, using specialized code editors or IDEs (Integrated Development Environments) makes sense, because they make working on a large code base a lot more comfortable.
 
 There's a large choice available, and if you are already using a code editor or an IDE you feel comfortable with, just stick with it. As long as there is at least basic support for JavaScript, you're fine.
 
@@ -408,11 +408,11 @@ Whatever tool you choose, please use it to create your first file, named `index.
 
     "hello"
 
-Yeah, I know. That old `"hello"` line again. But bear with me, it's useful to demonstrate something important. Our JavaScript expression is now stored in the file, and where the embedded interpreter of the console executed any expression immediately for us, we now need to do this explicitly ourselves by running our file through the `node` program, like this:
+Yeah, I know. That old `"hello"` line again. But bear with me, it's useful to demonstrate something important. Our JavaScript expression is now stored in the file, and where the embedded interpreter of the console executed any expression immediately for us, we now need to trigger this explicitly ourselves by running our file through the `node` program, like this:
 
     > node index.js
 
-The result is... literally nothing. A JavaScript console would have printed the result of evaluating the expression. But when feeding the file containing the expression into Node.js, we see nothing. Is the expression really evaluated? We can test this by intentionally creating an invalid expression - simply remove the second quotation marks:
+The result is... literally nothing. A JavaScript console would have printed the result of evaluating the expression. But when feeding the file containing the expression into Node.js, we see nothing. Is the expression really evaluated? We can test this by intentionally creating an invalid expression - simply remove the second quotation mark:
 
     "hello
 
@@ -420,7 +420,7 @@ and run the file again:
 
     > node index.js
 
-    /home/manuelkiessling/nodejs-hello-world/nodejs-hello-world/index.js:1
+    /home/manuelkiessling/nodejs-hello-world/index.js:1
     "hello
     ^^^^^^
 
@@ -433,9 +433,9 @@ and run the file again:
         at Function.Module.runMain (internal/modules/cjs/loader.js:1051:12)
         at internal/main/run_main_module.js:16:11
 
-Fine, this proves that our code reaches a JavaScript interpreter. But why don't we see any output?
+Fine, this proves that our code reaches a JavaScript interpreter. But why don't we see any output for the non-broken code?
 
-The reason is that an interactive JavaScript console does the additional work of printing any expression's result back to us - but now we don't have a console, only a "pure" JavaScript interpreter, and we need to do the outputting ourselves. To do so, we can use method `log` of object `console`. Neither *objects* nor *methods* have not yet been introduced properly, but we need to change our file's content like this:
+The reason is that an interactive JavaScript console does the additional work of printing any expression's result back to us - but now we don't have a console, only a "pure" JavaScript interpreter, and we need to trigger the outputting ourselves. To do so, we can use method `log` of object `console`. Even though neither *objects* nor *methods* have yet been introduced properly, please change your file's content to this:
 
     console.log("hello")
 
@@ -462,7 +462,7 @@ and run it:
     hello
     hello1
 
-Nice. You may have noticed that I suddenly started to put a semicolon `;` at the end of each line. This isn't strictly neccessary, because most of the time JavaScript knows how to detect automatically that an expression has ended, even if it goes over multiple lines. But ending every expression with a semicolon explicitly removes any ambiguity, and is the dominant code style. We will stick to it in this book.
+Nice. You may have noticed that I suddenly started to put a semicolon `;` at the end of each line. This isn't strictly neccessary, because most of the time JavaScript knows how to automatically detect that an expression has ended, even if it goes over multiple lines. But ending every expression with a semicolon explicitly removes any ambiguity, and is the dominant code style. We will stick to it in this book.
 
 Let's use our new multi-line freedom to write a very first *control structure*:
 
@@ -474,9 +474,9 @@ Let's use our new multi-line freedom to write a very first *control structure*:
 
 The output, of course, is `n is a positive number.`.
 
-Let's dissect this code. So far, every JavaScript expression we've fed into a console or into Node.js has been executed - a control structure like this `if` statement potentially results in some part of code not being executed. If we set `n` to `-5`, then the line `console.log("a is a positive number.");` will not be executed.
+Let's dissect this code. So far, every JavaScript expression we've fed into a console or into Node.js has been executed - a control structure like the `if` statement potentially results in some part of code not being executed. If we set `n` to `-5`, then the line `console.log("a is a positive number.");` will not be executed.
 
-This is because if statements introduce a so-called *block* (the part in parentheses `{` and `}`), and define a *condition* that must evaluate to `true` for the code in the block to be evaluated. The condition is the part in parentheses `(` and `)` that follows the `if` keyword. The condition may contain any valid JavaScript boolean expression - the only thing that's relevant is that the interpreter must be able to decide if the condition is `true` or `false`.
+This is because `if` statements introduce a so-called *block* (the part between parentheses `{` and `}`), and define a *condition* that must evaluate to `true` for the code in the block to be evaluated. The condition is the part in parentheses `(` and `)` that follows the `if` keyword. The condition may contain any valid JavaScript expression - the only thing that's relevant is that the interpreter must be able to decide if the condition results in a boolean `true` or `false`.
 
 These conditions all resolve to `true`, and therefore, the block following the `if` statement will be executed:
 
@@ -509,6 +509,21 @@ Only identifying positive numbers is a bit boring, so let's extend our applicati
         console.log("n is neither positive nor negative.");
     }
 
+Obviously, by modifying the value of `n` (and re-running the application after each change), we can make our application write different outputs.
+
+Our code can be improved by rewriting it from using three distinct `if` control structures to only one multi-part control structure:
+
+    let n = 10;
+
+    if (n > 0) {
+        console.log("n is a positive number.");
+    } else if (n < 0) {
+        console.log("n is a negative number.");
+    } else {
+        console.log("n is neither positive nor negative.");
+    }
+
+This way, the code can branch out into one of several blocks; if the expression of the first `if` condition doesn't evaluate to `true`, then the next expression in the condition of the following `else if` statement is evaluated, and if even that one doesn't evaluate to `true`, then block of the final `else` statement is executed.
 
 
 
@@ -516,3 +531,6 @@ Only identifying positive numbers is a bit boring, so let's extend our applicati
 
 
 # Part 4: CDK - Deploy and run your applications on AWS, the serverless way
+
+
+[^note1]: To be precise, Node.js wraps V8, an open-source JavaScript engine developed by The Chromium Project for Google Chrome and Chromium web browsers. See https://en.wikipedia.org/wiki/V8_(JavaScript_engine) for more details.
