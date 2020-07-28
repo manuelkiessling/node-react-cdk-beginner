@@ -260,11 +260,16 @@ When we declare a variable, we can also assign it the value of an existing varia
 
 Important detail: `b` and `c` now have the same value, `"foo"`, but they do not "share" this value, because ´c´ got an independent copy of `b`'s value, which can be demonstrated like this:
 
+    >  let b = "foo"
+    >  let c = b
+    >  c
+    <- "foo"
+
     >  b = "bar"
     >  c
     <- "foo"
 
-Changing the value of `b` did **not** change the value of `c` - although `c` has been declared with `let c = b`, it is nevertheless completely independent from `b`.
+Changing the value of `b` did **not** change the value of `c` - although `c` has been declared with `let c = b`, it is nevertheless completely independent from `b` afterwards.
 
 In addition to variables, JavaScript supports *constants*. Like variables, they act as a container for a value, making the value available under the name of the constant - however, we are forced to assign a value upon declaration, and cannot re-assign another value once the const has been declared:
 
@@ -523,7 +528,64 @@ Our code can be improved by rewriting it from using three distinct `if` control 
         console.log("n is neither positive nor negative.");
     }
 
-This way, the code can branch out into one of several blocks; if the expression of the first `if` condition doesn't evaluate to `true`, then the next expression in the condition of the following `else if` statement is evaluated, and if even that one doesn't evaluate to `true`, then block of the final `else` statement is executed.
+This way, the code can branch out into one of several blocks; if the expression of the first `if` condition doesn't evaluate to `true`, then the next expression in the condition of the following `else if` statement is evaluated, and if even that one doesn't evaluate to `true`, then the block of the final `else` statement is executed.
+
+
+Let's make our application a bit more complex. Say we want to check not only one value, but two. This could be achieved with a naive implementation where we simply duplicate our comparison logic after changing the value of `n`:
+
+    let n = 10;
+
+    if (n > 0) {
+        console.log("n is a positive number.");
+    } else if (n < 0) {
+        console.log("n is a negative number.");
+    } else {
+        console.log("n is neither positive nor negative.");
+    }
+
+    n = -7;
+
+    if (n > 0) {
+        console.log("n is a positive number.");
+    } else if (n < 0) {
+        console.log("n is a negative number.");
+    } else {
+        console.log("n is neither positive nor negative.");
+    }
+
+This is a correctly working application that does exactly what we want, but clearly this isn't an efficient implementation. What if we want to check a thousand values? Copy-and-paste isn't going to cut it in an efficient manner.
+
+Instead, we can turn our comparison logic into a code construct that can be re-used again and again without the need to spell the logic out repeatedly. The construct we need to create is a *function*.
+
+Like an *if* control structure, a function consists of two parts: a block of code that is preceded by some kind of declaration. Before we apply this approach to our comparison logic above, let's start with a very basic example:
+
+    const greet = (name) => {
+        console.log("Hello " + name);
+    };
+
+Again, we dissect this in detail. Declaring a function creates a value, and this value can be assigned to a name like *greet* with `let` or `const`. We choose `const` because although that's possible, there isn't much sense to assign another value to *greet* afterwards.
+
+The declaration itself follows after the equals sign, and has the base syntax `() => {}` - that is, a list of zero or more parameter names enclosed in parentheses, followed by the "arrow" `=>`, followed by the function body enclosed in curly braces. Again, we end this value assignment with a semicolon.
+
+Let's look at some general rules and special cases for declaring functions.
+
+Functions don't need to have parameters:
+
+    const greetAnonymously = () => {
+        console.log("Hello whoever you are.");
+    };
+
+If the body of the function contains only a single line, then the curly braces that denote the beginning and the end of a block can be omitted:
+
+    const greetAnonymously = () => console.log("Hello whoever you are");
+
+But as soon as the function's body consists of mutiple lines, these are required:
+
+    const greetAnonymously = () => {
+        console.log("Hello whoever you are.");
+        console.log("Nice to meet you.");
+    };
+
 
 
 

@@ -7,3 +7,7 @@ if (n > 0) {
 } else {
     console.log("n is neither positive nor negative.");
 }
+
+const greet = (name) => {
+    console.log("Hello " + name);
+};
