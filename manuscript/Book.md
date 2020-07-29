@@ -579,14 +579,62 @@ If the body of the function contains only a single line, then the curly braces t
 
     const greetAnonymously = () => console.log("Hello whoever you are");
 
-But as soon as the function's body consists of mutiple lines, these are required:
+But as soon as the function's body consists of multiple lines, the braces are required:
 
     const greetAnonymously = () => {
         console.log("Hello whoever you are.");
         console.log("Nice to meet you.");
     };
 
+Multiple function parameter names must be separated with comma, like this:
 
+    const greet = (firstname, lastname) => {
+        console.log("Hello " + firstname + " " + lastname);
+    };
+
+You may wonder what the type of const `greet` is after assigning it a function. Unsurprisingly, it's `function`, which we can show by saving the following code and running it:
+
+    const greet = (firstname, lastname) => {
+        console.log("Hello " + firstname + " " + lastname);
+    };
+
+    console.log(typeof(greet));
+
+The output will be "function".
+
+When running this code you will realize how only the `console.log(typeof(greet));` line is actually executed. The function itself is declared and assigned, but its code, the part in the curly braces, isn't run.
+
+This is because functions are only executed when they are *called* by another piece of code, like so:
+
+    const greet = (firstname, lastname) => {
+        console.log("Hello " + firstname + " " + lastname);
+    };
+
+    greet("John", "Doe");
+    greet("Jane", "Doe");
+
+The output of this will be:
+
+    Hello John Doe
+    Hello Jane Doe
+
+Besides the `=>` arrow operator, which is simply a syntactic element needed to declare a function, and the ability to be executed by other pieces of code, functions introduce another new concept: parameters.
+
+As we can see above, when calling a function with parameters, we need to write out the name of the variable we assigned for this function (here, it's `greet`), followed by values for its parameters, enclosed in parentheses (e.g. `"John"` and `"Doe"`). In case a function does not have parameters, we still need the parentheses to make it a function call, like so: `greet()`.[^note2]
+
+A parameter behaves a bit like a variable declared with `let`, but it's a variable that has meaning only within the function's body block, which can easily be shown by running the following code:
+
+    const greet = (name) => {
+        console.log("Hello " + name);
+    };
+
+    console.log(name);
+
+This will result in a `ReferenceError: name is not defined` error, because `name` doesn't have a meaning outside the curly braces that denote the function body.
+
+
+
+We've already learned about consts, value assignment,
 
 
 # Part 3: React - Rich web applications with JavaScript
@@ -596,3 +644,5 @@ But as soon as the function's body consists of mutiple lines, these are required
 
 
 [^note1]: To be precise, Node.js wraps V8, an open-source JavaScript engine developed by The Chromium Project for Google Chrome and Chromium web browsers. See https://en.wikipedia.org/wiki/V8_(JavaScript_engine) for more details.
+
+[^note2]: In other words, there is an important difference between running `greet;` and `greet();` - the latter calls, and therefore executes, the function value that is assigned to `greet`, while the former only returns the assigned function value, but doesn't execute it. This is why `console.log(typeof(greet));` will print `function`, which is the type of the value that has been assigned to const `greet`. On the other hand, running `console.log(typeof(greet("John", "Doe")));`. will return `undefined`, because that is the resulting value when running the function. We will later encounter functions that return values other than `undefined`.
