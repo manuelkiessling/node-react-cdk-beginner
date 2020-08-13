@@ -1,5 +1,12 @@
 const greet = (name) => {
-    console.log("Hello " + name);
+    console.log("Hello " + name + ". " + greeting);
 };
 
-console.log(name);
+let greeting = "Nice to meet you!";
+
+greet("The Insider");
+
+
+greeting = "How's it going?";
+
+greet("The Insider");

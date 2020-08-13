@@ -622,7 +622,7 @@ Besides the `=>` arrow operator, which is simply a syntactic element needed to d
 
 As we can see above, when calling a function with parameters, we need to write out the name of the variable we assigned for this function (here, it's `greet`), followed by values for its parameters, enclosed in parentheses (e.g. `"John"` and `"Doe"`). In case a function does not have parameters, we still need the parentheses to make it a function call, like so: `greet()`.[^note2]
 
-A parameter behaves a bit like a variable declared with `let`, but it's a variable that has meaning only within the function's body block, which can easily be shown by running the following code:
+A parameter behaves a bit like a variable declared with `let`, but it is a variable that has meaning only within the function's body block, which can easily be shown by running the following code:
 
     const greet = (name) => {
         console.log("Hello " + name);
@@ -631,6 +631,40 @@ A parameter behaves a bit like a variable declared with `let`, but it's a variab
     console.log(name);
 
 This will result in a `ReferenceError: name is not defined` error, because `name` doesn't have a meaning outside the curly braces that denote the function body.
+
+As a result, it is not problematic to declare two distinct `name` variables, one outside the function's body block and one inside:
+
+    let name = "The Outsider";
+
+    const greet = (name) => {
+        console.log("Hello " + name);
+    };
+
+    console.log(name);
+
+    greet("The Insider");
+
+This will output "The Outsider", followed by "The Insider", which demonstrates that variable declarations have a *scope*, that is, they have a meaning, and are accessible and visible, only within a certain context.
+
+A code file always has at least one scope, the outermost scope where in the example above the first "name" variable is created. This outermost scope doesn't have to be created explicitly, while additional scopes are created, for example, by defining a function, in which case the function body has its own scope.
+
+While this is straightforward, the details are a bit more complicated. While scopes are mostly independent from each other, they can still interact, at least in some directions. That's because scopes are nested, that is, one scope can live within another scope, forming a kind of parent-child relationship.
+
+In the example above, we have two scopes, the implicit outer scope, and the function scope that we created by defining our function.
+
+This results in the function scope being the "child" of the "parent" outer scope. And this, in turn, means that the function scope can "see" and access variables from the outer scope - child scopes have access to their parent scope.
+
+We can demonstrate this with the following code:
+
+    let greeting = "Nice to meet you!";
+
+    const greet = (name) => {
+        console.log("Hello " + name + ". " + greeting);
+    };
+
+    greet("The Insider");
+
+This will print "Hello The Insider. Nice to meet you!" to the console. That's because although "greeting" is defined outside of the "greet" function, the function code, because it creates a scope that is a child of the scope where greeting was defined, can access it.
 
 
 
