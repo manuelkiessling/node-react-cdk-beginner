@@ -652,19 +652,45 @@ While this is straightforward, the details are a bit more complicated. While sco
 
 In the example above, we have two scopes, the implicit outer scope, and the function scope that we created by defining our function.
 
-This results in the function scope being the "child" of the "parent" outer scope. And this, in turn, means that the function scope can "see" and access variables from the outer scope - child scopes have access to their parent scope.
+This results in the function scope being the "child" of the "parent" outer scope. And this, in turn, means that the function scope can "see" and access variables from the outer scope - in other words: child scopes have access to their parent scope.
 
 We can demonstrate this with the following code:
-
-    let greeting = "Nice to meet you!";
 
     const greet = (name) => {
         console.log("Hello " + name + ". " + greeting);
     };
 
+    let greeting = "Nice to meet you!";
+
     greet("The Insider");
 
-This will print "Hello The Insider. Nice to meet you!" to the console. That's because although "greeting" is defined outside of the "greet" function, the function code, because it creates a scope that is a child of the scope where greeting was defined, can access it.
+This will print "Hello The Insider. Nice to meet you!" to the console. And this is possible because although "greeting" is declared outside of the "greet" function, the inner scope of the function body, as a child of the scope where greeting was declared, can access it.
+
+Note how the important aspect here is the *scope* in which "greeting" was defined, while it doesn't matter on which *line* it was defined. We first declare our "greet" function, where we already reference "greeting", and declare that only a couple of lines later. This doesn't create any problems.
+
+The inner scope has access to a variable of the outer scope, and to be even more precise, it has access to the *value* of a variable of the outer scope that the variable has at that moment in time when the inner scope is executed.
+
+The following code shows what that means:
+
+    const greet = (name) => {
+        console.log("Hello " + name + ". " + greeting);
+    };
+
+    let greeting = "Nice to meet you!";
+
+    greet("The Insider");
+
+
+    greeting = "How's it going?";
+
+    greet("The Insider");
+
+
+This show that the inner scope not only sees the initially assigned value of "greeting"; when the value of "greeting" is changed, then a subsequent execution of the inner scope code will see this change.
+
+
+
+
 
 
 
