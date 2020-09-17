@@ -698,7 +698,7 @@ This, however, is neither the most crazy nor the most useful thing we can do wit
 
 For example, we can *pass* a function to another function:
 
-    const greet = (name) => {
+    const greetFriendly = (name) => {
         console.log("Hello " + name);
     };
 
@@ -707,9 +707,12 @@ For example, we can *pass* a function to another function:
         greetFunc(nameTwo);
     };
 
-    greetTwoPeople(greet, "Jane", "John");
+    greetTwoPeople(greetFriendly, "Jane", "John");
 
 
+This example consists of two functions, *greet* and *greetTwoPeople*. The interesting thing is how *greetTwoPeople* uses *greet*, but in a special way. Instead of calling *greet* directly, the *greetTwoPeople* function expects that we pass a function as its first parameter.
+
+Super-important detail:
 
 
 We've already learned about consts, value assignment,

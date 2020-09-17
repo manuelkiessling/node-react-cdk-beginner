@@ -1,4 +1,5 @@
-const greet = (name) => {
+
+const greetFriendly = (name) => {
     console.log("Hello " + name);
 };
 
@@ -7,4 +8,4 @@ const greetTwoPeople = (greetFunc, nameOne, nameTwo) => {
     greetFunc(nameTwo);
 };
 
-greetTwoPeople(greet, "Jane", "John");
+greetTwoPeople(greetFriendly, "Jane", "John");
