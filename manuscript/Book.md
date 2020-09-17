@@ -686,10 +686,28 @@ The following code shows what that means:
     greet("The Insider");
 
 
-This show that the inner scope not only sees the initially assigned value of "greeting"; when the value of "greeting" is changed, then a subsequent execution of the inner scope code will see this change.
+This shows that the inner scope not only sees the initially assigned value of "greeting"; when the value of "greeting" is changed, then a subsequent execution of the inner scope code will see this change.
 
+What we see here is a *closure*. The [MDN web docs][https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures] define these as follows:
 
+> A closure is the combination of a function bundled together (enclosed) with references to its surrounding state (the lexical environment). In other words, a closure gives you access to an outer function’s scope from an inner function. In JavaScript, closures are created every time a function is created, at function creation time.
 
+And this is exactly what we saw: at the time that our *greet* function is created, the scope it is created in contains a variable *greeting*, and thus, our function is *bundled together* with this surrounding state.
+
+This, however, is neither the most crazy nor the most useful thing we can do with functions. What's really useful is the fact that functions are variables, too, and can be treated like other variables in many interesting contexts.function
+
+For example, we can *pass* a function to another function:
+
+    const greet = (name) => {
+        console.log("Hello " + name);
+    };
+
+    const greetTwoPeople = (greetFunc, nameOne, nameTwo) => {
+        greetFunc(nameOne);
+        greetFunc(nameTwo);
+    };
+
+    greetTwoPeople(greet, "Jane", "John");
 
 
 
