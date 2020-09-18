@@ -571,17 +571,17 @@ Let's look at some general rules and special cases for declaring functions.
 
 Functions don't need to have parameters:
 
-    const greetAnonymously = () => {
+    const greetWithoutName = () => {
         console.log("Hello whoever you are.");
     };
 
 If the body of the function contains only a single line, then the curly braces that denote the beginning and the end of a block can be omitted:
 
-    const greetAnonymously = () => console.log("Hello whoever you are");
+    const greetWithoutName = () => console.log("Hello whoever you are");
 
 But as soon as the function's body consists of multiple lines, the braces are required:
 
-    const greetAnonymously = () => {
+    const greetWithoutName = () => {
         console.log("Hello whoever you are.");
         console.log("Nice to meet you.");
     };
@@ -620,7 +620,7 @@ The output of this will be:
 
 Besides the `=>` arrow operator, which is simply a syntactic element needed to declare a function, and the ability to be executed by other pieces of code, functions introduce another new concept: parameters.
 
-As we can see above, when calling a function with parameters, we need to write out the name of the variable we assigned for this function (here, it's `greet`), followed by values for its parameters, enclosed in parentheses (e.g. `"John"` and `"Doe"`). In case a function does not have parameters, we still need the parentheses to make it a function call, like so: `greet()`.[^note2]
+As we can see above, when calling a function with parameters, we need to write out the name of the variable we assigned for this function (here, it's `greet`), followed by values for its parameters, enclosed in parentheses (e.g. `"John"` and `"Doe"`). In case a function does not have parameters, we still need the parentheses to make it a function *call*, like so: `greet()`.[^note2]
 
 A parameter behaves a bit like a variable declared with `let`, but it is a variable that has meaning only within the function's body block, which can easily be shown by running the following code:
 
@@ -710,9 +710,33 @@ For example, we can *pass* a function to another function:
     greetTwoPeople(greetFriendly, "Jane", "John");
 
 
-This example consists of two functions, *greet* and *greetTwoPeople*. The interesting thing is how *greetTwoPeople* uses *greet*, but in a special way. Instead of calling *greet* directly, the *greetTwoPeople* function expects that we pass a function as its first parameter.
+This example consists of two functions, *greetFriendly* and *greetTwoPeople*. The interesting thing is how *greetTwoPeople* uses *greetFriendly*, but in a special way. Instead of calling *greet* directly, the *greetTwoPeople* function expects that we pass a function as its first parameter.
 
-Super-important detail:
+Super-important detail: note how on the last line, *greetFriendly* is *passed*, not called! Contrast this with the following:
+
+    greetTwoPeople(greetFriendly(), "Jane", "John");
+
+This would be wrong, because by adding the parentheses to *greetFriendly*, we call and therefore execute it, instead of passing it to *greetTwoPeople* for further use.
+
+By passing *greetFriendly* into *greetTwoPeople* under the parameter name *greetFunc*, we make *greetFriendly* available to *greetTwoPeople*, just like we make the value *"Jane"* available to *greetTwoPeople* under the parameter name *nameOne*.
+
+This shows how functions are just another type of value in JavaScript that can be passed around as needed.
+
+If functions are just another kind of value - do we need to declare them with a name? After all, we can simply pass the string value "Jane" where required, without the need to declare a variable with that value first.
+
+And indeed, we can create function values on-the-go the very same way:
+
+    greetTwoPeople((name) => console.log("Hi " + name), "Jane", "John");
+
+If you are not used to this kind of code, it's a bit hard to read, admittedly. That's because we do an inline declaration of the function we pass as *greetFunc*, and it's easy to get lost as to what is part of this function declaration and the rest of the function call to *greetTwoPeople*. It helps to spread the function call over several lines:
+
+    greetTwoPeople(
+        (name) => console.log("Hi " + name),
+        "Jane",
+        "John"
+    );
+
+
 
 
 We've already learned about consts, value assignment,

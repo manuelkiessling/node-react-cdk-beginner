@@ -8,4 +8,8 @@ const greetTwoPeople = (greetFunc, nameOne, nameTwo) => {
     greetFunc(nameTwo);
 };
 
-greetTwoPeople(greetFriendly, "Jane", "John");
+greetTwoPeople(
+    (name) => console.log("Hi " + name),
+    "Jane",
+    "John"
+);
