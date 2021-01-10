@@ -316,7 +316,7 @@ As stated before, running JavaScript code, and therefore, building JavaScript ap
 
 The Node.js project takes a JavaScript interpreter (the one that ships with the Chrome browser, called *V8*), and makes it available as a stand-alone program on the command line. This allows us to not only feed single lines of code into the interpreter interactively, but whole files of JavaScript code, non-interactively.
 
-This enables application building: using the simple expressions we already know, and some more complex ones we are going to learn about now, we can create complex programs that reliably and continuously serve a useful purpose - from simple command line tools to full-fledged server applications.
+This enables application building: using the simple expressions we already know, and some more complex ones we are going to learn about next, we can create complex programs that reliably and continuously serve a useful purpose - from simple command line tools to full-fledged server applications.
 
 Being able to build useful server applications is an important building block of knowledge on our journey, because it allows us to provide an HTTP-based REST API for the React-based Single-Page Application we are going to build in the third part of this book.
 
@@ -740,12 +740,9 @@ If you are not used to this kind of code, it's a bit hard to read, admittedly. T
         "John"
     );
 
-These inline-declared functions are also called *anonymous* functions, because they don't have a name.
+Because they are not assigned to a named variable, these inline-declared functions are also called *anonymous* functions.
 
 
-
-
-We've already learned about consts, value assignment,
 
 
 # Part 3: React - Rich web applications with JavaScript
