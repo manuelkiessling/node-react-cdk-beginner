@@ -1,12 +1,15 @@
-const greet = (name) => {
-    console.log("Hello " + name + ". " + greeting);
+
+const greetFriendly = (name) => {
+    console.log("Hello " + name);
 };
 
-let greeting = "Nice to meet you!";
+const greetTwoPeople = (greetFunc, nameOne, nameTwo) => {
+    greetFunc(nameOne);
+    greetFunc(nameTwo);
+};
 
-greet("The Insider");
-
-
-greeting = "How's it going?";
-
-greet("The Insider");
+greetTwoPeople(
+    (name) => console.log("Hi " + name),
+    "Jane",
+    "John"
+);

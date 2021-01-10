@@ -571,17 +571,17 @@ Let's look at some general rules and special cases for declaring functions.
 
 Functions don't need to have parameters:
 
-    const greetAnonymously = () => {
+    const greetWithoutName = () => {
         console.log("Hello whoever you are.");
     };
 
 If the body of the function contains only a single line, then the curly braces that denote the beginning and the end of a block can be omitted:
 
-    const greetAnonymously = () => console.log("Hello whoever you are");
+    const greetWithoutName = () => console.log("Hello whoever you are");
 
 But as soon as the function's body consists of multiple lines, the braces are required:
 
-    const greetAnonymously = () => {
+    const greetWithoutName = () => {
         console.log("Hello whoever you are.");
         console.log("Nice to meet you.");
     };
@@ -620,7 +620,7 @@ The output of this will be:
 
 Besides the `=>` arrow operator, which is simply a syntactic element needed to declare a function, and the ability to be executed by other pieces of code, functions introduce another new concept: parameters.
 
-As we can see above, when calling a function with parameters, we need to write out the name of the variable we assigned for this function (here, it's `greet`), followed by values for its parameters, enclosed in parentheses (e.g. `"John"` and `"Doe"`). In case a function does not have parameters, we still need the parentheses to make it a function call, like so: `greet()`.[^note2]
+As we can see above, when calling a function with parameters, we need to write out the name of the variable we assigned for this function (here, it's `greet`), followed by values for its parameters, enclosed in parentheses (e.g. `"John"` and `"Doe"`). In case a function does not have parameters, we still need the parentheses to make it a function *call*, like so: `greet()`.[^note2]
 
 A parameter behaves a bit like a variable declared with `let`, but it is a variable that has meaning only within the function's body block, which can easily be shown by running the following code:
 
@@ -686,10 +686,55 @@ The following code shows what that means:
     greet("The Insider");
 
 
-This show that the inner scope not only sees the initially assigned value of "greeting"; when the value of "greeting" is changed, then a subsequent execution of the inner scope code will see this change.
+This shows that the inner scope not only sees the initially assigned value of "greeting"; when the value of "greeting" is changed, then a subsequent execution of the inner scope code will see this change.
+
+What we see here is a *closure*. The [MDN web docs][https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures] define these as follows:
+
+> A closure is the combination of a function bundled together (enclosed) with references to its surrounding state (the lexical environment). In other words, a closure gives you access to an outer function’s scope from an inner function. In JavaScript, closures are created every time a function is created, at function creation time.
+
+And this is exactly what we saw: at the time that our *greet* function is created, the scope it is created in contains a variable *greeting*, and thus, our function is *bundled together* with this surrounding state.
+
+This, however, is neither the most crazy nor the most useful thing we can do with functions. What's really useful is the fact that functions are variables, too, and can be treated like other variables in many interesting contexts.function
+
+For example, we can *pass* a function to another function:
+
+    const greetFriendly = (name) => {
+        console.log("Hello " + name);
+    };
+
+    const greetTwoPeople = (greetFunc, nameOne, nameTwo) => {
+        greetFunc(nameOne);
+        greetFunc(nameTwo);
+    };
+
+    greetTwoPeople(greetFriendly, "Jane", "John");
 
 
+This example consists of two functions, *greetFriendly* and *greetTwoPeople*. The interesting thing is how *greetTwoPeople* uses *greetFriendly*, but in a special way. Instead of calling *greet* directly, the *greetTwoPeople* function expects that we pass a function as its first parameter.
 
+Super-important detail: note how on the last line, *greetFriendly* is *passed*, not called! Contrast this with the following:
+
+    greetTwoPeople(greetFriendly(), "Jane", "John");
+
+This would be wrong, because by adding the parentheses to *greetFriendly*, we call and therefore execute it, instead of passing it to *greetTwoPeople* for further use.
+
+By passing *greetFriendly* into *greetTwoPeople* under the parameter name *greetFunc*, we make *greetFriendly* available to *greetTwoPeople*, just like we make the value *"Jane"* available to *greetTwoPeople* under the parameter name *nameOne*.
+
+This shows how functions are just another type of value in JavaScript that can be passed around as needed.
+
+If functions are just another kind of value - do we need to declare them with a name? After all, we can simply pass the string value "Jane" where required, without the need to declare a variable with that value first.
+
+And indeed, we can create function values on-the-go the very same way:
+
+    greetTwoPeople((name) => console.log("Hi " + name), "Jane", "John");
+
+If you are not used to this kind of code, it's a bit hard to read, admittedly. That's because we do an inline declaration of the function we pass as *greetFunc*, and it's easy to get lost as to what is part of this function declaration and the rest of the function call to *greetTwoPeople*. It helps to spread the function call over several lines:
+
+    greetTwoPeople(
+        (name) => console.log("Hi " + name),
+        "Jane",
+        "John"
+    );
 
 
 
