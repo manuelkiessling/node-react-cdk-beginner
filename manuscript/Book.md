@@ -9,7 +9,7 @@ If you absolutely must use Windows for developing JavaScript applications, then 
 
 ## Values and Types
 
-Starting to write JavaScript code is really simple. All we need is an environment which is able to interpret and run the JavaScript code that we write. There are several environments we can choose from, and we will learn about the different environments that are able to handle our code, but for now we will start with one that is readily available to us: the web browser.
+Starting to write and run JavaScript code is really simple. All we need is an environment which is able to interpret and run the JavaScript code that we write. There are several environments we can choose from, and we will learn about the different environments that are able to handle our code, but for now we will start with one that is readily available to us: the web browser.
 
 All mainstream web browsers - Chrome, Firefox, Internet Explorer, Edge, Safari, Opera, to name the most famous ones - are able to run JavaScript code, and we can use them for our first experiments.
 
@@ -662,7 +662,7 @@ We can demonstrate this with the following code:
 
     let greeting = "Nice to meet you!";
 
-    greet("The Insider");
+    greet("Insider");
 
 This will print "Hello The Insider. Nice to meet you!" to the console. And this is possible because although "greeting" is declared outside of the "greet" function, the inner scope of the function body, as a child of the scope where greeting was declared, can access it.
 
