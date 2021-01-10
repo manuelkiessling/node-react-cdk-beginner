@@ -565,17 +565,17 @@ Like an *if* control structure, a function consists of two parts: a block of cod
 
 Again, we dissect this in detail. Declaring a function creates a value, and this value can be assigned to a name like *greet* with `let` or `const`. We choose `const` because although that's possible, there isn't much sense to assign another value to *greet* afterwards.
 
-The declaration itself follows after the equals sign, and has the base syntax `() => {}` - that is, a list of zero or more parameter names enclosed in parentheses, followed by the "arrow" `=>`, followed by the function body enclosed in curly braces. Again, we end this value assignment with a semicolon.
+The declaration itself follows after the equals sign, and has the base syntax `() => {}` - that is, a list of zero or more parameter names enclosed in parentheses, followed by the "arrow" `=>`, followed by the function body enclosed in curly braces. As always, we end this value assignment with a semicolon.
 
 Let's look at some general rules and special cases for declaring functions.
 
-Functions don't need to have parameters:
+Functions don't need to have parameters, in which case the parentheses are empty:
 
     const greetWithoutName = () => {
         console.log("Hello whoever you are.");
     };
 
-If the body of the function contains only a single line, then the curly braces that denote the beginning and the end of a block can be omitted:
+And if the body of the function contains only a single line, then the curly braces that denote the beginning and the end of a block can be omitted:
 
     const greetWithoutName = () => console.log("Hello whoever you are");
 
@@ -602,7 +602,7 @@ You may wonder what the type of const `greet` is after assigning it a function. 
 
 The output will be "function".
 
-When running this code you will realize how only the `console.log(typeof(greet));` line is actually executed. The function itself is declared and assigned, but its code, the part in the curly braces, isn't run.
+When running this code you will realize how only the `console.log(typeof(greet));` line is actually executed. The function itself is *declared* and *assigned*, but its code, the part in the curly braces, isn't *run*.
 
 This is because functions are only executed when they are *called* by another piece of code, like so:
 
@@ -620,7 +620,7 @@ The output of this will be:
 
 Besides the `=>` arrow operator, which is simply a syntactic element needed to declare a function, and the ability to be executed by other pieces of code, functions introduce another new concept: parameters.
 
-As we can see above, when calling a function with parameters, we need to write out the name of the variable we assigned for this function (here, it's `greet`), followed by values for its parameters, enclosed in parentheses (e.g. `"John"` and `"Doe"`). In case a function does not have parameters, we still need the parentheses to make it a function *call*, like so: `greet()`.[^note2]
+As we can see above, when calling a function with parameters, we need to write out the name of the variable we assigned this function to (here, it's `greet`), followed by values for its parameters, enclosed in parentheses (e.g. `"John"` and `"Doe"`). In case a function does not have parameters, we still need the parentheses to make it a function *call*, like so: `greet()`.[^note2]
 
 A parameter behaves a bit like a variable declared with `let`, but it is a variable that has meaning only within the function's body block, which can easily be shown by running the following code:
 
