@@ -630,11 +630,11 @@ A parameter behaves a bit like a variable declared with `let`, but it is a varia
 
     console.log(name);
 
-This will result in a `ReferenceError: name is not defined` error, because `name` doesn't have a meaning outside the curly braces that denote the function body.
+This will result in a `ReferenceError: name is not defined` error, because `name` doesn't have a meaning outside the curly braces that denote the body of function *greet*.
 
 As a result, it is not problematic to declare two distinct `name` variables, one outside the function's body block and one inside:
 
-    let name = "The Outsider";
+    let name = "Outsider";
 
     const greet = (name) => {
         console.log("Hello " + name);
@@ -642,17 +642,17 @@ As a result, it is not problematic to declare two distinct `name` variables, one
 
     console.log(name);
 
-    greet("The Insider");
+    greet("Insider");
 
-This will output "The Outsider", followed by "The Insider", which demonstrates that variable declarations have a *scope*, that is, they have a meaning, and are accessible and visible, only within a certain context.
+This will output "Outsider", followed by "Hello Insider", which demonstrates that variable declarations have a *scope*, that is, they have a meaning, and are accessible and visible, only within a certain context.
 
 A code file always has at least one scope, the outermost scope where in the example above the first "name" variable is created. This outermost scope doesn't have to be created explicitly, while additional scopes are created, for example, by defining a function, in which case the function body has its own scope.
 
-While this is straightforward, the details are a bit more complicated. While scopes are mostly independent from each other, they can still interact, at least in some directions. That's because scopes are nested, that is, one scope can live within another scope, forming a kind of parent-child relationship.
+While this is straightforward, the details are a bit more complicated. While scopes are mostly independent from each other, they can still interact, at least in some directions. That's because scopes are *nested*, that is, one scope can live within another scope, forming a kind of parent-child relationship.
 
-In the example above, we have two scopes, the implicit outer scope, and the function scope that we created by defining our function.
+In the example above, we have two scopes, the implicit outer scope, and the function scope that we created by defining function *greet*.
 
-This results in the function scope being the "child" of the "parent" outer scope. And this, in turn, means that the function scope can "see" and access variables from the outer scope - in other words: child scopes have access to their parent scope.
+This results in the function scope being the "child" of the outermost "parent" scope. And this, in turn, means that the function scope can "see" and access variables from the outer scope - in other words: child scopes have access to their parent scope.
 
 We can demonstrate this with the following code:
 
@@ -666,7 +666,7 @@ We can demonstrate this with the following code:
 
 This will print "Hello The Insider. Nice to meet you!" to the console. And this is possible because although "greeting" is declared outside of the "greet" function, the inner scope of the function body, as a child of the scope where greeting was declared, can access it.
 
-Note how the important aspect here is the *scope* in which "greeting" was defined, while it doesn't matter on which *line* it was defined. We first declare our "greet" function, where we already reference "greeting", and declare that only a couple of lines later. This doesn't create any problems.
+Note how the important aspect here is the *scope* in which "greeting" was defined, while it doesn't matter on which *line* it was defined. We first declared our "greet" function, already accessing "greeting", and declare that only a couple of lines later. This doesn't create any problems.
 
 The inner scope has access to a variable of the outer scope, and to be even more precise, it has access to the *value* of a variable of the outer scope that the variable has at that moment in time when the inner scope is executed.
 
@@ -678,23 +678,25 @@ The following code shows what that means:
 
     let greeting = "Nice to meet you!";
 
-    greet("The Insider");
+    greet("Insider");
 
 
     greeting = "How's it going?";
 
-    greet("The Insider");
+    greet("Insider");
 
 
 This shows that the inner scope not only sees the initially assigned value of "greeting"; when the value of "greeting" is changed, then a subsequent execution of the inner scope code will see this change.
 
-What we see here is a *closure*. The [MDN web docs][https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures] define these as follows:
+What we see in action here is a *closure*. The [MDN web docs][https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures] define these as follows:
 
 > A closure is the combination of a function bundled together (enclosed) with references to its surrounding state (the lexical environment). In other words, a closure gives you access to an outer function’s scope from an inner function. In JavaScript, closures are created every time a function is created, at function creation time.
 
 And this is exactly what we saw: at the time that our *greet* function is created, the scope it is created in contains a variable *greeting*, and thus, our function is *bundled together* with this surrounding state.
 
-This, however, is neither the most crazy nor the most useful thing we can do with functions. What's really useful is the fact that functions are variables, too, and can be treated like other variables in many interesting contexts.function
+
+
+This, however, is neither the most crazy nor the most useful thing we can do with functions. What's really useful is the fact that functions are variables, too, and can be treated like other variables in many interesting contexts.
 
 For example, we can *pass* a function to another function:
 
@@ -710,7 +712,7 @@ For example, we can *pass* a function to another function:
     greetTwoPeople(greetFriendly, "Jane", "John");
 
 
-This example consists of two functions, *greetFriendly* and *greetTwoPeople*. The interesting thing is how *greetTwoPeople* uses *greetFriendly*, but in a special way. Instead of calling *greet* directly, the *greetTwoPeople* function expects that we pass a function as its first parameter.
+This example contains two functions, *greetFriendly* and *greetTwoPeople*. The interesting thing is how *greetTwoPeople* uses *greetFriendly*, but in a special way. Instead of calling *greet* directly, the *greetTwoPeople* function expects that we pass a function via its first parameter.
 
 Super-important detail: note how on the last line, *greetFriendly* is *passed*, not called! Contrast this with the following:
 
@@ -720,21 +722,25 @@ This would be wrong, because by adding the parentheses to *greetFriendly*, we ca
 
 By passing *greetFriendly* into *greetTwoPeople* under the parameter name *greetFunc*, we make *greetFriendly* available to *greetTwoPeople*, just like we make the value *"Jane"* available to *greetTwoPeople* under the parameter name *nameOne*.
 
+The function calls to *greetFriendly* are then triggered within *greetTwoPeople*, via the name of the parameter, *greetFunc*, followed by parentheses (which contain the parameters that need to be passed to *greetFriendly*).
+
 This shows how functions are just another type of value in JavaScript that can be passed around as needed.
 
 If functions are just another kind of value - do we need to declare them with a name? After all, we can simply pass the string value "Jane" where required, without the need to declare a variable with that value first.
 
-And indeed, we can create function values on-the-go the very same way:
+And indeed, we can create function values on-the-go, like this:
 
     greetTwoPeople((name) => console.log("Hi " + name), "Jane", "John");
 
-If you are not used to this kind of code, it's a bit hard to read, admittedly. That's because we do an inline declaration of the function we pass as *greetFunc*, and it's easy to get lost as to what is part of this function declaration and the rest of the function call to *greetTwoPeople*. It helps to spread the function call over several lines:
+If you are not used to this kind of code, it's a bit hard to read, admittedly. That's because we do an inline declaration of the function we pass as *greetFunc*, and it's easy to get lost as to what is part of the function declaration and the rest of the function call to *greetTwoPeople*. It helps to spread the parameters of the function call over several lines, with each parameter on a line of its own:
 
     greetTwoPeople(
         (name) => console.log("Hi " + name),
         "Jane",
         "John"
     );
+
+These inline-declared functions are also called *anonymous* functions, because they don't have a name.
 
 
 
