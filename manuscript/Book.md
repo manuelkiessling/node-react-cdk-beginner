@@ -440,7 +440,7 @@ and run the file again:
 
 Fine, this proves that our code reaches a JavaScript interpreter. But why don't we see any output for the non-broken code?
 
-The reason is that an interactive JavaScript console does the additional work of printing any expression's result back to us - but now we don't have a console, only a "pure" JavaScript interpreter, and we need to trigger the outputting ourselves. To do so, we can use method `log` of object `console`. Even though neither *objects* nor *methods* have yet been introduced properly, please change your file's content to this:
+The reason is that an interactive JavaScript console does the additional work of printing any expression's result back to us - but now we don't have an interactive console, only a "pure" JavaScript interpreter, and we need to trigger the outputting ourselves. To do so, we can use method `log` of object `console`. Even though neither *objects* nor *methods* have yet been introduced properly, please change your file's content to this:
 
     console.log("hello")
 
@@ -712,13 +712,13 @@ For example, we can *pass* a function to another function:
     greetTwoPeople(greetFriendly, "Jane", "John");
 
 
-This example contains two functions, *greetFriendly* and *greetTwoPeople*. The interesting thing is how *greetTwoPeople* uses *greetFriendly*, but in a special way. Instead of calling *greet* directly, the *greetTwoPeople* function expects that we pass a function via its first parameter.
+This example contains two functions, *greetFriendly* and *greetTwoPeople*. The interesting thing is how *greetTwoPeople* uses *greetFriendly*, but in a special way. Instead of calling *greetFriendly* directly, the *greetTwoPeople* function expects that we pass a function via its first parameter - and then calls this passed function.
 
 Super-important detail: note how on the last line, *greetFriendly* is *passed*, not called! Contrast this with the following:
 
     greetTwoPeople(greetFriendly(), "Jane", "John");
 
-This would be wrong, because by adding the parentheses to *greetFriendly*, we call and therefore execute it, instead of passing it to *greetTwoPeople* for further use.
+This would be wrong, because by adding the parentheses to *greetFriendly*, we call and therefore execute it, instead of passing it to *greetTwoPeople* as a value, for later use.
 
 By passing *greetFriendly* into *greetTwoPeople* under the parameter name *greetFunc*, we make *greetFriendly* available to *greetTwoPeople*, just like we make the value *"Jane"* available to *greetTwoPeople* under the parameter name *nameOne*.
 
@@ -742,7 +742,120 @@ If you are not used to this kind of code, it's a bit hard to read, admittedly. T
 
 Because they are not assigned to a named variable, these inline-declared functions are also called *anonymous* functions.
 
+Anonymous functions can be just as complex as named functions, with multiple parameters and a multi-line body block:
 
+    (firstNumber, secondNumber) => {
+        console.log("The sum of firstNumber and secondNumber is " + (firstNumber + secondNumber));
+        console.log("The product of firstNumber and secondNumber is " + (firstNumber * secondNumber));
+    }
+
+Or, they can be very simplistic and succinct:
+
+    () => 5 * 3
+
+The latter example happens to also introduce another concept: functions - anonymous functions as well as named functions - can, and very often do, *return* a value when being called. The example above returns the integer value *15*. It does return a value because it does not have a single-line body that is not enclosed in parentheses - the result of its body therefore is returned implicitly.
+
+If we want to return a result from a function with a multi-line body, we need to do so explicitly, using the *return* keyword:
+
+    () => {
+        console.log("Going to return the product of 5 and 3...");
+        return 5 * 3;
+    }
+
+It is important to differentiate between assigning a named variable to a function declaration versus assigning a named variable to a function return value:
+
+    const calculateProduct = () => 5 * 3;
+
+    const product = calculateProduct();
+
+Here, the value of *calculateProduct* is a function, while the value of *product* is the result of calling (or running, or executing) the function.
+
+In order to allow for better readable code snippets, let's introduce another concept. JavaScript code files can contain *comments*, that is, text that is ignored by the JavaScript interpreter but can be used by code authors to add helpful annotations, like this:
+
+    # This line assigns a function to variable calculateProduct...
+    const calculateProduct = () => 5 * 3;
+
+    # ...while this line assigns the result of calling calculateProduct to a variable named "product"
+    const product = calculateProduct();
+
+Note how JavaScript won't stop you from getting fancy, especially with anonymous function declarations. This is perfectly valid code:
+
+    console.log( ( (num) => num * 2 )( ( (num) => num * num )(8) ) );
+
+But... yeah. Let's just remember that most of the times, software source code is written exactly once, but read often. Thus, my advice is to optimize your code for reading:
+
+    const duplicateNumber = (num) => num * 2;
+
+    const squareNumber = (num) => num * num;
+
+    console.log(
+        duplicateNumber(
+            squareNumber(8)
+        )
+    );
+
+
+We are now going to put our new Node.js and function chops to use, by writing our first web server application.
+
+
+With this, we leave our "Hello, world" terrain for good, and we therefore create a new folder on the same level as "nodejs-hello-world", called `nodejs-webserver`, like this:
+
+    > mkdir nodejs-webserver
+    > cd nodejs-webserver
+
+Again, we are going to define which version of Node.js we want to use for this project via NVM:
+
+    > echo "14" > .nvmrc
+    > nvm use
+
+
+We start writing our server code in file `index.js`. Start with the following line:
+
+    const http = require("http");
+
+We already now all the elements of this line:
+
+- `const` is the JavaScript keyword used to introduce the declaration of a variable that will not change its value after its declaration
+- `http` is the name of the variable that is about to be declared
+- `require` is the name of a function - in this case, a function that we did not declare ourselves; it is instead provided by Node.js, and explained shortly
+- `require` takes a parameter of type string, which we provide here with value `"http"`
+
+We can already deduct that at this point, the variable named `http` contains whatever value the function call `require("http")` returns - we only need to solve one mystery: what is `require` and what does it do?
+
+A correct answer that doesn't actually explain anything is: `require` loads and returns the (built-in) Node.js module provided under the name that is passed to the `require()` function call as a parameter.
+
+Next question: What is a Node.js module?
+
+A module is a piece of JavaScript code that is stored somewhere on our hard disk, and which therefore isn't immediately available for us, but can be made available by "requiring" it within our own code.
+
+Quick exercise for illustration purpose: let's create and then require our own module!
+
+To do so, first create another file within `nodejs-webserver`, called `calculator.js`, with the following content:
+
+
+const duplicateNumber = (num) => num * 2;
+
+const squareNumber = (num) => num * num;
+
+module.exports = {
+    duplicateNumber,
+    squareNumber
+};
+
+As we did earlier, we declare two functions, `duplicateNumber` and `squareNumber`, but we do not use them within this file - instead, we *export* them, which is kind of the counterpart of `require` - it makes elements declared within a module available for use elsewhere.
+
+This setup implicitly turns `calculator.js` into a Node.js module - every JavaScript file which exports something can be used a module within a Node.js codebase.
+
+To do so, switch back to file `index.js` and replace its content as follows:
+
+    const calculator = require("./calculator");
+
+    console.log(calculator.duplicateNumber(5));
+    console.log(calculator.squareNumber(5));
+
+You will notice a subtle difference - while "http" is an internal module that ships with Node.js, "calculator" is a module written by us, and we need to tell require where to find the module file; therefore, the leading `./` path is necessary. *Not* necessary, on the other hand, is the file extension. While we could write `const calculator = require("./calculator.js");`, we don't have to - the `.js` extension can be left out.
+
+The "thing" we get from calling `require("./calculator")`, and which we assign to `calculator`, is of type *object*. An object is, at its core, a very simple key-value store, with... https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Working_with_Objects#objects_and_properties
 
 
 # Part 3: React - Rich web applications with JavaScript
