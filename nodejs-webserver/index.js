@@ -1,4 +1,11 @@
-const calculator = require("./calculator.js");
+const http = require("http");
 
-console.log(calculator.duplicateNumber(5));
-console.log(calculator.squareNumber(5));
+const server = http.createServer((req, res) => {
+    res.end("I have received a request, and this is my response.");
+});
+
+server.listen(
+    "8000",
+    "localhost",
+    () => console.log("HTTP server started and available at http://localhost:8000.")
+);
