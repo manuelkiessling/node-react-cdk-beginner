@@ -855,7 +855,47 @@ To do so, switch back to file `index.js` and replace its content as follows:
 
 You will notice a subtle difference - while "http" is an internal module that ships with Node.js, "calculator" is a module written by us, and we need to tell require where to find the module file; therefore, the leading `./` path is necessary. *Not* necessary, on the other hand, is the file extension. While we could write `const calculator = require("./calculator.js");`, we don't have to - the `.js` extension can be left out.
 
-The "thing" we get from calling `require("./calculator")`, and which we assign to `calculator`, is of type *object*. An object is, at its core, a very simple key-value store, with... https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Working_with_Objects#objects_and_properties
+The "thing" we get from calling `require("./calculator")`, and which we assign to `calculator`, is of type *object*. An object is, at its core, a very simple key-value store, with the keys being of type string - or at least values that can be converted to strings.
+
+For example, this is a simple object:
+
+    const obj = {
+        "firstname": "John",
+        "lastname": "Doe",
+        "age": 35
+    };
+
+The values of an object are accessed through their respective key, like this:
+
+    obj.firstname
+
+or like this:
+
+    obj["firstname"]
+
+Don't get too fancy with key types, though - it's best to stick to simple strings; the results might be unexpected if you don't:
+
+    const obj = {
+        1: "John",
+        "1": "Doe"
+    };
+
+As the integer value `1` is converted to the string value `"1"` in order to be usable as an object key, we have an object where the key `"1"` is defined twice; as this is not possible, the second declaration overrides the first one - the result is an object with only one key, `"1"`, and the value for this key is `"Doe"`.
+
+It's much more common to access object keys using the dot notation, as in `obj.firstname` or `console.log` (another mystery solved: `console` is an object, and on its key `log` a function is defined).
+
+You must, however, use the bracket notation if e.g. the key is a string with a space: `obj.first name` or `obj."first name"` won't work - in such a case, you need to write `obj["first name"]`.[^note3]
+
+However, when we assigned an object to `module.exports` in module calculator / file `calculator.js`, we did *not* specify any keys, only values. This worked because the values where already available under a name - const variable *duplicateNumber* and const variable *squareNumber* - and thus, providing these values via their named variables, JavaScript can infer the object keys by simply using the variable names as key names.
+
+This works with any type of value, not only function values:
+
+    const name = "John Doe";
+
+    const person = { name };
+
+    console.log(person.name);
+
 
 
 # Part 3: React - Rich web applications with JavaScript
@@ -867,3 +907,5 @@ The "thing" we get from calling `require("./calculator")`, and which we assign t
 [^note1]: To be precise, Node.js wraps V8, an open-source JavaScript engine developed by The Chromium Project for Google Chrome and Chromium web browsers. See https://en.wikipedia.org/wiki/V8_(JavaScript_engine) for more details.
 
 [^note2]: In other words, there is an important difference between running `greet;` and `greet();` - the latter calls, and therefore executes, the function value that is assigned to `greet`, while the former only returns the assigned function value, but doesn't execute it. This is why `console.log(typeof(greet));` will print `function`, which is the type of the value that has been assigned to const `greet`. On the other hand, running `console.log(typeof(greet("John", "Doe")));`. will return `undefined`, because that is the resulting value when running the function. We will later encounter functions that return values other than `undefined`.
+
+[^note3]: See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Working_with_Objects#objects_and_properties for more details.
