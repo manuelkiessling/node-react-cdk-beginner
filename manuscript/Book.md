@@ -911,7 +911,7 @@ As you can see, this module exports more than a dozen values - for now, we are e
 
 This in itself doesn't do anything useful, though. We need to provide code that describes what a created server should do with incoming HTTP requests.
 
-We do this by providing a function as the first and only parameter to `createServer()`, like this:
+We do this by providing an anonymous function as the first and only parameter to `createServer()`, like this:
 
     const http = require("http");
 
@@ -919,11 +919,11 @@ We do this by providing a function as the first and only parameter to `createSer
         res.end("I have received a request, and this is my response.");
     });
 
-As you can see, the HTTP server code will call this function with two parameters, everytime the HTTP server receives an incoming request: we call the first one `req`, because it is an object containing information about the incoming request, and `res`, because this is an object containing functions which allow use to respond to the incoming request - like the function `end` that is used to send and finish the content of an HTTP response.
+As you can see, the HTTP server code will call this function with two parameters, everytime the HTTP server receives an incoming request: we call the first one `req`, because it is an object containing information about the incoming request, and `res`, because this is an object containing functions which allow use to respond to the incoming request - like the function `end` that is used to send an HTTP response and immediately finish response handling (which makes our code ready to handle another request).
 
 Still, running `node index.js` simply throws us back to the command line, with nothing happening.
 
-While we already ordered our application to *create* an HTTP server and defined some server behaviour, we still need to make the created server *listen* on a local IP address and TCP port, and to keep running. This is achieved by using the return value of `http.createServer`, which is an object that provides a `listen` function:
+While we already ordered our application to *create* an HTTP server and defined some request handling behaviour, we still need to make the created server *listen* on a local IP address and TCP port, and we need to make it keep running and waiting for incoming requests. This is achieved by using the return value of `http.createServer`, which is an object that provides a `listen` function:
 
     const http = require("http");
 
@@ -937,11 +937,11 @@ While we already ordered our application to *create* an HTTP server and defined 
         () => console.log("HTTP server started and available at http://127.0.0.1:8000.")
     );
 
-The three parameters that we pass to `listen` are the TCP port number, the IP address (we use the special localhost address), and a function which is called by `listen` as soon as the HTTP server is bound to the given IP address and TCP port and is ready to receive incoming HTTP requests.
+The three parameters that we pass to `listen` are the TCP port number, the IP address (we use the special *localhost* address), and a function which is called by `listen` as soon as the HTTP server is bound to the given IP address and TCP port and is ready to receive incoming HTTP requests.
 
-This time, when running `node index.js` on the command line, you'll notice how you are not being thrown back to the command line - instead, the Node.js application keeps running, after outputting the "I have received a request, and this is my response." line.
+This time, when running `node index.js` on the command line, you'll notice how you are not being thrown back to the command line - instead, the Node.js application keeps running, after outputting the "HTTP server started and available at http://localhost:8000." line.
 
-You can now open URL http://127.0.0.1:8000 in a browser of your choice, and you will see the response: "I have received a request, and this is my response."
+You can now open URL http://127.0.0.1:8000 in a browser of your choice, and you will see the response: "I have received a request, and this is my response.". When a request is handled, you won't see any further output on the command line though, because we didn't add any `console.log` calls within the `http.createServer` anonymous function parameter.
 
 At this point, 
 
