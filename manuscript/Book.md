@@ -690,7 +690,7 @@ This shows that the inner scope not only sees the initially assigned value of "g
 
 What we see in action here is a *closure*. The [MDN web docs][https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures] define these as follows:
 
-> A closure is the combination of a function bundled together (enclosed) with references to its surrounding state (the lexical environment). In other words, a closure gives you access to an outer function’s scope from an inner function. In JavaScript, closures are created every time a function is created, at function creation time.
+> A closure is the combination of a function bundled together (enclosed) with references to its surrounding state (the lexical environment). In other words, a closure gives you access to an outer function's scope from an inner function. In JavaScript, closures are created every time a function is created, at function creation time.
 
 And this is exactly what we saw: at the time that our *greet* function is created, the scope it is created in contains a variable *greeting*, and thus, our function is *bundled together* with this surrounding state.
 
@@ -896,13 +896,13 @@ This works with any type of value, not only function values:
 
     console.log(person.name);
 
-Ok, back to our web server. Scrap the current of `index.js` and let's re-start with the initial content:
+Ok, back to our web server. Scrap the current content of `index.js` and re-start with the following initial content:
 
     const http = require("http");
 
-It's now clear what that does: it gives us a variable named `http` with an object that is exported by internal Node.js module "http". There's now black magic involved, actually - see https://github.com/nodejs/node/blob/v14.15.4/lib/http.js#L59-L74 for the code that exports this object.
+It's now clear what that does: it gives us a variable named `http` with an object that is exported by internal Node.js module "http". There's no black magic involved, actually - see https://github.com/nodejs/node/blob/v14.15.4/lib/http.js#L59-L74 for the code that exports this object.
 
-As you can see, this module exports more than a dozen values - for now, we are especially interested in function value `createServer` which, believe it or not, can be used to create an HTTP server, like this:
+As you can see, this module exports more than a dozen values - for now, we are especially interested in function value `createServer` which, believe it or not, can be used to create an HTTP server. It is used like this:
 
 
     const http = require("http");
@@ -919,7 +919,7 @@ We do this by providing an anonymous function as the first and only parameter to
         res.end("I have received a request, and this is my response.");
     });
 
-As you can see, the HTTP server code will call this function with two parameters, everytime the HTTP server receives an incoming request: we call the first one `req`, because it is an object containing information about the incoming request, and `res`, because this is an object containing functions which allow use to respond to the incoming request - like the function `end` that is used to send an HTTP response and immediately finish response handling (which makes our code ready to handle another request).
+As you can see, the HTTP server code will call this function with two parameters, every time the HTTP server receives an incoming request: we call the first one `req`, because it is an object containing information about the incoming request, and `res`, because this is an object containing functions which allow use to respond to the incoming request - like the function `end` that is used to send an HTTP response and immediately finish response handling (which makes our code ready to handle another request).
 
 Still, running `node index.js` simply throws us back to the command line, with nothing happening.
 
@@ -939,11 +939,240 @@ While we already ordered our application to *create* an HTTP server and defined 
 
 The three parameters that we pass to `listen` are the TCP port number, the IP address (we use the special *localhost* address), and a function which is called by `listen` as soon as the HTTP server is bound to the given IP address and TCP port and is ready to receive incoming HTTP requests.
 
-This time, when running `node index.js` on the command line, you'll notice how you are not being thrown back to the command line - instead, the Node.js application keeps running, after outputting the "HTTP server started and available at http://localhost:8000." line.
+This time, when running `node index.js` on the command line, you'll notice how you are *not* thrown back to the command line - instead, the Node.js application keeps running, after outputting the "HTTP server started and available at http://localhost:8000." line.
 
-You can now open URL http://127.0.0.1:8000 in a browser of your choice, and you will see the response: "I have received a request, and this is my response.". When a request is handled, you won't see any further output on the command line though, because we didn't add any `console.log` calls within the `http.createServer` anonymous function parameter.
+You can now open URL http://127.0.0.1:8000 in a browser of your choice, and you will see the response: "I have received a request, and this is my response.".
 
-At this point, 
+When a request is handled, you won't see any further output on the command line though, because we didn't add any `console.log` calls within the `http.createServer` anonymous function parameter.
+
+At this point, depending on your previous knowledge, you may wonder what we are talking about here - besides Node.js code. What exactly is HTTP, what is a request, and what is a response. In other words: How does the World Wide Web work under the hood?
+
+If you feel like you lack understanding of these basics, simply continue reading - what follows is a breakout session describing some fundamentals of the Web that are not specific to JavaScript or Node.js.
+
+If, however, you already have a solid understanding of these basics, then simply skip the following chapter, and we will immediately continue with our Node.js webserver.
+
+
+## A close look at the World Wide Web
+
+What happens when you open a web page in your browser? On the surface, your browser (the client) loads a page from a remote system (the server) and displays its content. What exactly is displayed, and how it is presented to us, is defined by the HTML, CSS and JavaScript content which the server sends back to our client.
+
+    Web browser                     Web server
+    ┌─────────┐                     ┌─────────┐
+    │         │   requests content  │         │
+    │ shows   │-------------------->│ provides│
+    │ page    │                     │ page    │
+    │ content │                     │ content │
+    │         │<--------------------│         │
+    └─────────┘    responds with    └─────────┘
+                      content
+
+This is the content of the web page, and this is what the end user is interested in in the first place. But I would like to zoom in and not talk about the content of a web page yet. Instead, I would like to focus on the processes which take place "under the hood" when a browser opens a web page - the stuff that happens before we even see the first content appear on the screen.
+
+How does the browser *actually* ask the server for its content? How does the server *actually* respond with the content?
+
+How do browser and server find each other, and how do they exchange information and data?
+
+This is what this chapter is about.
+
+
+### The building blocks of the World Wide Web
+
+The bad news is that even for a seemingly simple and innocent operation - like a browser requesting a single web page from a server - there are so many moving parts involved that you could fill multiple books explaining them all. The good news, however, is that in order to become a productive web developer, we do not need to know all the atomic details.
+
+We do not need to know how a CPU works on the transistor level and we do not need to chase every zero and every one that travels through a network cable in order to build a fast, reliable and useful web application.
+
+It is useful to know and understand - at least conceptually - the most important parts and the mechanisms which make them work together.
+
+To achieve this, we will build a mental model of how the world wide web works over the course of this chapter. As we will see, there is no magic involved, and while it's a complex ecosystem which is put into motion each time you click on a link in a web browser, it's not complicated to grasp what happens conceptually.
+
+Let's start by clarifying the scope we are talking about. When you use your browser, you are surfing "the web". More precisely, you are interacting with a system of different technical and conceptual components which together form the *World Wide Web*.
+
+A> This name is the reason why the domain names of most websites begin with the prefix (or rather *subdomain*, which is
+A> the correct technical term) `www`, like `www.google.com`. It's just a matter of habit to use this prefix - technically,
+A> it doesn't matter at all, so feel free to set up a web site at `qqq.yournamehere.com`.
+
+The World Wide Web is not one single piece of technology. Instead, it's a collection of open standards which define how
+certain pieces of technology can work together; plus, it builds on top of other standards and technologies which are
+much older and allow the World Wide Web to work without reinventing *all* the wheels.
+
+Thus, from a bird's eye view, the World Wide Web landscape looks a bit like this:
+
+```
+The World Wide Web building set...
+┌───────────────────────────────────────┐
+│                                       │
+│    HTML, CSS, JavaScript              │
+│                                       │
+│    HTTP                               │
+│                                       │
+│    Browser                            │
+│                                       │
+│    Web server                         │
+│                                       │
+└───────────────────────────────────────┘
+...builds on the Internet building set...
+┌───────────────────────────────────────┐
+│                                       │
+│  BGP, DNS, TCP, IP, MIME, URI...      │
+│                                       │
+└───────────────────────────────────────┘
+...which builds on different network building sets.
+┌───────────────────────────────────────┐
+│                                       │
+│ Ethernet, ATM, IEEE 802.11...         │
+│                                       │
+└───────────────────────────────────────┘
+```
+
+Which is another way to say that you browser uses Internet technology like IP and TCP, which allows it to send and receive data over network technology like Ethernet or ATM, to talk to a web server using the HTTP protocol, enabling the browser to request and download the collection of HTML, CSS and JavaScript (and other assets like images, audio files, or video files) that make up the web page which appears in your browser window.
+
+Ok, but how does that look in practice?
+
+The first thing to understand is that the web browser and the web server are two computer programs, running on different computer systems, which need to find each other, establish a network connection, and exchange data over this connection in a meaningful way.
+
+Let's tackle this process step by step.
+
+Web browsers and web servers talk to each other over the Internet. It is the client - the browser - which initiates the exchange. What triggers a browser to do so is the user who enters a URL into the address bar, for example: `http://www.example.com`.
+
+The Internet is a network of millions of servers distributed all over the world. One of this million of servers serves the *www.example.com* website. How does your browser connect to exactly this one server?
+
+The first thing the browser needs to do to in its quest to find the right server is to translate the domain name you gave it - *www.example.com* - into an actual Internet address, which is a number, not a name.
+
+To do so, the browser utilizes an Internet component which is not a part of the World Wide Web itself, but plays a crucial role in making it more comfortable to use: the Domain Name System, or DNS.
+
+You can think of the DNS as a huge telephone book. You know the name of a person, and you use it to look up their telephone number. The DNS offers the same service for browsers - the browser queries the DNS with a domain name like *www.example.com*, and the DNS tells the browser the Internet address.
+
+You can also query the Domain Name System yourself, from your command line, where we can use either `dig` or `nslookup` to ask the Domain Name System for the Internet address of *www.example.com* like so:
+
+    dig www.example.com
+
+    nslookup www.example.com
+
+The output of both commands is formatted quite differently, but in any case, you should see a line like this:
+
+    www.example.com.	2639	IN	A	93.184.216.34
+
+or this:
+
+    Address: 93.184.216.34
+
+Both lines tell you the same: that the Internet address of domain name *www.example.com* is *93.184.216.34*.
+
+The output of *dig* is a bit more precise - it tell's us that what we receive is the so-called *A* record for the domain, which stands for *Internet Protocol address version 4*, or *IPv4 address*, or, as version 4 is still the predominant Internet Protocol version, simply *IP address*.
+
+A> The Internet infrastructure also supports the newer IP version 6, which is deployed and used by more and more Internet participants like service providers and server hosters, but to this day, plays only a secondary role.
+
+Thus, *dig* and *nslookup* are user tools that can be used to translate a domain name into an IP address.
+
+When you ask your browser to open *www.example.com*, it does the same - it tries to retrieve this numeric address via the DNS.
+
+To do so, it doesn't start the *dig* or *nslookup* command in the background - that command is for human users. Instead, it issues the query directly, using its own application code. The details of this do not matter to us.
+
+You can sometimes even see the browser doing this step - especially if your internet connection is not the fastest, you can see for a brief moment a status message, often in the lower left corner of the browser window, stating something like "Looking up www.example.com...".
+
+So, you have entered the address *www.example.com* into the address bar of your browser, you hit enter, and your browser
+uses the Domain Name System to look up the IP address of the server system which serves the *www.example.com* website.
+
+What happens next?
+
+### How computers on the Internet establish a network connection
+
+Using the IP address it looked up, the browser can now attempt to establish a network connection to the target server.
+
+To do so, the browser uses the mechanisms of the Internet Protocol, whose job is to make network connections between computer systems possible.
+
+The most important mechanism for this is called *routing*. Routing is the process of creating a path between a source node on the Internet (your computer) and a target node on the Internet (the computer system with IP address *93.184.216.34*, in our example).
+
+The beauty of this routing mechanism is that while your computer needs to know the exact target address it wants to talk to, it doesn't need to bother how to get its data to this target address.
+
+A metaphor from real life comes to mind.
+
+Let's assume you want to write a letter to, say, the *European Organization for Nuclear Research* in Switzerland, also known as *CERN* (where the World Wide Web was invented by Sir Timothy John Berners-Lee in 1989).
+
+In order to do so, you need a target postal address, and you need to know the next post station where you can post the letter - and nothing more. The postal system takes care of the rest, and the exact route of your letter and the intermediary post stations involved is neither known to you nor important to you. You can rest assured that the system will route your letter correctly to its destination.
+
+With Internet Protocol routing, it's the same: Your computer knows the target address, plus it knows the address of its own "next" Internet "station" - this is called the *default gateway*. When you connect your computer to the Wifi box in your home, the IP address of the Wifi box becomes the default gateway of your computer, and a server system from your Internet provider is in turn the default gateway of your Wifi box.
+
+By delivering data to this default gateway, the data packet starts to travel through the Internet towards its destination through many different systems - or "nodes" - on the Internet, bringing it closer to its target with each step.
+
+Each node simply handing over the data packet to its one "next" node of course isn't enough, because that would only work if all nodes, including your source and target node, were connected serially on the Internet. But the Internet is a network of many nodes interconnected with each other.
+
+Thus, for routing to be useful, several nodes on the Internet have *multiple* "next nodes" configured, and depending
+on the IP address of the target system, will decide to route the data packet in one direction or the other:
+
+                                                                       NodeJ
+                                                                        ^
+                                                                       /
+                                                                      /
+                                 NodeC  -->  NodeG  -->  NodeI  -->  NodeK
+                                  ^            \
+                                 /              \
+                                /                \
+                               /                  v
+    Source  -->  NodeA  -->  NodeB              NodeH
+                              /\
+                             /  \
+                            /    \
+                           v      \
+                         NodeD     v
+                                 NodeE  -->  Target
+                                             (93.184.216.34)
+
+The above diagram is meant to be a very simplified illustration of the logical structure of a very tiny part of the Internet.
+
+The *Source* node could be your computer, which has *NodeA* (probably your DSL router) as its default gateway. When your computer tries to reach the node with IP 93.184.216.34, it has no choice but to hand over data to the only node it knows, *NodeA*. NodeA also only has one default gateway (probably a system operated by your Internet provider), *NodeB*.
+
+*NodeB*, however, has routes to multiple other nodes, *NodeC*, *NodeD* and *NodeE*, and it also knows which of these nodes is the best next hop for a data packet addressed to *93.184.216.34*.
+
+*NodeE*, then, has a direct route to the target node, and can deliver the data packet.
+
+Thus, *Source -> A -> B -> E -> Target* is the route over which your computer and the target system can establish a connection, and through which data packages can travel.
+
+This routing capability is the foundation of the Internet - it allows two computer systems to exchange data with each other.
+
+
+### How computer programs talk to each other over the Internet
+
+By now, we have established a general understanding of how computers find other computers on the Internet, and how they can establish a network connection via IP addresses and data packet routing using these addresses.
+
+We now need to zoom in even closer, and have a look at how exactly data is exchanged between a client and a server.
+
+First of all, it's important to note that it is not *computers* which exchange data through the Internet, it is *applications* which do.
+
+Our computers are just the physical shell in which our applications live, providing the physical means like network cards and network cables (or radio signals) which enable remote applications to talk to each other.
+
+In our case, the two applications talking to each other are the web browser application and the web server application.
+
+Let's update a diagram we have used before with more details:
+
+    Your computer system                      Web server system
+    ┌───────────────────┐                     ┌───────────────────┐
+    │                   │                     │                   │
+    │  Web browser      │                     │  Web server       │
+    │  application      │                     │  application      │
+    │  ┌────────────┐   │ requests content    │  ┌────────────┐   │
+    │  │          --│---│---------------------│--│-->         │   │
+    │  │            │   │                     │  │            │   │
+    │  │            │   │                     │  │            │   │
+    │  │            │   │                     │  │            │   │
+    │  │            │   │                     │  │            │   │
+    │  │         <--│---│---------------------│--│--          │   │
+    │  └────────────┘   │       responds with │  └────────────┘   │
+    │                   │             content │                   │
+    │                   │                     │                   │
+    └───────────────────┘                     └───────────────────┘
+
+As you can see, the word *server* is used ambigously: it can mean the physical machine - the *hardware* - which is connected to a network like the Internet in order to *serve* data (e.g. a web server for web pages, a file server for files, a mail server for mails), but it can also mean the application - the *software* - which does the serving of web pages, files, or mails.
+
+To distinguish between these two, I'm more precise in this text: I will talk about the server *application* when talking about the piece of software which serves web pages, and about the server *system* when talking about the computer which runs the server application.
+
+The Internet mechanisms we have seen so far - DNS, IP addressing, and routing - are sufficient to establish a general network connection between two computer systems, but not for making their applications talk to each other.
+
+We need another building block, another protocol which allows to link two applications together over an IP-based Internet connection, making reliable data exchange between two applications possible: TCP, the *Transmission Control Protocol*.
+
+Again: the IP protocol allows two *computers* to establish a connection, and TCP allows two *applications*, one on each computer, to then exchange data. The metaphor here would be that a computer is a street, and an application on a computer is one house on the street.
+
+Using this metaphor, we could say that IP addresses are street names. Just like houses on a street have house numbers, TCP uses a so-called port number to identify a single TCP endpoint on a given server system. These run from 0 to 65535.
 
 
 
