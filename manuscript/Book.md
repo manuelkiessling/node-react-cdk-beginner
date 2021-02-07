@@ -1174,6 +1174,10 @@ Again: the IP protocol allows two *computers* to establish a connection, and TCP
 
 Using this metaphor, we could say that IP addresses are street names. Just like houses on a street have house numbers, TCP uses a so-called port number to identify a single TCP endpoint on a given server system. These run from 0 to 65535.
 
+- explain localhost and port 8000
+- explain what data is exchanged between server and client, with curl
+- briefly explain http headers, status codes etc.
+
 
 
 # Part 3: React - Rich web applications with JavaScript
