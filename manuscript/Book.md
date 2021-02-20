@@ -933,15 +933,15 @@ While we already ordered our application to *create* an HTTP server and defined 
 
     server.listen(
         8000,
-        "127.0.0.1",
-        () => console.log("HTTP server started and available at http://127.0.0.1:8000.")
+        "localhost",
+        () => console.log("HTTP server started and available at http://localhost:8000.")
     );
 
 The three parameters that we pass to `listen` are the TCP port number, the IP address (we use the special *localhost* address), and a function which is called by `listen` as soon as the HTTP server is bound to the given IP address and TCP port and is ready to receive incoming HTTP requests.
 
 This time, when running `node index.js` on the command line, you'll notice how you are *not* thrown back to the command line - instead, the Node.js application keeps running, after outputting the "HTTP server started and available at http://localhost:8000." line.
 
-You can now open URL http://127.0.0.1:8000 in a browser of your choice, and you will see the response: "I have received a request, and this is my response.".
+You can now open URL http://localhost:8000 in a browser of your choice, and you will see the response: "I have received a request, and this is my response.".
 
 When a request is handled, you won't see any further output on the command line though, because we didn't add any `console.log` calls within the `http.createServer` anonymous function parameter.
 
@@ -1170,7 +1170,7 @@ The Internet mechanisms we have seen so far - DNS, IP addressing, and routing - 
 
 We need another building block, another protocol which allows to link two applications together over an IP-based Internet connection, making reliable data exchange between two applications possible: TCP, the *Transmission Control Protocol*.
 
-Again: the IP protocol allows two *computers* to establish a connection, and TCP allows two *applications*, one on each computer, to then exchange data. The metaphor here would be that a computer is a street, and an application on a computer is one house on the street.
+Again: the IP protocol allows two *computers* to establish a connection, and TCP allows two *applications*, one on each computer, to then exchange data. The metaphor here would be that a computer is a street, and an application on a computer is one house on the street. Both protocols together form the TCP/IP standard, the fundamental standard that makes the Internet work.
 
 Using this metaphor, we could say that IP addresses are street names. Just like houses on a street have house numbers, TCP uses a so-called *port number* to identify a single TCP endpoint on a given server system. These run from 0 to 65535.
 
@@ -1180,7 +1180,14 @@ In practice, there are a couple of well-known TCP port numbers that are always u
 
 Why, then, did we configure our Node.js HTTP server application, using the `server.listen` function, to bind to port 8000, instead of the well-known HTTP port 80?
 
-It's because TCP ports 0-1024 are a bit special - if a server application wants to bind itself to a port in this range, it needs superuser privileges to do so; by choosing port 8000 instead, we can avoid a fair share of additional complexity. Even if the user account on your computer is not an administrator account with special privileges, everything works just fine.
+It's because TCP ports 0-1024 are a bit special - if a server application wants to bind itself to a port in this range, it needs superuser privileges to do so; by choosing port 8000 instead, we can avoid a fair share of additional complexity. Even if the user account on your computer is not an administrator account with special privileges, everything works just fine. And by explicitly mentioning the TCP port when pointing our browser at http://localhost:8000 (instead of just http://localhost), we make sure that we connect to our port 8000 server.
+
+A> If we'd point our browser at http://localhost, a URL which lacks an explicit TCP port number, the browser assumes that it must use TCP port 80 - which is exactly the idea of well-known ports.
+
+
+Something else is a bit special in our case: While we do have a server application (our Node.js program) and a client application (our browser), both live on the same computer system. That's not a problem, though - from a TCP/IP point of view, it's nothing special; all the rules for getting data from A to B still apply, even if A and B are the same system.
+
+One advantage of this most minimalist setup is that we don't need to register an official domain name - if an application on a computer system wants to talk to another application on the same system, it can simply use a well-known, predefined special address, *localhost*. As said, all the rules still apply, and thus, this name must be translated into an IP address. Your computer doesn't need to get in touch with the
 
 - explain localhost
 - explain what data is exchanged between server and client, with curl
