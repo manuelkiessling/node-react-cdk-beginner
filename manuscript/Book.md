@@ -1174,13 +1174,13 @@ Again: the IP protocol allows two *computers* to establish a connection, and TCP
 
 Using this metaphor, we could say that IP addresses are street names. Just like houses on a street have house numbers, TCP uses a so-called *port number* to identify a single TCP endpoint on a given server system. These run from 0 to 65535.
 
-Technically, any server application on a given computer system can use (or "bind to", or "listen on") any TCP port number, as long as it is ensured that no two server applications use the same port number - something the operating system takes care of.
+Technically, any server application on a given computer system can use (or "bind to", or "listen on") any TCP port number, as long as it is ensured that no two server applications use the same port number.
 
-In practice, there are a couple of well-known TCP port numbers; for example DNS server applications typically run on TCP port 53, while HTTP server applications typically run on port 80 for unencrypted traffic and on port 443 for encrypted HTTPS traffic (yes, a single server application can bind to more than one TCP port).
+In practice, there are a couple of well-known TCP port numbers that are always used for certain types of servers, even it's not a technical limitation; for example, DNS server applications typically run on TCP port 53, while HTTP server applications typically run on TCP port 80 for unencrypted traffic and on TCP port 443 for encrypted HTTPS traffic (yes, a single server application can bind to more than one TCP port).
 
-Why, then, did we configure our Node.js HTTP server application, using the `server.listen` function, to bind to port 8000, instead of port 80?
+Why, then, did we configure our Node.js HTTP server application, using the `server.listen` function, to bind to port 8000, instead of the well-known HTTP port 80?
 
-Because TCP ports 0-1024 are a bit special - if a server application wants to bind to a port in this range, it needs superuser privileges to do so, and by choosing port 8000 instead, we don't need to deal with the additional complexity to launch our Node.js application with these extended
+It's because TCP ports 0-1024 are a bit special - if a server application wants to bind itself to a port in this range, it needs superuser privileges to do so; by choosing port 8000 instead, we can avoid a fair share of additional complexity. Even if the user account on your computer is not an administrator account with special privileges, everything works just fine.
 
 - explain localhost
 - explain what data is exchanged between server and client, with curl
