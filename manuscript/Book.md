@@ -941,7 +941,7 @@ The three parameters that we pass to `listen` are the TCP port number, the IP ad
 
 This time, when running `node index.js` on the command line, you'll notice how you are *not* thrown back to the command line - instead, the Node.js application keeps running, after outputting the "HTTP server started and available at http://localhost:8000." line.
 
-You can now open URL http://localhost:8000 in a browser of your choice, and you will see the response: "I have received a request, and this is my response.".
+You can now open URL *http://localhost:8000/* in a browser of your choice, and you will see the response: "I have received a request, and this is my response.".
 
 When a request is handled, you won't see any further output on the command line though, because we didn't add any `console.log` calls within the `http.createServer` anonymous function parameter.
 
@@ -1180,7 +1180,7 @@ In practice, there are a couple of well-known TCP port numbers that are always u
 
 Why, then, did we configure our Node.js HTTP server application, using the `server.listen` function, to bind to port 8000, instead of the well-known HTTP port 80?
 
-It's because TCP ports 0-1024 are a bit special - if a server application wants to bind itself to a port in this range, it needs superuser privileges to do so; by choosing port 8000 instead, we can avoid a fair share of additional complexity. Even if the user account on your computer is not an administrator account with special privileges, everything works just fine. And by explicitly mentioning the TCP port when pointing our browser at http://localhost:8000 (instead of just http://localhost), we make sure that we connect to our port 8000 server.
+It's because TCP ports 0-1024 are a bit special - if a server application wants to bind itself to a port in this range, it needs superuser privileges to do so; by choosing port 8000 instead, we can avoid a fair share of additional complexity. Even if the user account on your computer is not an administrator account with special privileges, everything works just fine. And by explicitly mentioning the TCP port when pointing our browser at http://localhost:8000/ (instead of just http://localhost/), we make sure that we connect to our port 8000 server.
 
 A> If we'd point our browser at http://localhost, a URL which lacks an explicit TCP port number, the browser assumes that it must use TCP port 80 - which is exactly the idea of well-known ports.
 
@@ -1189,7 +1189,7 @@ Something else is a bit special in our case: While we do have a server applicati
 
 One advantage of this most minimalist setup is that we don't need to register an official domain name - if an application on a computer system wants to talk to another application on the same system, it can simply use a well-known, predefined special address, *localhost*. As said, all the rules still apply, and thus, this name must be translated into an IP address. Your computer doesn't need to get in touch with the "official" DNS system to do so - all operating systems have this translation hardcoded into their configuration, and can therefore translate this special DNS name into the special IP address *127.0.0.1*, which in the networking system of a computer always means "the local computer system itself".
 
-And thus, when you enter *http://localhost:8000* into the browser, then the browser asks the operating system for the IP address of DNS name *localhost*, receives *127.0.0.1* as the answer, creates a TCP/IP connection to port *8000* of address *127.0.0.1* - that is, a connection is established to our running Node.js HTTP application - and can then start to send (and subsequently receive) data over this connection.
+And thus, when you enter *http://localhost:8000/* into the browser, then the browser asks the operating system for the IP address of DNS name *localhost*, receives *127.0.0.1* as the answer, creates a TCP/IP connection to port *8000* of address *127.0.0.1* - that is, a connection is established to our running Node.js HTTP application - and can then start to send (and subsequently receive) data over this connection.
 
 What data? We can make this visible with a command-line based browser tool named *curl*.
 
@@ -1197,7 +1197,7 @@ What data? We can make this visible with a command-line based browser tool named
 
 We can make the same request to our web server that we made with our "real" web browser with *curl*, too: while the Node.js HTTP server application is still running in one of your terminal windows, open another terminal window, and run the following command:
 
-    > curl http://localhost:8000
+    > curl http://localhost:8000/
 
 Not surprisingly, the answer looks familiar:
 
@@ -1205,7 +1205,7 @@ Not surprisingly, the answer looks familiar:
 
 But this is only a small part of the data that is actually exchanged between *curl* and our Node.js application. We can make all of it visible by adding the `--verbose` switch to the *curl* command:
 
-    > curl --verbose http://localhost:8000
+    > curl --verbose http://localhost:8000/
 
 The output now looks like this:
 
@@ -1230,8 +1230,13 @@ The one line starting without any special symbol, `I have received a request, an
 
 HTTP *header* data is something that we don't normally see when we browse the web in a conventional web browser. This data is nevertheless essential to make web browsing work.
 
-In any given HTTP session, it's always the client who, once the TCP/IP connection is established, start the dialogue with the server, by sending a first HTTP header line, starting with the name of one of the nine HTTP *request methods*, which are also called *verbs*.
+In any given HTTP session, it's always the client who, once the TCP/IP connection is established, start the dialogue with the server, by sending a first HTTP header line, starting with the name of one of the nine HTTP *request methods*, which are also called *verbs*.[^note4]
 
+In our case, the *curl* client uses request method *GET*, which tells the server that it would like to receive a specific resource from the server.
+
+This is followed by the URL that we passed to *curl*, but minus the protocol, host, and port part - that is, minus the `http://localhost:8000` part, leaving only the `/` part.
+
+The third part of the first HTTP header line is `HTTP/1.1` - there are different versions of the HTTP protocol used in the wild, and client and server must ensure that both sides are "talking the same language"; that is, both must use the same protocol version, which is why the client announces the version it wants to use right from the start.
 
 - explain what data is exchanged between server and client, with curl
 - briefly explain http headers, status codes etc.
@@ -1249,3 +1254,5 @@ In any given HTTP session, it's always the client who, once the TCP/IP connectio
 [^note2]: In other words, there is an important difference between running `greet;` and `greet();` - the latter calls, and therefore executes, the function value that is assigned to `greet`, while the former only returns the assigned function value, but doesn't execute it. This is why `console.log(typeof(greet));` will print `function`, which is the type of the value that has been assigned to const `greet`. On the other hand, running `console.log(typeof(greet("John", "Doe")));`. will return `undefined`, because that is the resulting value when running the function. We will later encounter functions that return values other than `undefined`.
 
 [^note3]: See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Working_with_Objects#objects_and_properties for more details.
+
+[^note4]: See https://developer.mozilla.org/de/docs/Web/HTTP/Methods for a list of all request methods.
