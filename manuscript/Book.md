@@ -1044,9 +1044,9 @@ You can think of the DNS as a huge telephone book. You know the name of a person
 
 You can also query the Domain Name System yourself, from your command line, where we can use either `dig` or `nslookup` to ask the Domain Name System for the Internet address of *www.example.com* like so:
 
-    dig www.example.com
+    > dig www.example.com
 
-    nslookup www.example.com
+    > nslookup www.example.com
 
 The output of both commands is formatted quite differently, but in any case, you should see a line like this:
 
@@ -1194,6 +1194,43 @@ And thus, when you enter *http://localhost:8000* into the browser, then the brow
 What data? We can make this visible with a command-line based browser tool named *curl*.
 
 *curl* is a full-fledged HTTP web browser just like Firefox or Chrome, but it lacks an interactive graphical user interface. This makes it rather unsuitable to comfortably browse the web, but makes it perfectly suitable whenever we want to have a close look at the details of a single HTTP request and its response.
+
+We can make the same request to our web server that we made with our "real" web browser with *curl*, too: while the Node.js HTTP server application is still running in one of your terminal windows, open another terminal window, and run the following command:
+
+    > curl http://localhost:8000
+
+Not surprisingly, the answer looks familiar:
+
+    I have received a request, and this is my response.
+
+But this is only a small part of the data that is actually exchanged between *curl* and our Node.js application. We can make all of it visible by adding the `--verbose` switch to the *curl* command:
+
+    > curl --verbose http://localhost:8000
+
+The output now looks like this:
+
+    * Connected to localhost (127.0.0.1) port 8000 (#0)
+    > GET / HTTP/1.1
+    > Host: localhost:8000
+    > User-Agent: curl/7.64.1
+    > Accept: */*
+    >
+    < HTTP/1.1 200 OK
+    < Date: Sun, 21 Feb 2021 10:33:37 GMT
+    < Connection: keep-alive
+    < Content-Length: 51
+    <
+    * Connection #0 to host localhost left intact
+    `I have received a request, and this is my response.
+    * Closing connection 0
+
+The lines starting with the `*` symbol are related to the connection on the TCP/IP level. The lines starting with symbols `>` and `<` are related to the HTTP data exchange, with lines starting with `>` showing so-called HTTP *header* data sent from the client to the server, and lines starting with `<` showing HTTP header data sent from the server to the client.
+
+The one line starting without any special symbol, `I have received a request, and this is my response.`, is the so-called HTTP *body* data sent from the server and received by the client.
+
+HTTP *header* data is something that we don't normally see when we browse the web in a conventional web browser. This data is nevertheless essential to make web browsing work.
+
+In any given HTTP session, it's always the client who, once the TCP/IP connection is established, start the dialogue with the server, by sending a first HTTP header line, starting with the name of one of the nine HTTP *request methods*, which are also called *verbs*.
 
 
 - explain what data is exchanged between server and client, with curl
