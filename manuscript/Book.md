@@ -1187,9 +1187,15 @@ A> If we'd point our browser at http://localhost, a URL which lacks an explicit 
 
 Something else is a bit special in our case: While we do have a server application (our Node.js program) and a client application (our browser), both live on the same computer system. That's not a problem, though - from a TCP/IP point of view, it's nothing special; all the rules for getting data from A to B still apply, even if A and B are the same system.
 
-One advantage of this most minimalist setup is that we don't need to register an official domain name - if an application on a computer system wants to talk to another application on the same system, it can simply use a well-known, predefined special address, *localhost*. As said, all the rules still apply, and thus, this name must be translated into an IP address. Your computer doesn't need to get in touch with the
+One advantage of this most minimalist setup is that we don't need to register an official domain name - if an application on a computer system wants to talk to another application on the same system, it can simply use a well-known, predefined special address, *localhost*. As said, all the rules still apply, and thus, this name must be translated into an IP address. Your computer doesn't need to get in touch with the "official" DNS system to do so - all operating systems have this translation hardcoded into their configuration, and can therefore translate this special DNS name into the special IP address *127.0.0.1*, which in the networking system of a computer always means "the local computer system itself".
 
-- explain localhost
+And thus, when you enter *http://localhost:8000* into the browser, then the browser asks the operating system for the IP address of DNS name *localhost*, receives *127.0.0.1* as the answer, creates a TCP/IP connection to port *8000* of address *127.0.0.1* - that is, a connection is established to our running Node.js HTTP application - and can then start to send (and subsequently receive) data over this connection.
+
+What data? We can make this visible with a command-line based browser tool named *curl*.
+
+*curl* is a full-fledged HTTP web browser just like Firefox or Chrome, but it lacks an interactive graphical user interface. This makes it rather unsuitable to comfortably browse the web, but makes it perfectly suitable whenever we want to have a close look at the details of a single HTTP request and its response.
+
+
 - explain what data is exchanged between server and client, with curl
 - briefly explain http headers, status codes etc.
 
