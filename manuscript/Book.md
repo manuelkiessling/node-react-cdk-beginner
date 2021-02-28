@@ -1120,7 +1120,7 @@ on the IP address of the target system, will decide to route the data packet in 
 
 The above diagram is meant to be a very simplified illustration of the logical structure of a very tiny part of the Internet.
 
-The *Source* node could be your computer, which has *NodeA* (probably your DSL router) as its default gateway. When your computer tries to reach the node with IP 93.184.216.34, it has no choice but to hand over data to the only node it knows, *NodeA*. NodeA also only has one default gateway (probably a system operated by your Internet provider), *NodeB*.
+The *Source* node could be your computer, which has *NodeA* (probably your DSL router) as its default gateway. When your computer tries to reach the node with IP 93.184.216.34, it has no choice but to hand over data to the only node it knows, *NodeA*. NodeA also has only one default gateway (probably a system operated by your Internet provider), *NodeB*.
 
 *NodeB*, however, has routes to multiple other nodes, *NodeC*, *NodeD* and *NodeE*, and it also knows which of these nodes is the best next hop for a data packet addressed to *93.184.216.34*.
 
@@ -1128,7 +1128,7 @@ The *Source* node could be your computer, which has *NodeA* (probably your DSL r
 
 Thus, *Source -> A -> B -> E -> Target* is the route over which your computer and the target system can establish a connection, and through which data packages can travel.
 
-This routing capability is the foundation of the Internet - it allows two computer systems to exchange data with each other.
+This routing capability is the foundation of the Internet - it allows two computer systems to exchange data with each other without being connected directly to each other.
 
 
 ### How computer programs talk to each other over the Internet
@@ -1231,14 +1231,22 @@ HTTP *header* data is something that we don't normally see when we browse the we
 
 In any given HTTP session, it's always the client who, once the TCP/IP connection is established, start the dialogue with the server, by sending a first HTTP header line, starting with the name of one of the nine HTTP *request methods*, which are also called *verbs*.[^note4]
 
-In our case, the *curl* client uses request method *GET*, which tells the server that it would like to receive a specific resource from the server.
+In our case, the *curl* client uses the request method *GET*, which tells the server that it would like to receive a specific *resource* from the server. It's certainly the most often used method, but there are others which we will encounter later.
 
-This is followed by the URL that we passed to *curl*, but minus the protocol, host, and port part - that is, minus the `http://localhost:8000` part, leaving only the `/` part.
+The method is followed by the URL that we passed to *curl*, but minus the protocol, host, and port parts - that is, minus the `http://localhost:8000` portion, leaving only the `/` part. That is the *resource* which is requested via "GET". Our current server implementation can only return one single resource no matter what it is asked - if you asked it to "GET" resource "/foo/bar", the response is still "I have received a request, and this is my response.". However, in real world applications, web server implementations need to respond differently to different requests, and therefore need to know what has been requested - that's what the resource is for.
 
-The third part of the first HTTP header line is `HTTP/1.1` - there are different versions of the HTTP protocol used in the wild, and client and server must ensure that both sides are "talking the same language"; that is, both must use the same protocol version, which is why the client announces the version it wants to use right from the start.
+The final part of the first HTTP header line is `HTTP/1.1` - there are different versions of the HTTP protocol used in the wild, and client and server must ensure that both sides are "talking the same language"; that is, both must use the same protocol version, which is why the client announces the version it wants to use right from the start. It's nothing we need to take care of in practice - for the remainder of this book, we can safely assume that all servers we write and all clients we use both use HTTP/1.1.
 
-- explain what data is exchanged between server and client, with curl
-- briefly explain http headers, status codes etc.
+The Method-Resource-Version line is the most essential part of any HTTP request. Clients always add additional header lines, though, which can be essential of completely irrelevant, depending on the server implementation; in our current care, the following three header line - Host, User-Agent, and Accept - are not relevant because we don't handle them within our current server implementation, but depending on what needs to be build in a full-fledged server application, they could be very important. The HTTP protocol supports an extensive list of HTTP request and reponse headers[^note5], but their role is always specific to the server and client implementation at hand. We will always discuss those headers that are relevant to our case - for now, we just need to understand that headers are used to fine-tune the integration between an HTTP server and an HTTP client by providing a place for structured data outside of the user-facing content. For example, the *User-Agent* request header tells our server which client software (and which version of this client software) is making the request, and our server could (but doesn't have to) act on this additional information, e.g. by providing different content to a *curl* client than to a *Firefox* client.
+
+The response part of the exchange, denoted by the < symbol, mirrors the request part. The first line is *HTTP/1.1 200 OK*, which tells the client that the server understands the HTTP/1.1 protocol, and that the response has a status of "200 OK", which is the most common response status; it is used to tell the client that the request was understood and handled without problems, signalling the client that it can expect a valid and complete response, or in other words that it can expect to receive the resource it asked for. There are several other response status codes[^note6], like "404 Not Found" which is used if the server isn't able to find the resource that the client asked for.
+
+This most essential response header line is followed by other, optional response headers, and the headers block is then followed by the body of the response, that is, the content that is to be displayed to the end user. In our case, it's just a simple string, but of course, more often than not, it's an HTML document that the browser then translates, or "renders", into a graphical representation - the "webpage". At least that's true for graphical browser like Firefox and Chrome - *curl* will always output any content, HTML or not, as-is.
+
+
+## Extending our web server
+
+With a better understanding of the Internet and HTTP under our belts, we can now return to our Node.js HTTP webserver implementation, and extend it.
 
 
 
@@ -1264,3 +1272,7 @@ In addition, interaction of the user with the graphical representation of the DO
 [^note3]: See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Working_with_Objects#objects_and_properties for more details.
 
 [^note4]: See https://developer.mozilla.org/de/docs/Web/HTTP/Methods for a list of all request methods.
+
+[^note5]: https://en.wikipedia.org/wiki/List_of_HTTP_header_fields
+
+[^note6]: https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
