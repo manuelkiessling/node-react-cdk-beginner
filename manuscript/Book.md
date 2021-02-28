@@ -1246,11 +1246,11 @@ The third part of the first HTTP header line is `HTTP/1.1` - there are different
 # Part 3: React - Rich web applications with JavaScript
 
 
-At it's core, Redux is a function that takes an existing state and an action, and returns an updated state as a result of applying the action on the existing state.
+At its core, Redux is a function that takes an existing state and an action, and returns an updated state as a result of applying the action on the existing state.
 
-At it's core, React is a function that takes a certain state and returns the matching DOM representation of that state.
+At its core, React is a function that takes a certain state and returns the matching DOM representation of that state.
 
-At it's core, a browser is a function that takes a certain DOM and returns a graphical representation.
+At its core, a browser is a function that takes a certain DOM and returns a graphical representation.
 
 In addition, interaction of the user with the graphical representation of the DOM in the browser ("the website") makes the DOM elements dispatch actions to Redux, which makes this machine go.
 
