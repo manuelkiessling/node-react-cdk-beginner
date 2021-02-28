@@ -1,7 +1,8 @@
 const http = require("http");
 
 const server = http.createServer((req, res) => {
-    res.end("I have received a request, and this is my response.");
+    res.write("I have received a request, and this is my response.\n");
+    res.end("The request method was " + req.method + ", and the requested resource was " + req.url);
 });
 
 server.listen(

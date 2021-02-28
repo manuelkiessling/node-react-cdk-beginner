@@ -1248,6 +1248,21 @@ This most essential response header line is followed by other, optional response
 
 With a better understanding of the Internet and HTTP under our belts, we can now return to our Node.js HTTP webserver implementation, and extend it.
 
+As said, we always return the same resource when responding to a request, no matter what the request looks like and what resource is actually requested. We can change this by echoing back information from the request within our response, by rewriting our server code like this:
+
+    const http = require("http");
+
+    const server = http.createServer((req, res) => {
+        res.write("I have received a request, and this is my response.\n");
+        res.end("The request method was " + req.method + ", and the requested resource was " + req.url);
+    });
+
+    server.listen(
+        "8000",
+        "localhost",
+        () => console.log("HTTP server started and available at http://localhost:8000.")
+    );
+
 
 
 # Part 3: React - Rich web applications with JavaScript
