@@ -1221,8 +1221,7 @@ The output now looks like this:
     < Content-Length: 51
     <
     * Connection #0 to host localhost left intact
-    `I have received a request, and this is my response.
-    * Closing connection 0
+    I have received a request, and this is my response.
 
 The lines starting with the `*` symbol are related to the connection on the TCP/IP level. The lines starting with symbols `>` and `<` are related to the HTTP data exchange, with lines starting with `>` showing so-called HTTP *header* data sent from the client to the server, and lines starting with `<` showing HTTP header data sent from the server to the client.
 
