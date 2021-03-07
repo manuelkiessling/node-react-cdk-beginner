@@ -1265,6 +1265,80 @@ As said, we always return the same resource when responding to a request, no mat
         () => console.log("HTTP server started and available at http://localhost:8000.")
     );
 
+As always, don't forget to "stop" the currently running server application with CTRL-C, and re-start it using the changed code base with `node index.js`.
+
+Interacting with the server through curl is now a tad more interesting:
+
+    > curl http://localhost:8000/foo/bar
+
+    I have received a request, and this is my response.
+    The request method was GET, and the requested resource was /foo/bar
+
+If we send a request to another resource, using another HTTP verb, the response changes accordingly:
+
+    > curl -X POST http://localhost:8000/baz
+
+    I have received a request, and this is my response.
+    The request method was POST, and the requested resource was /baz
+
+This shows how `req` is also an object, and it provides some useful *attributes* - attributes are values on an object that are not functions (while functions on an object are typically called *methods*).
+
+We can use the request-handling code to take a look at all the attributes and methods the *req* object provides, like this:
+
+    const http = require("http");
+
+    const server = http.createServer((req, res) => {
+        res.write("I have received a request, and this is my response.\n");
+        res.end("The request method was " + req.method + ", and the requested resource was " + req.url);
+
+        console.log(req);
+    });
+
+    server.listen(
+        "8000",
+        "localhost",
+        () => console.log("HTTP server started and available at http://localhost:8000.")
+    );
+
+After restarting the server application, another *curl* request makes the server application output (in its console window, not on the HTTP response!) a large list of the *req* object keys and values. It's quite a long and daunting list, to be honest, but you may be able to find the *method* and *url* attributes if you look closely.
+
+Most attributes don't look too useful, though. But there are some that might come handy for implementing a more complex server application. For example, there is one called *headers*. Let's output only this:
+
+    const http = require("http");
+
+    const server = http.createServer((req, res) => {
+        res.write("I have received a request, and this is my response.\n");
+        res.end("The request method was " + req.method + ", and the requested resource was " + req.url);
+
+        console.log(req.headers);
+    });
+
+    server.listen(
+        "8000",
+        "localhost",
+        () => console.log("HTTP server started and available at http://localhost:8000.")
+    );
+
+When once again restarting the server and running a curl request, we see another line of output, like this:
+
+     { host: 'localhost:8000', 'user-agent': 'curl/7.75.0', accept: '*/*' }
+
+These, of course, are the names of the HTTP headers we've already encountered in the output of `curl --verbose`, although here the Node.js *http* module obviously rewrote them into lowercase.
+
+As denoted by the leading `{` and the trailing `}`, `req.headers` is itself another object. This shows how objects can contain objects, and accessing values of objects within objects is by further extending the dot syntax:
+
+    console.log(req.headers.host);
+
+will print *localhost:8000* to the screen, because we access the value that is available under key *host* of object *header*, which in turn is available under key *headers* of object *req*.
+
+Note how the following line won't work:
+
+    console.log(req.headers.user-agent);
+
+As mentioned earlier, not all key names can be accessed with the dot notation - the hyphen in `user-agent` causes the problem in this case, which forces us to use the alternative square bracket notation:
+
+    console.log(req.headers["user-agent"]);
+
 
 
 # Part 3: React - Rich web applications with JavaScript
