@@ -335,7 +335,7 @@ This script is meant to be downloaded and executed on the command line. Thus, yo
 
 with `X.Y.Z` denoting the version number of the most recent release.
 
-Please take the time to also read the additional notes further down in the README. For example, on macOS, it might be neccessary to first install the *Xcode command line tools*, or else installation of NVM might fail.
+Please take the time to also read the additional notes further down in the README. For example, on macOS, it might be necessary to first install the *Xcode command line tools*, or else installation of NVM might fail.
 
 You've reached your goal as soon as running `nvm --version` on the terminal command line works without an error, and prints the version number. When talking about working on the command line, I'm going to use the following notation:
 
@@ -390,7 +390,7 @@ If this doesn't work as expected, or a version number other than the one you exp
 
 Let's see what we can do with this.
 
-As said, Node.js is basically a JavaScript interpreter[^note1], wrapped into a command line application instead of a web browser. As such, it provides an interactive console, very much like the one we already worked with. Simply start the `node` application, and you are on a console:
+As said, Node.js basically is a JavaScript interpreter[^note1], wrapped into a command line application instead of a web browser. As such, it provides an interactive console, very much like the one we already worked with. Simply start the `node` application, and you are thrown into this interactive console:
 
     > node
 
@@ -403,7 +403,7 @@ Type `.exit` or hit CTRL-D if you want to leave this console.
 
 While this is certainly nice to have whenever we feel like playing around with JavaScript interactively, we wanted to get away from the console and start writing "real" JavaScript applications.
 
-To do so, we need to create our very first JavaScript code file. And this means we need to talk about code editors, because we need a tool to create our code files. JavaScript code files are simple text files, and even a very rudimentary plain text editor is perfectly capable to create these files. Nevertheless, using specialized code editors or IDEs (Integrated Development Environments) makes sense, because they make working on a large code base a lot more comfortable.
+To do so, we need to create our very first JavaScript *code file*. And this means we need to talk about code editors, because we need a tool to create and edit our code files. JavaScript code files are simple text files, and even a very rudimentary plain text editor is perfectly capable to create and edit these files. Nevertheless, using specialized code editors or IDEs (Integrated Development Environments) makes sense, because they make working on a large code base a lot more comfortable.
 
 There's a large choice available, and if you are already using a code editor or an IDE you feel comfortable with, just stick with it. As long as there is at least basic support for JavaScript, you're fine.
 
@@ -467,7 +467,7 @@ and run it:
     hello
     hello1
 
-Nice. You may have noticed that I suddenly started to put a semicolon `;` at the end of each line. This isn't strictly neccessary, because most of the time JavaScript knows how to automatically detect that an expression has ended, even if it goes over multiple lines. But ending every expression with a semicolon explicitly removes any ambiguity, and is the dominant code style. We will stick to it in this book.
+Nice. You may have noticed that I suddenly started to put a semicolon `;` at the end of each line. This isn't strictly necessary, because most of the time JavaScript knows how to automatically detect that an expression has ended, even if it goes over multiple lines. But ending every expression with a semicolon explicitly removes any ambiguity, and is the dominant code style. We will stick to it in this book.
 
 Let's use our new multi-line freedom to write a very first *control structure*:
 
