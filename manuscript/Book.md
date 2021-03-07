@@ -269,7 +269,7 @@ Important detail: `b` and `c` now have the same value, `"foo"`, but they do not 
     >  c
     <- "foo"
 
-Changing the value of `b` did **not** change the value of `c` - although `c` has been declared with `let c = b`, it is nevertheless completely independent from `b` afterwards.
+Changing the value of `b` did **not** change the value of `c` - although `c` has been declared with `let c = b`, it is nevertheless completely independent from `b` from there on.
 
 In addition to variables, JavaScript supports *constants*. Like variables, they act as a container for a value, making the value available under the name of the constant - however, we are forced to assign a value upon declaration, and cannot re-assign another value once the const has been declared:
 
