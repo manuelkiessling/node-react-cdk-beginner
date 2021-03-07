@@ -386,7 +386,7 @@ With this, Node.js is now available on your system! You can verify this by runni
 
     v14.6.0
 
-If this doesn't work as expected, or a version number other than the one you expected is shown, then run `nvm use` to ensure that for the current project, NVM has definitely switched to the intended version.
+If this doesn't work as expected, or a version number other than the one you expected is shown, then run `nvm use` to ensure that for the current project, NVM has definitely switched to the intended version. However, note that for all practical purposes, it doesn't make any difference if your system uses another minor version, like *14.8.3* instead of *14.6.0*. And even if you have a higher major version, like *15.2.0*, you will probably still be good to follow along.
 
 Let's see what we can do with this.
 
