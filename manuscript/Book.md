@@ -855,7 +855,7 @@ To do so, switch back to file `index.js` and replace its content as follows:
 
 You will notice a subtle difference - while "http" is an internal module that ships with Node.js, "calculator" is a module written by us, and we need to tell require where to find the module file; therefore, the leading `./` path is necessary. *Not* necessary, on the other hand, is the file extension. While we could write `const calculator = require("./calculator.js");`, we don't have to - the `.js` extension can be left out.
 
-The "thing" we get from calling `require("./calculator")`, and which we assign to `calculator`, is of type *object*. An object is, at its core, a very simple key-value store, with the keys being of type string - or at least values that can be converted to strings.
+The "thing" we get from calling `require("./calculator")`, and which we assign to constant `calculator`, is of type *object*. An object is, at its core, a very simple key-value store, with the keys being of type string - or at least values that can be converted to strings.
 
 For example, this is a simple object:
 
@@ -886,7 +886,7 @@ It's much more common to access object keys using the dot notation, as in `obj.f
 
 You must, however, use the bracket notation if e.g. the key is a string with a space: `obj.first name` or `obj."first name"` won't work - in such a case, you need to write `obj["first name"]`.[^note3]
 
-However, when we assigned an object to `module.exports` in module calculator / file `calculator.js`, we did *not* specify any keys, only values. This worked because the values where already available under a name - const variable *duplicateNumber* and const variable *squareNumber* - and thus, providing these values via their named variables, JavaScript can infer the object keys by simply using the variable names as key names.
+However, when we assigned an object to `module.exports` in module calculator / file `calculator.js`, we did *not* specify any keys, only values. This worked because the values where already available under a name - const *duplicateNumber* and const *squareNumber* - and thus, providing these values via their named variables, JavaScript can infer the object keys by simply using the variable names as key names.
 
 This works with any type of value, not only function values:
 
