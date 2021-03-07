@@ -378,7 +378,7 @@ When running NVM while we are within the project folder, it will detect this fil
 
 As you can see, using `14` as the Node.js version number works as a kind of wildcard - because we only provided the first part of the three part version number, NVM automatically assumes we want the most recent version of Node.js 14.x.y, which as of this writing is 14.6.0.
 
-Version 14 of Node.js is the current Long Term Support (LTS) version of Node.js, and is a very good starting point for new projects. You can find the current "LTS" and "Current" versions of Node.js at https://nodejs.org.
+Version 14 of Node.js is the current Long Term Support (LTS) version of Node.js, and is an optimal starting point for new projects. You can find the most recent "LTS" and "Current" versions of Node.js at https://nodejs.org.
 
 With this, Node.js is now available on your system! You can verify this by running `node --version`:
 
