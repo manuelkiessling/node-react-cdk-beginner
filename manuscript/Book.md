@@ -467,7 +467,7 @@ and run it:
     hello
     hello1
 
-Nice. You may have noticed that I suddenly started to put a semicolon `;` at the end of each line. This isn't strictly necessary, because most of the time JavaScript knows how to automatically detect that an expression has ended, even if it goes over multiple lines. But ending every expression with a semicolon explicitly removes any ambiguity, and is the dominant code style. We will stick to it in this book.
+Nice. You may have noticed that I suddenly started to put a semicolon `;` at the end of each line. This isn't strictly necessary, because most of the time JavaScript knows how to automatically detect that an expression has ended, even if it goes over multiple lines. But ending every expression with a semicolon explicitly removes any ambiguity, and is the dominant code style. We will stick to it in this book from now on.
 
 Let's use our new multi-line freedom to write a very first *control structure*:
 
