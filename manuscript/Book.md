@@ -232,7 +232,7 @@ Letting the JavaScript interpreter evaluate the undeclared expression `y` correc
 
 So, two catches here: If the JavaScript interpreter encounters a variable name that hasn't been declared yet, it bails out (which is correct), stating that the variable has not yet been *defined* (which is confusing). However, passing an undeclared variable name to `typeof` does *not* make the JavaScript interpreter bail out (which is confusing), and returns type *undefined* - which is even more confusing. But at least we know now how the game is played.
 
-Ok, back to our new variable, `a`, which is neatly declared and neatly assigned to a value, and should therefore make for an unconfusing experience.
+Ok, back to our new variable, `a`, which is neatly declared and neatly assigned to a value, and should therefore make for a non-confusing experience.
 
 While we cannot re-declare an already declared variable, we can re-assign new values to variables declared with `let` - even values of a different type. `"hello"` is always `"hello"` and is always a *string*, but we can assign `a` another value, for example `a = "goodbye"` and `a = 1` - this changes its value, and potentially, its type:
 
