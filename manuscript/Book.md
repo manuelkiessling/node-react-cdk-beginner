@@ -1302,7 +1302,7 @@ We can use the request-handling code to take a look at all the attributes and me
 
 After restarting the server application, another *curl* request makes the server application output (in its console window, not on the HTTP response!) a large list of the *req* object keys and values. It's quite a long and daunting list, to be honest, but you may be able to find the *method* and *url* attributes if you look closely.
 
-Most attributes don't look too useful, though. But there are some that might come handy for implementing a more complex server application. For example, there is one called *headers*. Let's output only this:
+Most attributes don't look too useful, though. But there are some that might come handy for implementing a more complex server application. For example, there is one called *headers*. Let's output only that one:
 
     const http = require("http");
 
@@ -1325,7 +1325,7 @@ When once again restarting the server and running a curl request, we see another
 
 These, of course, are the names of the HTTP headers we've already encountered in the output of `curl --verbose`, although here the Node.js *http* module obviously rewrote them into lowercase.
 
-As denoted by the leading `{` and the trailing `}`, `req.headers` is itself another object. This shows how objects can contain objects, and accessing values of objects within objects is by further extending the dot syntax:
+As denoted by the leading `{` and the trailing `}`, `req.headers` is itself another object. This shows how objects can contain objects, and accessing values of objects within objects is achieved by further extending the dot syntax:
 
     console.log(req.headers.host);
 
