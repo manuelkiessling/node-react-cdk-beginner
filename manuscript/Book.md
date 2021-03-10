@@ -1335,7 +1335,7 @@ Note how the following line won't work:
 
     console.log(req.headers.user-agent);
 
-As mentioned earlier, not all key names can be accessed through the dot notation - the hyphen in `user-agent` causes the problem in this case, which forces us to use the alternative square bracket notation:
+As mentioned earlier, not all key names can be accessed through the dot notation - in this case, the hyphen in `user-agent` causes the problem, which forces us to use the alternative square bracket notation:
 
     console.log(req.headers["user-agent"]);
 
