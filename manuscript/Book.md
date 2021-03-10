@@ -1329,7 +1329,7 @@ As denoted by the leading `{` and the trailing `}`, `req.headers` is itself anot
 
     console.log(req.headers.host);
 
-will print *localhost:8000* to the screen, because we access the value that is available under key *host* of object *header*, which in turn is available under key *headers* of object *req*.
+will print *localhost:8000* to the screen, because we access the value that is available under key *host* of object *header*, which in turn is available under key *headers* of object *req*. There is no theoretical limit to how deep objects can be nested, but there usually is a practical limit, because nesting objects within objects means storing data after all, and our computers do not have unlimited storage space.
 
 Note how the following line won't work:
 
