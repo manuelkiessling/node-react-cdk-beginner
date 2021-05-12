@@ -1,11 +1,42 @@
 # Part 0: Preface
 
+## What you will learn
+
+- The basics of computer programming, with JavaScript
+- TypeScript
+- Node.js
+- React
+- Lambda
+- Terraform
+
+
+## Recommended working environment
+
 Nearly all relevant JavaScript projects have been developed on Linux or macOS systems and for Linux or macOS systems, which regularly creates some kind of "impedance mismatch" in terms of availability and reliability of tools for Windows.
 
 If you absolutely must use Windows for developing JavaScript applications, then don't worry, you will be just fine. Note, however, that this book will not provide the same level of hand-holding as it does for readers working on Linux or macOS. At some points, you will have to use alternatives to the tools recommended and explained here, and while the book will point you in the right direction, you will be quite a bit more on your own.
 
 
 # Part 1: Introduction to JavaScript
+
+This book teaches its readers how to build software applications with the programming language TypeScript.
+
+And yet, it begins by introducing the reader to a different programming language: JavaScript.
+
+One builds on the other. Ultimately, the code that is executed when your applications run is JavaScript code. And there is nothing wrong with writing your applications with JavaScript code directly - and actually, this is what we will do in the first part of this book.
+
+But there are very good reasons to then take the next step and write your applications with TypeScript code instead - and have your computer translate your TypeScript code into JavaScript code before it is executed.
+
+Luckily, taking this step is very straightforward. Once you understand the basics of software development with JavaScript (which is what the first part of this book takes care of), you can switch to TypeScript very easily. This is because TypeScript is not a completely new and different language - instead, it is a so-called *superset* of JavaScript, extending JavaScript's syntax with some additional syntax that makes your software development experience even better.
+
+It does so by extending JavaScript, a language which doesn't allow to explicitly type its values, with explicit type annotation syntax, giving you type safety while building your applications.
+
+If you are new to programming, the above sentence probably didn't make much sense. Fear not! We will take it step by step: we first learn how to build software with JavaScript, and then we will learn how to build software even better with TypeScript.
+
+The most important information right now is this: Every valid JavaScript program is also a 100% valid TypeScript program. Everything you learn about JavaScript - expressions, values, types, control structures, functions, and so on - are written and used in exactly the same way in TypeScript. Thus, once you've finished the first part of this book, and learned JavaScript, you have already learned 90% of TypeScript.
+
+
+
 
 ## Values and Types
 
@@ -59,9 +90,9 @@ We can run other expressions that evaluate to values of other types:
 
 This introduces two new types: *number* and *boolean*. For numbers, JavaScript doesn't differentiate between integer and floating point numbers - in other words, the values `1` and `1.0` are identical, and thus, `1` and `0.5` have the same type.
 
-As expected, values of type *number* can be used for mathematical operations. Entering `1 + 1` at the console will return `2`, as does `1.0 + 1.0`. In order to get a floating point number back, we must run an operation where the result contains a fractional part, e.g. `1 + 1.5`, which of course returns `2.5`. Numbers with a fractional part of zerro, like `1.0`, are always simplified to the whole number, e.g. `1`.
+As expected, values of type *number* can be used for mathematical operations. Entering `1 + 1` at the console will return `2`, as does `1.0 + 1.0`. In order to get a floating point number back, we must run an operation where the result contains a fractional part, e.g. `1 + 1.5`, which returns `2.5` as expected. Numbers with a fractional part of zero, like `1.0`, are always shown simplified to the whole number, e.g. `1`.
 
-Operations like `3 * 2.5` and `5 / 2` execute a multiplication and a division just like expected, and operator precedence is applied as usual, and can be enforced with parentheses, which is why `3 * 2 + 5` returns `11`, while `3 * (2 + 5)` returns `21`.
+Operations like `3 * 2.5` and `5 / 2` execute a multiplication and a division just like expected. Operator precedence is applied as usual, and can be enforced with parentheses, which is why `3 * 2 + 5` returns `11`, while `3 * (2 + 5)` returns `21`.
 
 The plus sign `+` has an obvious meaning when dealing with values of type *number*, but it also works with *string* values, and allows to concatenate texts: `"foo" + "bar"` results in `"foobar"`.
 
@@ -117,7 +148,7 @@ Mixing values of different types is possible not only for *comparison* - you can
 
 It's important to understand that the same logic applies when comparing values of different types with `==` or combining values of different types with `+`: for the JavaScript interpreter, it's a two-step process called *type coercion*. First, one of the values is translated into another type, and only then the comparison or combination takes place.
 
-There's a whole lot of rules behind type coercion in JavaScript. However, the basics are simple - whenever type coercion happens, a values is translated into one of only three types: into a string, into a boolean, or into a number.
+There's a whole lot of rules behind type coercion in JavaScript. However, the basics are simple - whenever type coercion happens, a value is translated into one of only three types: into a string, into a boolean, or into a number.
 
 When we run `1 + "foo"`, then the JavaScript interpreter assumes that we want a result of type *string*, and therefore translates the number `1` into the string `"1"`, and then concatenates both strings together into `"1foo"`. Because the string equivalent of the number `1.0` is `"1"`, too, the result of `1.0 + "foo"` is again `"1foo"`, while `1.5 + "foo"` results in `"1.5foo"`.
 
@@ -135,7 +166,7 @@ You can do these translations explicitly, through *type casting*. To do so, use 
 - `Number(expression)` transforms `expression` into a *number* value
 - `String(expression)` transforms `expression` into a *string* value
 
-For example, `Boolean(0)` and `Boolean("")` translate into `false`, while `Boolean(1)`, `Boolean("1")` - **and** `Boolean("0")`! - all translate into `true`. You can type cast more complex expressions, of course - `Number("1" + 2)` will result in a value `12` of type *number*.
+For example, `Boolean(0)` and `Boolean("")` translate into `false`, while `Boolean(1)`, `Boolean("1")` - **and** `Boolean("0")`! - all translate into `true`. You can type cast more complex expressions, of course - `Number("1" + 2)` will result in value `12` of type *number*.
 
 Note that this introduces another important element of the JavaScript language - functions - which we are going to discuss in detail later in this book.
 
@@ -143,7 +174,7 @@ Because keeping all these type coercion rules in mind isn't easy, and because no
 
 Let's now write a more complex JavaScript expression. Please enter and run `let a = "hello"` in the console.
 
-What we just did was a so-called *variable declaration and assignment* - we *declared* the existance of a new variable named `a`, and *assigned* it the value `"hello"`. In JavaScript, as in all other programming languages, variables act as containers for values. It's like using an envelope that has "a" written on it and putting a letter with the text "hello" into this envelope.
+What we just did was a so-called *variable declaration and assignment* - we *declared* the existence of a new variable named `a`, and *assigned* it the value `"hello"`. In JavaScript, as in all other programming languages, variables act as containers for values. It's like using an envelope that has "a" written on it and putting a letter with the text "hello" into this envelope.
 
 It's important to understand that when the JavaScript interpreter evaluates this single expression, it actually performs **two** things: first, a variable is *declared*, that is, the variable name is from then on known to the JavaScript interpreter. Afterwards, an initial value is then *assigned* to the newly defined variable, making the value accessible under the name of the variable.
 
