@@ -2,12 +2,30 @@
 
 ## What you will learn
 
+The approach of this book is to teach its readers how to build a fully working software application **from zero to production**.
+
+This means two things:
+
+1. You are not required to have done any kind of software development before getting started with this book. It will introduce and explain everything that is needed to build applications in full detail, assuming no prior knowledge or experience. This is the "from zero" part.
+
+2. Building on the foundational knowledge it teaches in the first half, the book will then, step by step, guide you through the process of building a real, full-fledged, and completely working software application, again explaining every detail along the way, and shows how to "deploy" that application - that is, how to make that application available on the Internet for anyone to use. This is the "to production" part.
+
+
+
+
+
+
 - The basics of computer programming, with JavaScript
 - TypeScript
 - Node.js
 - React
 - Lambda
 - Terraform
+
+
+## Who this book is for
+
+
 
 
 ## Recommended working environment
