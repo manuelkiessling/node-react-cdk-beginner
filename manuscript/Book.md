@@ -1,5 +1,6 @@
 # Part 0: Preface
 
+
 ## What you will learn
 
 The approach of this book is to teach its readers how to build a fully working software application **from zero to production**.
@@ -10,27 +11,25 @@ This means two things:
 
 2. Building on the foundational knowledge it teaches in the first half, the book will then, step by step, guide you through the process of building a real, full-fledged, and completely working software application, again explaining every detail along the way, and shows how to "deploy" that application - that is, how to make that application available on the Internet for anyone to use. This is the "to production" part.
 
+This is what this book will teach you in order to get from zero to production:
 
+First, it introduces JavaScript, one of the most widely used programming languages in the world. You will learn how to write and run JavaScript code right within your web browser, and you will learn about the most basic components of the JavaScript language, like types and variables.
 
+Then, it will introduce Node.js, a tool which allows you to write and run JavaScript code outside of your web browser, and you will learn how to use JavaScript and Node.js to build your first, simple software applications, with more advanced JavaScript components like control structures, loops, and functions.
 
+Next, it will introduce TypeScript, a software language that at its core is identical to JavaScript, but adds some very important goodies. This allows you to write more complex JavaScript applications with ease and confidence.
 
+It then introduces React and Redux, two JavaScript tools that will enable you to write elegant web applications with beautiful and fast user interfaces.
 
-- The basics of computer programming, with JavaScript
-- TypeScript
-- Node.js
-- React
-- Lambda
-- Terraform
+Finally, it will teach you how to put all of your newly gained JavaScript, TypeScript, Node.js, React, and Redux knowledge to use, in order to create a fully working application running on Amazon AWS.
 
 
 ## Who this book is for
 
 
-
-
 ## Recommended working environment
 
-Nearly all relevant JavaScript projects have been developed on Linux or macOS systems and for Linux or macOS systems, which regularly creates some kind of "impedance mismatch" in terms of availability and reliability of tools for Windows.
+Nearly all relevant JavaScript projects have been developed *on* Linux or macOS systems and *for* Linux or macOS systems, which regularly creates some kind of "impedance mismatch" in terms of availability and reliability of tools for Windows.
 
 If you absolutely must use Windows for developing JavaScript applications, then don't worry, you will be just fine. Note, however, that this book will not provide the same level of hand-holding as it does for readers working on Linux or macOS. At some points, you will have to use alternatives to the tools recommended and explained here, and while the book will point you in the right direction, you will be quite a bit more on your own.
 
