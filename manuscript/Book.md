@@ -880,15 +880,14 @@ Quick exercise for illustration purpose: let's create and then require our own m
 
 To do so, first create another file within `nodejs-webserver`, called `calculator.js`, with the following content:
 
+    const duplicateNumber = (num) => num * 2;
 
-const duplicateNumber = (num) => num * 2;
+    const squareNumber = (num) => num * num;
 
-const squareNumber = (num) => num * num;
-
-module.exports = {
-    duplicateNumber,
-    squareNumber
-};
+    module.exports = {
+        duplicateNumber,
+        squareNumber
+    };
 
 As we did earlier, we declare two functions, `duplicateNumber` and `squareNumber`, but we do not use them within this file - instead, we *export* them, which is kind of the counterpart of `require` - it makes elements declared within a module available for use elsewhere.
 
@@ -901,9 +900,9 @@ To do so, switch back to file `index.js` and replace its content as follows:
     console.log(calculator.duplicateNumber(5));
     console.log(calculator.squareNumber(5));
 
-You will notice a subtle difference - while "http" is an internal module that ships with Node.js, "calculator" is a module written by us, and we need to tell require where to find the module file; therefore, the leading `./` path is necessary. *Not* necessary, on the other hand, is the file extension. While we could write `const calculator = require("./calculator.js");`, we don't have to - the `.js` extension can be left out.
+You will notice a subtle difference - while "http" is an internal module that ships with Node.js, "calculator" is a module written by us, and we need to tell *require* where to find the module file; therefore, the leading `./` path is necessary. *Not* necessary, on the other hand, is the file extension. While we could write `const calculator = require("./calculator.js");`, we don't have to - the `.js` extension can be left out.
 
-The "thing" we get from calling `require("./calculator")`, and which we assign to constant `calculator`, is of type *object*. An object is, at its core, a very simple key-value store, with the keys being of type string - or at least values that can be converted to strings.
+The "thing" we get from calling `require("./calculator")`, and which we assign to constant `calculator`, is of type *object*. An object is, at its core, a very simple key-value store, with the keys being of type *string* - or at least values that can be converted to strings.
 
 For example, this is a simple object:
 
@@ -928,7 +927,7 @@ Don't get too fancy with key types, though - it's best to stick to simple string
         "1": "Doe"
     };
 
-As the integer value `1` is converted to the string value `"1"` in order to be usable as an object key, we have an object where the key `"1"` is defined twice; as this is not possible, the second declaration overrides the first one - the result is an object with only one key, `"1"`, and the value for this key is `"Doe"`.
+As the integer value `1` is converted to the string value `"1"` in order to be usable as an object key, we have an object where the key `"1"` is defined twice; as this is not possible, the second declaration overrides the first one - the result is an object with only one key, `"1"`, and the value under this key is `"Doe"`.
 
 It's much more common to access object keys using the dot notation, as in `obj.firstname` or `console.log` (another mystery solved: `console` is an object, and on its key `log` a function is defined).
 
@@ -967,7 +966,7 @@ We do this by providing an anonymous function as the first and only parameter to
         res.end("I have received a request, and this is my response.");
     });
 
-As you can see, the HTTP server code will call this function with two parameters, every time the HTTP server receives an incoming request: we call the first one `req`, because it is an object containing information about the incoming request, and `res`, because this is an object containing functions which allow use to respond to the incoming request - like the function `end` that is used to send an HTTP response and immediately finish response handling (which makes our code ready to handle another request).
+As you can see, the HTTP server code will call this function with two parameters, every time the HTTP server receives an incoming request: we call the first one `req`, because it is an object containing information about the incoming *request*, and the second one `res`, because this is an object containing functions which allow use to *respond* to the incoming request - like the function `end` that is used to send an HTTP response and immediately finish response handling.
 
 Still, running `node index.js` simply throws us back to the command line, with nothing happening.
 
@@ -985,7 +984,7 @@ While we already ordered our application to *create* an HTTP server and defined 
         () => console.log("HTTP server started and available at http://localhost:8000.")
     );
 
-The three parameters that we pass to `listen` are the TCP port number, the IP address (we use the special *localhost* address), and a function which is called by `listen` as soon as the HTTP server is bound to the given IP address and TCP port and is ready to receive incoming HTTP requests.
+The three parameters that we pass to `listen` are the TCP port number, the IP address or DNS name (we use the special *localhost* name), and a function which is called by `listen` as soon as the HTTP server is bound to the given IP address and TCP port and is ready to receive incoming HTTP requests.
 
 This time, when running `node index.js` on the command line, you'll notice how you are *not* thrown back to the command line - instead, the Node.js application keeps running, after outputting the "HTTP server started and available at http://localhost:8000." line.
 
@@ -993,11 +992,11 @@ You can now open URL *http://localhost:8000/* in a browser of your choice, and y
 
 When a request is handled, you won't see any further output on the command line though, because we didn't add any `console.log` calls within the `http.createServer` anonymous function parameter.
 
-At this point, depending on your previous knowledge, you may wonder what we are talking about here - besides Node.js code. What exactly is HTTP, what is a request, and what is a response. In other words: How does the World Wide Web work under the hood?
+At this point, depending on your previous knowledge, you may wonder what we are talking about here: What exactly is HTTP, what is a request and a response, a TCP port and IP address? In other words: How does the World Wide Web work under the hood?
 
-If you feel like you lack understanding of these basics, simply continue reading - what follows is a breakout session describing some fundamentals of the Web that are not specific to JavaScript or Node.js.
+If you feel like you lack a solid understanding of these basics, simply continue reading - what follows is a breakout session describing some fundamentals of the Web that are not specific to JavaScript or Node.js.
 
-If, however, you already have a solid understanding of these basics, then simply skip the following chapter, and we will immediately continue with our Node.js webserver.
+And in case you already have a solid understanding of these basics, then simply skip the following chapter, and we will immediately continue with our Node.js webserver implementation. In any case: see you one the other side!
 
 
 ## A close look at the World Wide Web
@@ -1350,7 +1349,7 @@ We can use the request-handling code to take a look at all the attributes and me
 
 After restarting the server application, another *curl* request makes the server application output (in its console window, not on the HTTP response!) a large list of the *req* object keys and values. It's quite a long and daunting list, to be honest, but you may be able to find the *method* and *url* attributes if you look closely.
 
-Most attributes don't look too useful, though. But there are some that might come handy for implementing a more complex server application. For example, there is one called *headers*. Let's output only that one:
+Most of these attributes don't look too useful, though. But there are some that might come handy for implementing a more complex server application. For example, there is one called *headers*. Let's output only that one:
 
     const http = require("http");
 
@@ -1373,11 +1372,11 @@ When once again restarting the server and running a curl request, we see another
 
 These, of course, are the names of the HTTP headers we've already encountered in the output of `curl --verbose`, although here the Node.js *http* module obviously rewrote them into lowercase.
 
-As denoted by the leading `{` and the trailing `}`, `req.headers` is itself another object. This shows how objects can contain objects, and accessing values of objects within objects is achieved by further extending the dot syntax:
+As denoted by the leading `{` and the trailing `}`, `req.headers` is itself another object. This shows how objects can contain objects, and accessing values of objects within objects is achieved by repeatedly using the dot syntax:
 
     console.log(req.headers.host);
 
-will print *localhost:8000* to the screen, because we access the value that is available under key *host* of object *header*, which in turn is available under key *headers* of object *req*. There is no theoretical limit to how deep objects can be nested, but there usually is a practical limit, because nesting objects within objects means storing data after all, and our computers do not have unlimited storage space.
+will print *localhost:8000* to the screen, because we access the value that is available under key *host* of object *header*, which in turn is available under key *headers* of object *req*. [^note7]
 
 Note how the following line won't work:
 
@@ -1386,6 +1385,32 @@ Note how the following line won't work:
 As mentioned earlier, not all key names can be accessed through the dot notation - in this case, the hyphen in `user-agent` causes the problem, which forces us to use the alternative square bracket notation:
 
     console.log(req.headers["user-agent"]);
+
+Okay, we now have a basic web server application, and we have a basic idea of what the *req* object looks like. How can we use this to create a server that does something useful?
+
+We previously wrote module *calculator* in file *calculator.js*. Let's use this to write a web server application that can do calculations based on an incoming request. For example, if we request the server with *curl* like this:
+
+    > curl http://localhost:8000/duplicate?number=42
+
+then we want the server to respond like this:
+
+    The duplicate of 42 is 84.
+
+And if we request it like this:
+
+    > curl http://localhost:8000/square?number=42
+
+then we want the server to respond like this:
+
+    The square of 42 is 1764.
+
+
+To achieve this, we need solve several problems. First, we need to teach our server to distinguish between *duplicate* and *square* requests, and handle them accordingly.
+
+Then, we need to extract the number provided on the request - `42` in the above example -  from the request object.
+
+Lastly, we need to use the functions provided by the *calculator* module to do the calculation that has been requested, and with the result, we need to formulate an HTTP response.
+
 
 
 
@@ -1415,3 +1440,5 @@ In addition, interaction of the user with the graphical representation of the DO
 [^note5]: https://en.wikipedia.org/wiki/List_of_HTTP_header_fields
 
 [^note6]: https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+
+[^note7]: There is no theoretical limit to how deep objects can be nested, but there usually is a practical limit, because nesting objects within objects means storing data after all, and our computers do not have unlimited storage space.
