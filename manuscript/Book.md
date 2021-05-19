@@ -13,13 +13,13 @@ This means two things:
 
 This is what this book will teach you in order to get from zero to production:
 
-First, it introduces JavaScript, one of the most widely used programming languages in the world. You will learn how to write and run JavaScript code right within your web browser, and you will learn about the most basic components of the JavaScript language, like types and variables.
+First, it introduces **JavaScript**, one of the most widely used programming languages in the world. You will learn how to write and run JavaScript code right within your web browser, and you will learn about the most basic components of the JavaScript language, like types and variables.
 
-Then, it will introduce Node.js, a tool which allows you to write and run JavaScript code outside of your web browser, and you will learn how to use JavaScript and Node.js to build your first, simple software applications, with more advanced JavaScript components like control structures, loops, and functions.
+Then, it will introduce **Node.js**, a tool which allows you to write and run JavaScript code outside of your web browser, and you will learn how to use JavaScript and Node.js to build your first, simple software applications, with more advanced JavaScript components like control structures, loops, and functions.
 
-Next, it will introduce TypeScript, a software language that at its core is identical to JavaScript, but adds some very important goodies. This allows you to write more complex JavaScript applications with ease and confidence.
+Next, it will introduce **TypeScript**, a software language that at its core is identical to JavaScript, but adds some very important goodies. This allows you to write more complex JavaScript applications with ease and confidence.
 
-It then introduces React and Redux, two JavaScript tools that will enable you to write elegant web applications with beautiful and fast user interfaces.
+It then introduces **React and Redux**, two JavaScript & TypeScript tools that will enable you to write elegant web applications with beautiful and fast user interfaces.
 
 Finally, it will teach you how to put all of your newly gained JavaScript, TypeScript, Node.js, React, and Redux knowledge to use, in order to create a fully working application running on Amazon AWS.
 
