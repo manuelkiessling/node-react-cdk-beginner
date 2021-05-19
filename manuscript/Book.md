@@ -21,7 +21,7 @@ Next, it will introduce **TypeScript**, a software language that at its core is 
 
 It then introduces **React and Redux**, two JavaScript & TypeScript tools that will enable you to write elegant web applications with beautiful and fast user interfaces.
 
-Finally, it will teach you how to put all of your newly gained JavaScript, TypeScript, Node.js, React, and Redux knowledge to use, in order to create a fully working application running on Amazon AWS.
+Finally, it will teach you how to put all of your newly gained JavaScript, TypeScript, Node.js, React, and Redux knowledge to practical use, in order to create a fully working application running on Amazon AWS.
 
 
 ## Who this book is for
