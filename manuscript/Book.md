@@ -1414,6 +1414,11 @@ Lastly, we need to use the functions provided by the *calculator* module to do t
 
 
 
+
+... Übergang zu TypeScript - was passiert zum Beispiel, wenn die Berechnungsfunktionen einen String oder ein bool übergeben bekommen?
+
+
+
 # Part 3: React - Rich web applications with JavaScript
 
 
