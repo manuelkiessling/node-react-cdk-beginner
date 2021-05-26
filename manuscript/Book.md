@@ -1473,7 +1473,52 @@ As you can see, the resulting URL object provides several attributes, and they a
 
 Ok, looks like we can use this module to get our hands on the different parts of the request URL.
 
-There is one catch, though - creating a URL object only works by providing a "full" URL string. This means we cannot simply pass `req.url` into `new URL()`, because in our example, `req.url` is only the string `""/duplicate?number=42"`, without `http` and `127.0.0.1:8000` etc.
+There is one catch, though - creating a URL object only works by providing a "full" URL string. This means we cannot simply pass `req.url` into `new URL()`, because in our example, `req.url` is only the string `"/duplicate?number=42"`, without `http` and `localhost:8000` etc.
+
+If we try to do this on the Node.js CLI, we get an error:
+
+    % node
+    Welcome to Node.js v14.16.1.
+    Type ".help" for more information.
+
+    > const url = require("url");
+
+    > const myUrl = new url.URL("/duplicate?number=42");
+    Uncaught TypeError [ERR_INVALID_URL]: Invalid URL: /duplicate?number=42
+        at onParseError (internal/url.js:259:9)
+        at new URL (internal/url.js:335:5)
+        at REPL2:1:15
+        at Script.runInThisContext (vm.js:133:18)
+        at REPLServer.defaultEval (repl.js:484:29)
+        at bound (domain.js:413:15)
+        at REPLServer.runBound [as eval] (domain.js:424:12)
+        at REPLServer.onLine (repl.js:817:10)
+        at REPLServer.emit (events.js:327:22)
+        at REPLServer.EventEmitter.emit (domain.js:467:12) {
+      input: '/duplicate?number=42',
+      code: 'ERR_INVALID_URL'
+    }
+
+This can be easily fixed, though - we just need to prefix our `req.url` string with the missing information. While these need to have the correct syntax, the actual values are not relevant, because it's only the `pathname` and `search` parts that are relevant for us.
+
+An updated webserver implementation that shows the URL object on the command line upon each received request looks like this:
+
+    const http = require("http");
+    const url = require("url");
+
+    const server = http.createServer((req, res) => {
+        res.write("I have received a request, and this is my response.\n");
+        res.end("The request method was " + req.method + ", and the requested resource was " + req.url);
+
+        const myUrl = new url.URL("http://localhost:8000" + req.url);
+        console.log(myUrl);
+    });
+
+    server.listen(
+        "8000",
+        "localhost",
+        () => console.log("HTTP server started and available at http://localhost:8000.")
+    );
 
 
 
