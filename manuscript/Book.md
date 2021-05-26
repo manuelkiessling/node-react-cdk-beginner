@@ -736,7 +736,7 @@ The following code shows what that means:
 
 This shows that the inner scope not only sees the initially assigned value of "greeting"; when the value of "greeting" is changed, then a subsequent execution of the inner scope code will see this change.
 
-What we see in action here is a *closure*. The [MDN web docs][https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures] define these as follows:
+What we see in action here is a *closure*. The [MDN web docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures) define these as follows:
 
 > A closure is the combination of a function bundled together (enclosed) with references to its surrounding state (the lexical environment). In other words, a closure gives you access to an outer function's scope from an inner function. In JavaScript, closures are created every time a function is created, at function creation time.
 
@@ -1390,7 +1390,7 @@ Okay, we now have a basic web server application, and we have a basic idea of wh
 
 We previously wrote module *calculator* in file *calculator.js*. Let's use this to write a web server application that can do calculations based on an incoming request. For example, if we request the server with *curl* like this:
 
-    > curl http://localhost:8000/duplicate?number=42
+    > curl "http://localhost:8000/duplicate?number=42"
 
 then we want the server to respond like this:
 
@@ -1398,19 +1398,40 @@ then we want the server to respond like this:
 
 And if we request it like this:
 
-    > curl http://localhost:8000/square?number=42
+    > curl "http://localhost:8000/square?number=42"
 
 then we want the server to respond like this:
 
     The square of 42 is 1764.
 
+(We now started to put the URL in double quotes "" because `?` and `=` have a special meaning on the command line).
 
-To achieve this, we need solve several problems. First, we need to teach our server to distinguish between *duplicate* and *square* requests, and handle them accordingly.
+To achieve this, we need to solve several problems. First, we need to teach our server to distinguish between *duplicate* and *square* requests, and handle them accordingly.
 
-Then, we need to extract the number provided on the request - `42` in the above example -  from the request object.
+Then, we need to extract the number provided with the request - `42` in the above example -  from the request object.
 
 Lastly, we need to use the functions provided by the *calculator* module to do the calculation that has been requested, and with the result, we need to formulate an HTTP response.
 
+As always, we tackle this step by step.
+
+First, an observation: in its current implementation, the server responds to `curl "http://localhost:8000/square?number=42"` like this:
+
+    The request method was GET, and the requested resource was /square?number=42
+
+This shows that `req.url` contains all the information we are interested in - but we need to break this string into useful pieces.
+
+Parsing a URL to split into it's different parts isn't exactly trivial. But fortunately, Node.js ships with a module that does the heavy lifting. It's called *url*, and is based on the [WHATWG URL API](https://nodejs.org/api/url.html#url_the_whatwg_url_api).
+
+
+    "  https:   //  user : pass @ sub.host.com : 80   /p/a/t/h  ?  query=string   #hash "
+    │          │  │      │      │   hostname   │port│          │                │       │
+    │          │  │ user-│ pass-├──────────────┴────┤          │                │       │
+    │ protocol │  │ name │ word │        host       │          │                │       │
+    ├──────────┴──┼──────┴──────┼───────────────────┤          │                │       │
+    │   origin    │             │       origin      │ pathname │     search     │ hash  │
+    ├─────────────┴─────────────┴───────────────────┴──────────┴────────────────┴───────┤
+    │                                    href                                           │
+    └───────────────────────────────────────────────────────────────────────────────────┘
 
 
 
