@@ -1414,14 +1414,13 @@ Lastly, we need to use the functions provided by the *calculator* module to do t
 
 As always, we tackle this step by step.
 
-First, an observation: in its current implementation, the server responds to `curl "http://localhost:8000/square?number=42"` like this:
+First, an observation: in its current implementation, the server responds to `curl "http://localhost:8000/duplicate?number=42"` like this:
 
-    The request method was GET, and the requested resource was /square?number=42
+    The request method was GET, and the requested resource was /duplicate?number=42
 
 This shows that `req.url` contains all the information we are interested in - but we need to break this string into useful pieces.
 
-Parsing a URL to split into it's different parts isn't exactly trivial. But fortunately, Node.js ships with a module that does the heavy lifting. It's called *url*, and is based on the [WHATWG URL API](https://nodejs.org/api/url.html#url_the_whatwg_url_api).
-
+Parsing a URL to split into it's different parts isn't exactly trivial. But fortunately, Node.js ships with a module that does the heavy lifting. It is called *url*, and is based on the [WHATWG URL API](https://nodejs.org/api/url.html#url_the_whatwg_url_api). This is a standard that describes the different parts a URL can possibly have. Here is a visualization of the different parts of example URL `https://user:pass@sub.host.com:80/p/a/t/h?query=string#hash`:
 
     "  https:   //  user : pass @ sub.host.com : 80   /p/a/t/h  ?  query=string   #hash "
     │          │  │      │      │   hostname   │port│          │                │       │
@@ -1433,6 +1432,48 @@ Parsing a URL to split into it's different parts isn't exactly trivial. But fort
     │                                    href                                           │
     └───────────────────────────────────────────────────────────────────────────────────┘
 
+Using the *url* module works like this:
+
+First, we need to require it:
+
+    const url = require("url");
+
+This gives us an object named `url` (lowercase), and this object provides an attribute `URL` (uppercase). The uppercase `URL` is a *class*. We did not yet introduce classes in JavaScript and we won't do this properly now, so for the moment, just follow along. Here is how this class can be used to create a new url object based on a given string:
+
+    const myUrl = new url.URL("https://user:pass@sub.host.com:80/p/a/t/h?query=string#hash");
+
+Note the `new` keyword, which is, well, new. While JavaScript always allows us to create objects "on the fly", by simply defining them with code like `const myObject = { "foo": "bar" }`, the `new` keyword can be used to create an object whose structure follows a certain "blueprint" - and these blueprints are called *classes* in JavaScript. The blueprint or class `URL` is hidden inside module *url*, but we don't need to know what it looks like - all we need to know is that we can use it to create *URL* objects by using the `new` keyword and passing a string containing a URL. If we do this, what we get back is an object. And if we want to see how such an object looks like, we can quickly demo this on the Node.js CLI (remember: you just need to run application `node` without any further parameters on your command line to get into the interactive Node.js CLI):
+
+    % node
+    Welcome to Node.js v14.16.1.
+    Type ".help" for more information.
+
+    > const url = require("url");
+
+    > const myUrl = new url.URL("https://user:pass@sub.host.com:80/p/a/t/h?query=string#hash");
+
+    > console.log(myUrl)
+
+    URL {
+      href: 'https://user:pass@sub.host.com:80/p/a/t/h?query=string#hash',
+      origin: 'https://sub.host.com:80',
+      protocol: 'https:',
+      username: 'user',
+      password: 'pass',
+      host: 'sub.host.com:80',
+      hostname: 'sub.host.com',
+      port: '80',
+      pathname: '/p/a/t/h',
+      search: '?query=string',
+      searchParams: URLSearchParams { 'query' => 'string' },
+      hash: '#hash'
+    }
+
+As you can see, the resulting URL object provides several attributes, and they are named exactly like the URL parts that WHATWG specifies.
+
+Ok, looks like we can use this module to get our hands on the different parts of the request URL.
+
+There is one catch, though - creating a URL object only works by providing a "full" URL string. This means we cannot simply pass `req.url` into `new URL()`, because in our example, `req.url` is only the string `""/duplicate?number=42"`, without `http` and `127.0.0.1:8000` etc.
 
 
 
