@@ -1541,7 +1541,7 @@ When we start this server code and run `curl "http://localhost:8000/duplicate?nu
 
 We are definitely getting closer. Attribute `pathname` carries value `"/duplicate"`, and will carry value `"/square"` if we run `curl "http://localhost:8000/square?number=42"`. We can thus use this attribute to differentiate between both request types.
 
-The url module also conveniently splits up the so-called *search* parameters for us, by providing another object on attribute `searchParams`. This object is based on another class called *URLSearchParams*, and it allows us to retrieve the `number` parameter via `myUrl.searchParams.number`.
+The url module also conveniently splits up the so-called *search* parameters for us, by providing another object on attribute `searchParams`. This object is based on another class called *URLSearchParams*, and it allows us to retrieve the `number` through a function that `URL.searchParams` provides, like this: `URL.searchParams.get("number")`.
 
 
 
