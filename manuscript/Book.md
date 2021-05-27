@@ -1539,12 +1539,66 @@ When we start this server code and run `curl "http://localhost:8000/duplicate?nu
       hash: ''
     }
 
-We are definitely getting closer. Attribute `pathname` carries value `"/duplicate"`, and will carry value `"/square"` if we run `curl "http://localhost:8000/square?number=42"`. We can thus use this attribute to differentiate between both request types.
+We are definitely getting closer. Attribute `pathname` carries value `"/duplicate"`, and will carry value `"/square"` if we run `curl "http://localhost:8000/square?number=42"`. We can thus use this attribute to differentiate between both request types, like this:
 
-The url module also conveniently splits up the so-called *search* parameters for us, by providing another object on attribute `searchParams`. This object is based on another class called *URLSearchParams*, and it allows us to retrieve the `number` through a function that `URL.searchParams` provides, like this: `URL.searchParams.get("number")`.
+    if (myUrl.pathname === '/duplicate') {
+            // handle the "duplicate" request
+    }
 
+    if (myUrl.pathname === '/square') {
+            // handle the "square" request
+    }
 
+The url module also conveniently splits up the so-called *search* parameters for us, by providing another object on attribute `searchParams`. This object is based on a class called *URLSearchParams*, and it allows us to retrieve the `number` through the `get` function  provided on the object, like this:
 
+    `URL.searchParams.get("number")`.
+
+This should allow us to write the code handling a "duplicate" request, like this:
+
+        if (myUrl.pathname === '/duplicate') {
+            res.end(
+                "The duplicate of "
+                + myUrl.searchParams.get("number")
+                + " is "
+                + calculator.duplicateNumber(myUrl.searchParams.get("number"))
+            );
+        }
+
+Note how I've distributed the string parameter passed to `res.end` over several lines. This avoids ending up with a very long and hard to read code line. When concatenating several strings into one large string with `+`, it's easy to put each part on its own line.
+
+To make this request handler work, we need to rework our `index.js` webserver code quite a bit. We need to `require` our *calculator* module, remove the existing `res.write` and `res.end` lines, and add the handler code instead. The result looks like this:
+
+    const http = require("http");
+    const url = require("url");
+    const calculator = require("./calculator");
+
+    const server = http.createServer((req, res) => {
+        const myUrl = new url.URL("http://localhost:8000" + req.url);
+
+        if (myUrl.pathname === '/duplicate') {
+            res.end(
+                "The duplicate of "
+                + myUrl.searchParams.get("number")
+                + " is "
+                + calculator.duplicateNumber(myUrl.searchParams.get("number"))
+            );
+        }
+
+    });
+
+    server.listen(
+        "8000",
+        "localhost",
+        () => console.log("HTTP server started and available at http://localhost:8000.")
+    );
+
+Things are now getting more complex, so let's recapitulate what each part of this code does.
+
+The first three lines declare consts `http`, `url`, and `calculator`, by "requiring" internal Node.js modules *http* and *url*, as well as our own local module *calculator* (note once again how the latter is referenced as a local file path beginning with `./`).
+
+We then declare const `server`, by calling function `createServer` of object `http`. The one and only parameter we pass into this function is an anonymous or inline function of the form `(req, res) => { ... }`. The running HTTP server will trigger this function whenever it receives a new incoming HTTP request.
+
+Begriff "Callback" ist noch nicht eingeführt!
 
 ... Übergang zu TypeScript - was passiert zum Beispiel, wenn die Berechnungsfunktionen einen String oder ein bool übergeben bekommen?
 

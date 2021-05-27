@@ -5,10 +5,13 @@ const calculator = require("./calculator");
 const server = http.createServer((req, res) => {
     const myUrl = new url.URL("http://localhost:8000" + req.url);
 
-    console.log(myUrl);
-
     if (myUrl.pathname === '/duplicate') {
-        res.end("The duplicate of " + myUrl.searchParams.get("number") + " is " + calculator.duplicateNumber(myUrl.searchParams.get("number")));
+        res.end(
+            "The duplicate of "
+            + myUrl.searchParams.get("number")
+            + " is "
+            + calculator.duplicateNumber(myUrl.searchParams.get("number"))
+        );
     }
 
 });
