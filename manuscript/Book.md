@@ -951,7 +951,6 @@ It's now clear what that does: it gives us a variable named `http` with an objec
 
 As you can see, this module exports more than a dozen values - for now, we are especially interested in function value `createServer` which, believe it or not, can be used to create an HTTP server. It is used like this:
 
-
     const http = require("http");
 
     http.createServer();
@@ -966,7 +965,15 @@ We do this by providing an anonymous function as the first and only parameter to
         res.end("I have received a request, and this is my response.");
     });
 
-As you can see, the HTTP server code will call this function with two parameters, every time the HTTP server receives an incoming request: we call the first one `req`, because it is an object containing information about the incoming *request*, and the second one `res`, because this is an object containing functions which allow use to *respond* to the incoming request - like the function `end` that is used to send an HTTP response and immediately finish response handling.
+The HTTP server code will call this function with two parameters, every time the HTTP server receives an incoming request. A construct like this is a typical pattern found in many JavaScript code files: it's the *callback* pattern.
+
+The pattern works like this: A certain piece of code - in our case, it's the `createServer` function - takes care of something happening "behind the scenes". In our cases, it's accepting new incoming HTTP requests - something that our own code doesn't need to take care of.
+
+However, the exact way how a new incoming HTTP should be *handled*, after it has been *accepted*, is something we want to define within our own code. It's a bit like asking for a callback in real life. Imagine you plan to buy something from your local dealer on the other side of the town, but you know that the item you are looking for is out of stock on most days.
+
+In this case, you would call the dealer and ask if it is currently in stock. "No", the dealer says, "but tell me your number and I will call you back once it's in stock". This way, you only need to make the trip across town once...
+
+Let's now look at this anonymous (or "inline") function in detail: It expects two be called with two parameters: we call the first one `req`, because it is an object containing information about the incoming *request*, and the second one `res`, because this is an object containing functions which allow use to *respond* to the incoming request - like the function `end` that is used to send an HTTP response and immediately finish response handling.
 
 Still, running `node index.js` simply throws us back to the command line, with nothing happening.
 
@@ -1542,14 +1549,14 @@ When we start this server code and run `curl "http://localhost:8000/duplicate?nu
 We are definitely getting closer. Attribute `pathname` carries value `"/duplicate"`, and will carry value `"/square"` if we run `curl "http://localhost:8000/square?number=42"`. We can thus use this attribute to differentiate between both request types, like this:
 
     if (myUrl.pathname === '/duplicate') {
-            // handle the "duplicate" request
+        // handle the "duplicate" request
     }
 
     if (myUrl.pathname === '/square') {
-            // handle the "square" request
+        // handle the "square" request
     }
 
-The url module also conveniently splits up the so-called *search* parameters for us, by providing another object on attribute `searchParams`. This object is based on a class called *URLSearchParams*, and it allows us to retrieve the `number` through the `get` function  provided on the object, like this:
+The url module also conveniently splits up the so-called *search* parameters for us, by providing another object on attribute `searchParams`. This object is based on a class called *URLSearchParams*, and it allows us to retrieve the `number` value through the `get` function  provided on the object, like this:
 
     `URL.searchParams.get("number")`.
 
@@ -1566,7 +1573,7 @@ This should allow us to write the code handling a "duplicate" request, like this
 
 Note how I've distributed the string parameter passed to `res.end` over several lines. This avoids ending up with a very long and hard to read code line. When concatenating several strings into one large string with `+`, it's easy to put each part on its own line.
 
-To make this request handler work, we need to rework our `index.js` webserver code quite a bit. We need to `require` our *calculator* module, remove the existing `res.write` and `res.end` lines, and add the handler code instead. The result looks like this:
+To make this request handler work, we need to rework our `index.js` webserver code quite a bit. We need to `require` our *calculator* module, remove the existing `res.write` and `res.end` lines, and add the code handling both request types instead. The result looks like this:
 
     const http = require("http");
     const url = require("url");
@@ -1584,6 +1591,15 @@ To make this request handler work, we need to rework our `index.js` webserver co
             );
         }
 
+        if (myUrl.pathname === '/square') {
+            res.end(
+                "The square of "
+                + myUrl.searchParams.get("number")
+                + " is "
+                + calculator.squareNumber(myUrl.searchParams.get("number"))
+            );
+        }
+
     });
 
     server.listen(
@@ -1592,11 +1608,15 @@ To make this request handler work, we need to rework our `index.js` webserver co
         () => console.log("HTTP server started and available at http://localhost:8000.")
     );
 
+
 Things are now getting more complex, so let's recapitulate what each part of this code does.
 
-The first three lines declare consts `http`, `url`, and `calculator`, by "requiring" internal Node.js modules *http* and *url*, as well as our own local module *calculator* (note once again how the latter is referenced as a local file path beginning with `./`).
+The first three lines declare consts `http`, `url`, and `calculator`, by "requiring" internal Node.js modules *http* and *url*, as well as our own local module *calculator* (note once again how the latter is referenced as a local file path beginning with `./`, while the internal modules are referenced by their name only).
 
 We then declare const `server`, by calling function `createServer` of object `http`. The one and only parameter we pass into this function is an anonymous or inline function of the form `(req, res) => { ... }`. The running HTTP server will trigger this function whenever it receives a new incoming HTTP request.
+
+The body of this inline function does the heavy lifting required to handle a request.
+
 
 Begriff "Callback" ist noch nicht eingeführt!
 

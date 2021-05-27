@@ -14,6 +14,15 @@ const server = http.createServer((req, res) => {
         );
     }
 
+    if (myUrl.pathname === '/square') {
+        res.end(
+            "The square of "
+            + myUrl.searchParams.get("number")
+            + " is "
+            + calculator.squareNumber(myUrl.searchParams.get("number"))
+        );
+    }
+
 });
 
 server.listen(
