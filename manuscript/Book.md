@@ -1499,9 +1499,11 @@ If we try to do this on the Node.js CLI, we get an error:
       code: 'ERR_INVALID_URL'
     }
 
-This can be easily fixed, though - we just need to prefix our `req.url` string with the missing information. While these need to have the correct syntax, the actual values are not relevant, because it's only the `pathname` and `search` parts that are relevant for us.
+This can be easily fixed, though - we just need to prefix our `req.url` string with the missing information. While these need to have the correct syntax, the actual values are not relevant, because it's only the `pathname` and `search` parts that are relevant for us. Such a solution would look like this:
 
-An updated webserver implementation that shows the URL object on the command line upon each received request looks like this:
+    const myUrl = new url.URL("http://localhost:8000" + req.url);
+
+And thus, an updated webserver implementation that shows the contents of the URL object on the command line upon each received request looks like this:
 
     const http = require("http");
     const url = require("url");
@@ -1519,6 +1521,28 @@ An updated webserver implementation that shows the URL object on the command lin
         "localhost",
         () => console.log("HTTP server started and available at http://localhost:8000.")
     );
+
+When we start this server code and run `curl "http://localhost:8000/duplicate?number=42"`, the server application will show the following output on the command line:
+
+    URL {
+      href: 'http://localhost:8000/square?number=42',
+      origin: 'http://localhost:8000',
+      protocol: 'http:',
+      username: '',
+      password: '',
+      host: 'localhost:8000',
+      hostname: 'localhost',
+      port: '8000',
+      pathname: '/duplicate',
+      search: '?number=42',
+      searchParams: URLSearchParams { 'number' => '42' },
+      hash: ''
+    }
+
+We are definitely getting closer. Attribute `pathname` carries value `"/duplicate"`, and will carry value `"/square"` if we run `curl "http://localhost:8000/square?number=42"`. We can thus use this attribute to differentiate between both request types.
+
+The url module also conveniently splits up the so-called *search* parameters for us, by providing another object on attribute `searchParams`. This object is based on another class called *URLSearchParams*, and it allows us to retrieve the `number` parameter via `myUrl.searchParams.number`.
+
 
 
 
