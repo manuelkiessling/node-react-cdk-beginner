@@ -5,7 +5,7 @@ const calculator = require("./calculator");
 const server = http.createServer((req, res) => {
     const myUrl = new url.URL("http://localhost:8000" + req.url);
 
-    if (myUrl.pathname === '/duplicate') {
+    if (myUrl.pathname === "/duplicate") {
         res.end(
             "The duplicate of "
             + myUrl.searchParams.get("number")
@@ -14,7 +14,7 @@ const server = http.createServer((req, res) => {
         );
     }
 
-    if (myUrl.pathname === '/square') {
+    if (myUrl.pathname === "/square") {
         res.end(
             "The square of "
             + myUrl.searchParams.get("number")

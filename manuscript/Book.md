@@ -1544,7 +1544,7 @@ And thus, an updated webserver implementation that shows the contents of the URL
 When we start this server code and run `curl "http://localhost:8000/duplicate?number=42"`, the server application will show the following output on the command line:
 
     URL {
-      href: 'http://localhost:8000/square?number=42',
+      href: 'http://localhost:8000/duplicate?number=42',
       origin: 'http://localhost:8000',
       protocol: 'http:',
       username: '',
@@ -1574,7 +1574,7 @@ The url module also conveniently splits up the so-called *search* parameters for
 
 This should allow us to write the code handling a "duplicate" request, like this:
 
-        if (myUrl.pathname === '/duplicate') {
+        if (myUrl.pathname === "/duplicate") {
             res.end(
                 "The duplicate of "
                 + myUrl.searchParams.get("number")
@@ -1585,7 +1585,7 @@ This should allow us to write the code handling a "duplicate" request, like this
 
 Note how I've distributed the string parameter passed to `res.end` over several lines. This avoids ending up with a very long and hard to read code line. When concatenating several strings into one large string with `+`, it's easy to put each part on its own line.
 
-To make this request handler work, we need to rework our `index.js` webserver code quite a bit. We need to `require` our *calculator* module, remove the existing `res.write` and `res.end` lines, and add the code handling both request types instead. The result looks like this:
+To make this request handler work (and also the one handling "square" requests), we need to rework our `index.js` webserver code quite a bit. We need to `require` our *calculator* module, remove the existing `res.write` and `res.end` lines, and add the code for handling both request types. The result looks like this:
 
     const http = require("http");
     const url = require("url");
@@ -1594,7 +1594,7 @@ To make this request handler work, we need to rework our `index.js` webserver co
     const server = http.createServer((req, res) => {
         const myUrl = new url.URL("http://localhost:8000" + req.url);
 
-        if (myUrl.pathname === '/duplicate') {
+        if (myUrl.pathname === "/duplicate") {
             res.end(
                 "The duplicate of "
                 + myUrl.searchParams.get("number")
@@ -1603,7 +1603,7 @@ To make this request handler work, we need to rework our `index.js` webserver co
             );
         }
 
-        if (myUrl.pathname === '/square') {
+        if (myUrl.pathname === "/square") {
             res.end(
                 "The square of "
                 + myUrl.searchParams.get("number")
@@ -1625,11 +1625,19 @@ Things are now getting more complex, so let's recapitulate what each part of thi
 
 The first three lines declare consts `http`, `url`, and `calculator`, by "requiring" internal Node.js modules *http* and *url*, as well as our own local module *calculator* (note once again how the latter is referenced as a local file path beginning with `./`, while the internal modules are referenced by their name only).
 
-We then declare const `server`, by calling function `createServer` of object `http`. The one and only parameter we pass into this function is an anonymous or inline function of the form `(req, res) => { ... }`. The running HTTP server will trigger this function whenever it receives a new incoming HTTP request.
+We then declare const `server`, by calling function `createServer` of object `http`. The one and only parameter we pass into this function is an anonymous or inline callback function of form `(req, res) => { ... }`. The running HTTP server will trigger this function whenever it receives a new incoming HTTP request.
 
-The body of this inline function does the heavy lifting required to handle a request.
+The body of this inline function does the heavy lifting required to handle a request. First, on line 6, we create an object called `myUrl`, by passing the `req.url` string attribute to class `url.URL`. Because `url.URL` is a class, and not a function, we need to call it using the `new` operator. This results in an object of type `URL` being created and assigned to const `myUrl`.
 
+This is followed by two `if` statements. If statements execute the code in their curly braces enclosed body block if the expression in the parentheses following the `if` keyword resolves to the boolean value `true`. On line 8, this is the case if the string contained in attribute `myUrl.pathname` is equal to the string value `"/duplicate"`, and it's the case on line 17 if `myUrl.pathname` is `"/square"`.
 
+Depending on which of the two if statements is true, our code responds to the request (by executing `res.end()`) by either running `calculator.duplicate()` or `calculator.square()`. These functions need a number to calculate a result, and we want to pass the number part of a request like `http://localhost:8000/duplicate?number=42`. We get this value by using function `get` from object `searchParams` on object `myUrl`, on lines 13 and 22.
+
+Last but not least, as it's not enough to set up HTTP request handling, we also set up the server to listen on port *8000* of address *localhost*, on the final five lines of our code file.
+
+Let's also reiterate what happens when we start this server application by running `node index.js`.
+
+As always, Node.js will parse our code file from top to bottom. It loads the code in modules *http*, *url*, and *./calculator*. It then executes the `http.createServer` function, followed by function `server.listen`. At this point, that's all that is being executed. The code between lines 6 and 24 is, at this point, NOT yet being executed! Instead, the code in module *http* waits for the first HTTP request to come in, and only when that happens, our code between lines 6 and 24 (that is, the body of the inline callback function), will be called (and will be called again and again for each incoming HTTP request).
 
 
 ... Übergang zu TypeScript - was passiert zum Beispiel, wenn die Berechnungsfunktionen einen String oder ein bool übergeben bekommen?
