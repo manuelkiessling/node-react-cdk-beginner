@@ -965,15 +965,27 @@ We do this by providing an anonymous function as the first and only parameter to
         res.end("I have received a request, and this is my response.");
     });
 
-The HTTP server code will call this function with two parameters, every time the HTTP server receives an incoming request. A construct like this is a typical pattern found in many JavaScript code files: it's the *callback* pattern.
+The HTTP server code will call this function whenever the HTTP server receives an incoming request. A construct like this is a typical pattern found in many JavaScript code files: it's the *callback* pattern.
 
 The pattern works like this: A certain piece of code - in our case, it's the `createServer` function - takes care of something happening "behind the scenes". In our cases, it's accepting new incoming HTTP requests - something that our own code doesn't need to take care of.
 
-However, the exact way how a new incoming HTTP should be *handled*, after it has been *accepted*, is something we want to define within our own code. It's a bit like asking for a callback in real life. Imagine you plan to buy something from your local dealer on the other side of the town, but you know that the item you are looking for is out of stock on most days.
+However, the exact way how a new incoming HTTP should be *handled*, after it has been *accepted*, is something we want to define with own code.
 
-In this case, you would call the dealer and ask if it is currently in stock. "No", the dealer says, "but tell me your number and I will call you back once it's in stock". This way, you only need to make the trip across town once...
+It's a bit like asking for a callback in real life. Imagine you plan to buy something from your local dealer on the other side of the town, but you know that the item you are looking for is out of stock on most days.
 
-Let's now look at this anonymous (or "inline") function in detail: It expects two be called with two parameters: we call the first one `req`, because it is an object containing information about the incoming *request*, and the second one `res`, because this is an object containing functions which allow use to *respond* to the incoming request - like the function `end` that is used to send an HTTP response and immediately finish response handling.
+In this case, you would call the dealer and ask if that item is currently in stock. "No", the dealer says, "but tell me your number and I will call you back once it's back in stock". This way, you only need to make the trip across town once the item is in stock.
+
+Your dealer makes a note to call you back later, and he will regularly check the item's stock. Once it becomes available, he will call you.
+
+Lines 3 to 5 in the above code do exactly the same thing. The `http` module is your dealer, and calling `http.createServer` from your own code is calling your dealer to set up a callback. By doing so, you tell him "Hey, whenever you receive a new item, I mean, a new HTTP request, would you be so kind to call me back? Here is my number, I mean, the function from my code which I would like you to call when it happens."
+
+In this sense, the `(req, res) => { ... }` inline function is like the telephone number under which your dealer can reach you.
+
+This way, you and your dealer, or your own code and the *http* module code, are becoming integrated while also being decoupled. They are now integrated, because the HTTP server code from module *http* will now call your own code whenever an HTTP request comes in - but they are also decoupled: your own code doesn't care what the *http* module does under the hood or what it does while no HTTP request are coming in, in the same way you don't need to care what your dealer does all day and how exactly he will check for new inventory items, as long as he calls you back once your item becomes available. And the *http* module code doesn't care what you do with the HTTP requests it passes into your callback function - all it cares about is that the callback function exists and can be called.
+
+Let's stress another point to make sure it is completely clear: This inline callback function of yours is NOT called immediately when running `node index.js`. It is called IF and WHEN an HTTP request comes in. This also means it is potentially called again and again - if you send 100 HTTP requests to your server, your own code, the inline callback function, will run 100 times, and if your start the server application, but never send an HTTP request to this server, it will run exactly zero times.
+
+Let's now look at this anonymous (or "inline") callback function in detail: It expects to be called with two parameters: we call the first one `req`, because it is an object containing information about the incoming *request*, and the second one `res`, because this is an object containing functions which allow use to *respond* to the incoming request - like the function `end` that is used to send an HTTP response and immediately finish response handling.
 
 Still, running `node index.js` simply throws us back to the command line, with nothing happening.
 
@@ -1618,7 +1630,7 @@ We then declare const `server`, by calling function `createServer` of object `ht
 The body of this inline function does the heavy lifting required to handle a request.
 
 
-Begriff "Callback" ist noch nicht eingeführt!
+
 
 ... Übergang zu TypeScript - was passiert zum Beispiel, wenn die Berechnungsfunktionen einen String oder ein bool übergeben bekommen?
 
