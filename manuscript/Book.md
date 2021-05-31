@@ -973,7 +973,7 @@ However, the exact way how a new incoming HTTP should be *handled*, after it has
 
 It's a bit like asking for a callback in real life. Imagine you plan to buy something from your local dealer on the other side of the town, but you know that the item you are looking for is out of stock on most days.
 
-In this case, you would call the dealer and ask if that item is currently in stock. "No", the dealer says, "but tell me your number and I will call you back once it's back in stock". This way, you only need to make the trip across town once the item is in stock.
+In this case, you would call the dealer and ask if that item is currently in stock. "No", the dealer says, "but tell me your number and I will call you back once it's available". This way, you only need to make the trip across town once the item is in stock.
 
 Your dealer makes a note to call you back later, and he will regularly check the item's stock. Once it becomes available, he will call you.
 
