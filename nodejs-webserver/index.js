@@ -22,7 +22,6 @@ const server = http.createServer((req, res) => {
             + calculator.squareNumber(myUrl.searchParams.get("number"))
         );
     }
-
 });
 
 server.listen(

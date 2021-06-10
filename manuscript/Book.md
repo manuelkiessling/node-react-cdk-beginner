@@ -1611,7 +1611,6 @@ To make this request handler work (and also the one handling "square" requests),
                 + calculator.squareNumber(myUrl.searchParams.get("number"))
             );
         }
-
     });
 
     server.listen(
@@ -1637,7 +1636,7 @@ Last but not least, as it's not enough to set up HTTP request handling, we also 
 
 Let's also reiterate what happens when we start this server application by running `node index.js`.
 
-As always, Node.js will parse our code file from top to bottom. It loads the code in modules *http*, *url*, and *./calculator*. It then executes the `http.createServer` function, followed by function `server.listen`. At this point, that's all that is being executed. The code between lines 6 and 24 is, at this point, NOT yet being executed! Instead, the code in module *http* waits for the first HTTP request to come in, and only when that happens, our code between lines 6 and 24 (that is, the body of the inline callback function), will be called (and will be called again and again for each incoming HTTP request).
+As always, Node.js will parse our code file from top to bottom. It loads the code in modules *http*, *url*, and *./calculator*. It then executes the `http.createServer` function, followed by function `server.listen` on line 27. At this point, that's all that is being executed. The code between lines 6 and 24 is, at this point, NOT yet being executed! Instead, the code in module *http* waits for an HTTP request to come in, and whenever this happens - and *only* whenever that happens - our code between lines 6 and 24 (that is, the body of the inline callback function), will be called (and will be called again and again for each incoming HTTP request).
 
 
 ... Übergang zu TypeScript - was passiert zum Beispiel, wenn die Berechnungsfunktionen einen String oder ein bool übergeben bekommen?
