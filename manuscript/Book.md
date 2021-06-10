@@ -1639,6 +1639,14 @@ Let's also reiterate what happens when we start this server application by runni
 As always, Node.js will parse our code file from top to bottom. It loads the code in modules *http*, *url*, and *./calculator*. It then executes the `http.createServer` function, followed by function `server.listen` on line 27. At this point, that's all that is being executed. The code between lines 6 and 24 is, at this point, NOT yet being executed! Instead, the code in module *http* waits for an HTTP request to come in, and whenever this happens - and *only* whenever that happens - our code between lines 6 and 24 (that is, the body of the inline callback function), will be called (and will be called again and again for each incoming HTTP request).
 
 
+### The bug
+
+If you play around with the new server application, for example by running `curl "http://localhost:8000/duplicate?number=42"`, you will see how everything works as expected. And yet, our implementation has a big problem. And this problem - this fundamental bug, really - has to do with types, as so many JavaScript code bugs do.
+
+Let's first analyze and understand the problem, and then solve it. Spoiler alert: the solution is to not write our webserver with JavaScript. This might sound very radical, but as we will see, it's a very elegant and natural solution. But let's take it step by step.
+
+
+
 ... Übergang zu TypeScript - was passiert zum Beispiel, wenn die Berechnungsfunktionen einen String oder ein bool übergeben bekommen?
 
 
