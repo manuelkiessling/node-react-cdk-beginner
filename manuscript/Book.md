@@ -1643,11 +1643,25 @@ As always, Node.js will parse our code file from top to bottom. It loads the cod
 
 If you play around with the new server application, for example by running `curl "http://localhost:8000/duplicate?number=42"`, you will see how everything works as expected. And yet, our implementation has a big problem. And this problem - this fundamental bug, really - has to do with types, as so many JavaScript code bugs do.
 
-Let's first analyze and understand the problem, and then solve it. Spoiler alert: the solution is to not write our webserver with JavaScript. This might sound very radical, but as we will see, it's a very elegant and natural solution. But let's take it step by step.
+Let's first analyze and understand the problem, and then solve it. Spoiler alert: the solution is to not write our webserver with JavaScript, but with another programming language. This might sound very radical, but as we will see, it's a very elegant and natural solution. But let's take it step by step.
 
 
+We start by demonstrating the bug. To do so, start another `curl` request, like this:
 
-... Übergang zu TypeScript - was passiert zum Beispiel, wenn die Berechnungsfunktionen einen String oder ein bool übergeben bekommen?
+    curl "http://localhost:8000/duplicate?number=five"
+
+While this works, it doesn't work as expected. This is the response:
+
+    The square of five is NaN
+
+`"five"`, of course, is not a number - this is what *NaN* means, literally: *Not a Number*[^note8]. Instead, it is a string with value `"five"`.
+
+But here is an important detail: if we send the request `curl "http://localhost:8000/duplicate?number=42"`, then `"42"` isn't a number either! It is a string with value `"42"`.
+
+
+The problem, or rather its root cause, is not that our code cannot *handle* strings that aren't numbers. The problem is that JavaScript didn't tell us as early as possible.
+
+In terms of software quality, *knowing* about the bug and being *able* to fix it is not the same as *being explicitly told* about the bug and being *forced* to fix it by the programming language!
 
 
 
@@ -1679,3 +1693,5 @@ In addition, interaction of the user with the graphical representation of the DO
 [^note6]: https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
 
 [^note7]: There is no theoretical limit to how deep objects can be nested, but there usually is a practical limit, because nesting objects within objects means storing data after all, and our computers do not have unlimited storage space.
+
+[^note8]: See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NaN for more details.
