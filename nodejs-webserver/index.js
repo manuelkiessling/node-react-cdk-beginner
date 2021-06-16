@@ -5,10 +5,20 @@ const calculator = require("./calculator");
 const server = http.createServer((req, res) => {
     const myUrl = new url.URL("http://localhost:8000" + req.url);
 
+    const number = myUrl.searchParams.get("number");
+
+    if (isNaN(parseInt(number))) {
+        res.end(
+            "Value "
+            + number
+            + " cannot be interpreted as an integer value!"
+        );
+    }
+
     if (myUrl.pathname === "/duplicate") {
         res.end(
             "The duplicate of "
-            + myUrl.searchParams.get("number")
+            + number
             + " is "
             + calculator.duplicateNumber(myUrl.searchParams.get("number"))
         );
@@ -17,7 +27,7 @@ const server = http.createServer((req, res) => {
     if (myUrl.pathname === "/square") {
         res.end(
             "The square of "
-            + myUrl.searchParams.get("number")
+            + number
             + " is "
             + calculator.squareNumber(myUrl.searchParams.get("number"))
         );

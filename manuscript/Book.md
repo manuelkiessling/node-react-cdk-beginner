@@ -1656,12 +1656,87 @@ While this works, it doesn't work as expected. This is the response:
 
 `"five"`, of course, is not a number - this is what *NaN* means, literally: *Not a Number*[^note8]. Instead, it is a string with value `"five"`.
 
-But here is an important detail: if we send the request `curl "http://localhost:8000/duplicate?number=42"`, then `"42"` isn't a number either! It is a string with value `"42"`.
+But here is an important detail: if we send the request `curl "http://localhost:8000/duplicate?number=42"`, then `"42"` isn't a number either! It too is a string, with value `"42"`.
+
+The reason our code works with string `"42"` but not with string `"five"` has to do with JavaScript's type system, its lack of strict type checking, and its ability to implicitly and automatically transform values from one type into another - at least in some cases.
+
+We can easily demonstrate this on the Node.js CLI (reminder: just run `node` on the Terminal command line to get into the Node.js CLI).
+
+Type `"42" * 2` into the CLI, and the result is `84`. Type `"five" * 2`, and the result is `NaN`:
+
+    % node
+    Welcome to Node.js v14.16.1.
+    Type ".help" for more information.
+
+    > "42" * 2
+    84
+
+    > "five" * 2
+    NaN
+
+A computer cannot multiply a string with a number. If calculating `"42" * 2` works, it means that the string value is transformed into a number value before the actual multiplication happens. This happens implicitly, but we can do so explicitly, using function `parseInt`:
+
+    > parseInt("42")
+    42
+
+Trying the same with string value `"five"` yields `NaN`:
+
+    > parseInt("five")
+    NaN
+
+Note: `parseInt` will try to interpret a given value as an integer number, that is, a number without a fractional part, like -1, 0, 1, 2 etc. There is also `parseFloat`, which will try to interpret a given value as a floating point number, like -1.0, 0.0, 0.123 etc.
+
+This offers a way to work around the bug, in file *index.js*. Instead of just passing the *number* parameter to the *calculator* functions, we can first ensure that its value can be interpreted as a number, and bail out if that's not the case:
+
+    const http = require("http");
+    const url = require("url");
+    const calculator = require("./calculator");
+
+    const server = http.createServer((req, res) => {
+        const myUrl = new url.URL("http://localhost:8000" + req.url);
+
+        const number = myUrl.searchParams.get("number");
+
+        if (isNaN(parseInt(number))) {
+            res.end(
+                "Value "
+                + number
+                + " cannot be interpreted as an integer value!"
+            );
+        }
+
+        if (myUrl.pathname === "/duplicate") {
+            res.end(
+                "The duplicate of "
+                + number
+                + " is "
+                + calculator.duplicateNumber(myUrl.searchParams.get("number"))
+            );
+        }
+
+        if (myUrl.pathname === "/square") {
+            res.end(
+                "The square of "
+                + number
+                + " is "
+                + calculator.squareNumber(myUrl.searchParams.get("number"))
+            );
+        }
+    });
+
+    server.listen(
+        "8000",
+        "localhost",
+        () => console.log("HTTP server started and available at http://localhost:8000.")
+    );
+
+Note: isNaN vs === NaN
 
 
-The problem, or rather its root cause, is not that our code cannot *handle* strings that aren't numbers. The problem is that JavaScript didn't tell us as early as possible.
+The problem, or rather its root cause, is not that our code cannot *handle* strings that don't contain a number. The problem is that JavaScript didn't *tell us* as early as possible.
 
-In terms of software quality, *knowing* about the bug and being *able* to fix it is not the same as *being explicitly told* about the bug and being *forced* to fix it by the programming language!
+In terms of software quality, *knowing* about a bug and *being able* to fix it is not the same as *being explicitly told* about a bug and being *forced* to fix it by the programming language!
+
 
 
 
