@@ -7,7 +7,7 @@ const server = http.createServer((req, res) => {
 
     const number = myUrl.searchParams.get("number");
 
-    if (isNaN(parseInt(number))) {
+    if (Number.isNaN(parseInt(number))) {
         res.end(
             "Value "
             + number

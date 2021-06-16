@@ -1697,7 +1697,7 @@ This offers a way to work around the bug, in file *index.js*. Instead of just pa
 
         const number = myUrl.searchParams.get("number");
 
-        if (isNaN(parseInt(number))) {
+        if (Number.isNaN(parseInt(number))) {
             res.end(
                 "Value "
                 + number
@@ -1730,14 +1730,16 @@ This offers a way to work around the bug, in file *index.js*. Instead of just pa
         () => console.log("HTTP server started and available at http://localhost:8000.")
     );
 
-Note: isNaN vs === NaN
+Note: you might be tempted to simply do a comparison to check if something is `NaN`, like this: `if (parseInt(number) === NaN) { ... }`. However, comparing something to `NaN` will *always* yield `false`. Yes, this means that `NaN === NaN` is `false`. `NaN` is the only value that is not equal to itself. Sounds weird? That's because it is. Use `Number.isNaN` and you will be fine.
+
+
 
 
 The problem, or rather its root cause, is not that our code cannot *handle* strings that don't contain a number. The problem is that JavaScript didn't *tell us* as early as possible.
 
 In terms of software quality, *knowing* about a bug and *being able* to fix it is not the same as *being explicitly told* about a bug and being *forced* to fix it by the programming language!
 
-
+https://stackoverflow.com/a/29918884
 
 
 # Part 3: React - Rich web applications with JavaScript
