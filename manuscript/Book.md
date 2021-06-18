@@ -1730,12 +1730,29 @@ This offers a way to work around the bug, in file *index.js*. Instead of just pa
         () => console.log("HTTP server started and available at http://localhost:8000.")
     );
 
-Note: you might be tempted to simply do a comparison to check if something is `NaN`, like this: `if (parseInt(number) === NaN) { ... }`. However, comparing something to `NaN` will *always* yield `false`. Yes, this means that `NaN === NaN` is `false`. `NaN` is the only value that is not equal to itself. Sounds weird? That's because it is. Use `Number.isNaN` and you will be fine.
+Note: you might be tempted to simply do a comparison to check if something is `NaN`, like this: `if (parseInt(number) === NaN) { ... }`. However, comparing something to `NaN` will *always* yield `false`. Yes, this means that `NaN === NaN` is `false`. `NaN` is the only value that is not equal to itself. Sounds weird? That's because it is. Use the `Number.isNaN` function and you will be fine.
+
+With this, we avoid running into the bug, and all is fine, right? No it's not. Because the *actual* problem here lies much deeper.
+
+The problem, or rather its root cause, is not that our code cannot *handle* strings that don't contain a number. The problem is that JavaScript didn't *tell us* as early as possible, and we could only find out by running and testing the server application.
+
+While a programming language cannot prevent each and every possible bug, it should support us in writing bug-free code as much as possible. Let's say we would mistype the first line of code in file index.js, and write `connst` instead of `const`. If we'd try to run this code, Node.js would bail out with a `SyntaxError: Unexpected identifier` message and refuse to run our code. So JavaScript clearly cares about correctly written identifiers.
+
+However, it doesn't care about types in the same way. We can easily write an application like this:
+
+    const duplicateNumber = (num) => num * 2;
+
+    console.log(duplicateNumber("So what?"));
+
+    console.log(duplicateNumber(true));
+
+and JavaScript won't bat an eye. To add injury to insult, the second function call, `duplicateNumber(true)`, will even return a numeric result - multiplying the boolean value `true` with the number value `2` results in the number value `2`, because why not?
+
+Running into the kind of bugs resulting from this kind of negligence in a production application with thousands of users isn't exactly fun.
 
 
 
-
-The problem, or rather its root cause, is not that our code cannot *handle* strings that don't contain a number. The problem is that JavaScript didn't *tell us* as early as possible.
+If types play an important role for our applications, but at the same time, the language doesn't really care about them when it is time to decide if an application should be allowed to start or not, then something is off.
 
 In terms of software quality, *knowing* about a bug and *being able* to fix it is not the same as *being explicitly told* about a bug and being *forced* to fix it by the programming language!
 
