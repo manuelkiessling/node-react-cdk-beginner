@@ -1750,6 +1750,35 @@ and JavaScript won't bat an eye. To add injury to insult, the second function ca
 
 Running into the kind of bugs resulting from this kind of negligence in a production application with thousands of users isn't exactly fun.
 
+While JavaScript has a notion of types, as we've learned, it doesn't have any language constructs to define which types are expected in a given situation. Let's look at the `duplicateNumber` function again:
+
+    const duplicateNumber = (num) => num * 2;
+
+We, the developers, know and understand that passing anything but a value of type number for parameter `num` doesn't make sense. But we have no way to tell JavaScript.
+
+What we *can* do, of course, is check the type of a passed value within the function, using `typeof`, like this:
+
+    const duplicateNumber = (num) => {
+        if (typeof(num) !== "number") {
+            // do something
+        } else {
+            return num * 2;
+        }
+    }
+
+But once again, this doesn't really prevent us from running an application where we pass a string for `num` although that doesn't make any sense, a problem that is only handled when the application is already running.
+
+What we really want is something like this:
+
+    const duplicateNumber = (num: number) => num * 2;
+
+This way, we would define the function parameter more precisely: we give it a name, but we *also* declare, on the language level, that only values of type `number` are accepted when calling the function.
+
+With this, JavaScript would have the knowledge it needs to deny running a code file like this:
+
+        const duplicateNumber = (num: number) => num * 2;
+
+        duplicateNumber("So what?");
 
 
 If types play an important role for our applications, but at the same time, the language doesn't really care about them when it is time to decide if an application should be allowed to start or not, then something is off.
