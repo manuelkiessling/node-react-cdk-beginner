@@ -19,7 +19,7 @@ Then, it will introduce **Node.js**, a tool which allows you to write and run Ja
 
 Next, it will introduce **TypeScript**, a software language that at its core is identical to JavaScript, but adds some very important goodies. This allows you to write more complex JavaScript applications with ease and confidence.
 
-It then introduces **React and Redux**, two JavaScript & TypeScript tools that will enable you to write elegant web applications with beautiful and fast user interfaces.
+It then introduces **React and Redux**, two JavaScript & TypeScript libraries that will enable you to write elegant web applications with beautiful and fast user interfaces.
 
 Finally, it will teach you how to put all of your newly gained JavaScript, TypeScript, Node.js, React, and Redux knowledge to practical use, in order to create a fully working application running on Amazon AWS.
 
@@ -1810,9 +1810,9 @@ If we wanted to create a TypeScript file that is functionally equivalent to the 
 
     greetFriendly("Jane");
 
-Yeah, right: It's the exact same code! Writing TypeScript means writing JavaScript code exactly like we did before, but *optionally* adding type safety if and only if we want to.
+It's the exact same code! Writing TypeScript means writing JavaScript code exactly like we did before, but *optionally* adding type safety if and only if we want to.
 
-This means that while we could simply keep the TypeScript code above as it is, we are now able to improve it in terms of type safety if we want, like this:
+This means that while we could simply keep the TypeScript code above as it is, we now *can* improve it in terms of type safety, like this:
 
     const greetFriendly = (name: string) => {
         console.log("Hello " + name);
@@ -1820,8 +1820,32 @@ This means that while we could simply keep the TypeScript code above as it is, w
 
     greetFriendly("Jane");
 
-All we did was add the `: string` type declaration to the `greetFriendly` function definition. While cannot understand and use this additional information, TypeScript can, making our code type safe.
+All we did was add the `: string` type declaration to the `greetFriendly` function definition. While JavaScript cannot understand and use this additional information, TypeScript can, making our code type safe.
 
+We are now facing one minor challenge now: Node.js only runs JavaScript code, and doesn't understand TypeScript code. So how can we create a Node.js application using TypeScript?
+
+The TypeScript project has a simple solution for this: It ships with `tsc`, the TypeScript Compiler. This compiler takes TypeScript code and *transpiles* it into valid JavaScript code.
+
+Let's see how this works. First, create a new project folder, called `typescript-hello-world`.
+
+Within this folder, create file `index.ts` (note the `.ts` file suffix instead of `.js`), and fill it with our greet code:
+
+    const greetFriendly = (name: string) => {
+    console.log("Hello " + name);
+    };
+
+    greetFriendly("Jane");
+
+Sure enough, Node.js won't be able to run this code:
+
+    % node index.ts
+    index.ts:1
+    const greetFriendly = (name: string) => {
+    ^
+    
+    SyntaxError: Unexpected token ':'
+    
+Ok, we need need 
 
 https://stackoverflow.com/a/29918884
 
