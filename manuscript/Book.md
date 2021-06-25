@@ -1790,7 +1790,38 @@ But in terms of software quality, *knowing* about a bug and *being able* to fix,
 
 Turns out a lot of people think the same way, and saw the shortcomings of JavaScript in this area as serious enough that they decided to do something about it. These people wanted to put complex JavaScript applications into production with confidence, and saw the lack of type safety as such a crucial show-stopper that they created a new programming language - a beautiful and elegant language that can be summarized as "JavaScript, but with type safety": TypeScript.
 
-Now, let me get the most pressing issue out of the way right here: No, everything you've learned so far was not TypeScript
+Now, let me get the most pressing issue out of the way right here: No, everything you've learned so far was not learned in vain. Quite the opposite! That's because TypeScript has a very clever approach: It isn't a completely new language. Instead, it is based on JavaScript, and merely extends it with the type safety language constructs asked for above.
+
+This means that every valid JavaScript code is also valid TypeScript code.
+
+Let's assume we have the following JavaScript code:
+
+    const greetFriendly = (name) => {
+        console.log("Hello " + name);
+    };
+
+    greetFriendly("Jane");
+
+If we wanted to create a TypeScript file that is functionally equivalent to the JavaScript code above, this would be the result:
+
+    const greetFriendly = (name) => {
+        console.log("Hello " + name);
+    };
+
+    greetFriendly("Jane");
+
+Yeah, right: It's the exact same code! Writing TypeScript means writing JavaScript code exactly like we did before, but *optionally* adding type safety if and only if we want to.
+
+This means that while we could simply keep the TypeScript code above as it is, we are now able to improve it in terms of type safety if we want, like this:
+
+    const greetFriendly = (name: string) => {
+        console.log("Hello " + name);
+    };
+
+    greetFriendly("Jane");
+
+All we did was add the `: string` type declaration to the `greetFriendly` function definition. While cannot understand and use this additional information, TypeScript can, making our code type safe.
+
 
 https://stackoverflow.com/a/29918884
 
