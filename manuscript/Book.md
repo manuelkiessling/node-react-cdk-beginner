@@ -1780,10 +1780,17 @@ With this, JavaScript would have the knowledge it needs to deny running a code f
 
         duplicateNumber("So what?");
 
+Before even running this code, the interpreter would be able to identify the mismatch, that the `num` parameter must be of type `number`, and that the type of the the value it is called with on the second line is `string`, and it could deny running this code, preventing a runtime bug.
 
-If types play an important role for our applications, but at the same time, the language doesn't really care about them when it is time to decide if an application should be allowed to start or not, then something is off.
+Here's the thing: if value types obviously play an important role to avoid bugs in our applications, but at the same time, the language we use doesn't really care about them when it is time to decide if an application should be allowed to start or not, then something is off.
 
-In terms of software quality, *knowing* about a bug and *being able* to fix it is not the same as *being explicitly told* about a bug and being *forced* to fix it by the programming language!
+Of course, we could accept the situation as it is and trust our knowledge and keen eye to spot and avoid these kinds of bugs ourselves.
+
+But in terms of software quality, *knowing* about a bug and *being able* to fix, while certainly an important capability, is not the same as *being explicitly told* about a bug and being *forced* to fix it by the programming language itself!
+
+Turns out a lot of people think the same way, and saw the shortcomings of JavaScript in this area as serious enough that they decided to do something about it. These people wanted to put complex JavaScript applications into production with confidence, and saw the lack of type safety as such a crucial show-stopper that they created a new programming language - a beautiful and elegant language that can be summarized as "JavaScript, but with type safety": TypeScript.
+
+Now, let me get the most pressing issue out of the way right here: No, everything you've learned so far was not TypeScript
 
 https://stackoverflow.com/a/29918884
 
