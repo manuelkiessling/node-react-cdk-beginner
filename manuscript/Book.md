@@ -1906,7 +1906,7 @@ Try to run `tsc` with this input code, and you will see the following:
 
     Found 1 error.
 
-As expected, the TypeScript Compiler bails out and won't create any JavaScript code. Our TypeScript code defined parameter `name` to be of type `string`, and the compiler therefore won't allow to create JavaScript code that calls function `greetFriendly` with a parameter of type `number`.
+As expected, the TypeScript Compiler bails out with an error and won't create any JavaScript code. Our TypeScript code defined parameter `name` to be of type `string`, and the compiler therefore won't allow to create JavaScript code that calls function `greetFriendly` with a parameter of type `number`.
 
 
 
