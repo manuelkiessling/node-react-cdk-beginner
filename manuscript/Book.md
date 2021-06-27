@@ -46,7 +46,7 @@ But there are very good reasons to then take the next step and write your applic
 
 Luckily, taking this step is very straightforward. Once you understand the basics of software development with JavaScript (which is what the first part of this book takes care of), you can switch to TypeScript very easily. This is because TypeScript is not a completely new and different language - instead, it is a so-called *superset* of JavaScript, extending JavaScript's syntax with some additional syntax that makes your software development experience even better.
 
-It does so by extending JavaScript, a language which doesn't allow to explicitly type its values, with explicit type annotation syntax, giving you type safety while building your applications.
+It does so by extending JavaScript, a language which doesn't allow to explicitly type its values, with explicit type annotation syntax, giving you type-safety while building your applications.
 
 If you are new to programming, the above sentence probably didn't make much sense. Fear not! We will take it step by step: we first learn how to build software with JavaScript, and then we will learn how to build software even better with TypeScript.
 
@@ -1788,9 +1788,9 @@ Of course, we could accept the situation as it is and trust our knowledge and ke
 
 But in terms of software quality, *knowing* about a bug and *being able* to fix, while certainly an important capability, is not the same as *being explicitly told* about a bug and being *forced* to fix it by the programming language itself!
 
-Turns out a lot of people think the same way, and saw the shortcomings of JavaScript in this area as serious enough that they decided to do something about it. These people wanted to put complex JavaScript applications into production with confidence, and saw the lack of type safety as such a crucial show-stopper that they created a new programming language - a beautiful and elegant language that can be summarized as "JavaScript, but with type safety": TypeScript.
+Turns out a lot of people think the same way, and saw the shortcomings of JavaScript in this area as serious enough that they decided to do something about it. These people wanted to put complex JavaScript applications into production with confidence, and saw the lack of type-safety as such a crucial show-stopper that they created a new programming language - a beautiful and elegant language that can be summarized as "JavaScript, but with type-safety": TypeScript.
 
-Now, let me get the most pressing issue out of the way right here: No, everything you've learned so far was not learned in vain. Quite the opposite! That's because TypeScript has a very clever approach: It isn't a completely new language. Instead, it is based on JavaScript, and merely extends it with the type safety language constructs asked for above.
+Now, let me get the most pressing issue out of the way right here: No, everything you've learned so far was not learned in vain. Quite the opposite! That's because TypeScript has a very clever approach: It isn't a completely new language. Instead, it is based on JavaScript, and merely extends it with the type-safety language constructs asked for above.
 
 This means that every valid JavaScript code is also valid TypeScript code.
 
@@ -1810,9 +1810,9 @@ If we wanted to create a TypeScript file that is functionally equivalent to the 
 
     greetFriendly("Jane");
 
-It's the exact same code! Writing TypeScript means writing JavaScript code exactly like we did before, but *optionally* adding type safety if and only if we want to.
+It's the exact same code! Writing TypeScript means writing JavaScript code exactly like we did before, but *optionally* adding type-safety if and only if we want to.
 
-This means that while we could simply keep the TypeScript code above as it is, we now *can* improve it in terms of type safety, like this:
+This means that while we could simply keep the TypeScript code above as it is, we now *can* improve it in terms of type-safety, like this:
 
     const greetFriendly = (name: string) => {
         console.log("Hello " + name);
@@ -1820,15 +1820,15 @@ This means that while we could simply keep the TypeScript code above as it is, w
 
     greetFriendly("Jane");
 
-All we did was add the `: string` type declaration to the `greetFriendly` function definition. While JavaScript cannot understand and use this additional information, TypeScript can, making our code type safe.
+All we did was add the `: string` type declaration to the `greetFriendly` function definition. While JavaScript cannot understand and use this additional information, TypeScript can, making our code type-safe.
 
 We are now facing one minor challenge now: Node.js only runs JavaScript code, and doesn't understand TypeScript code. So how can we create a Node.js application using TypeScript?
 
-The TypeScript project has a simple solution for this: It ships with `tsc`, the TypeScript Compiler. This compiler takes TypeScript code and *transpiles* it into valid JavaScript code.
+The TypeScript project has a simple solution for this: It ships with `tsc`, the TypeScript Compiler. This compiler takes TypeScript code and translates it into valid JavaScript code. This process is called *transpiling*.
 
 Let's see how this works. First, create a new project folder, called `typescript-hello-world`.
 
-Within this folder, create file `index.ts` (note the `.ts` file suffix instead of `.js`), and fill it with our greet code:
+Within this folder, create file `index.ts` (note the `.ts` file suffix instead of `.js`), and fill it with our type-safe greet code:
 
     const greetFriendly = (name: string) => {
     console.log("Hello " + name);
@@ -1845,7 +1845,34 @@ Sure enough, Node.js won't be able to run this code:
     
     SyntaxError: Unexpected token ':'
     
-Ok, we need need 
+In order to transpile this code into code that Node.js can understand, we need to install the TypeScript Compiler. It is part of a software package called `typescript`, which is made available through the NPM package distribution ecosystem.
+
+When we installed Node.js through NVM before, we also installed the `npm` tool, and we can therefore use this to pull the `typescript` package code onto our local system and, like this:
+
+    % npm install -g typescript
+
+Thanks to the `-g` switch, the package is installed *globally* - that is, it is available from any location, not just the current project folder.
+
+Once NPM has finished installing the package, the application `tsc` that is part of this package can be started:
+
+    % tsc --version
+    
+    Version 4.3.4
+
+Using `tsc` is very simple - you just feed it a TypeScript input file, and it will create a valid JavaScript output file under the same filename, ending with .js instead of .ts. So all we need to run while in folder `typescript-hello-world` is this:
+
+    % tsc index.ts
+
+This creates file `index.js`, which we can run using Node.js:
+
+    % node index.js
+
+    Hello Jane
+
+If you would like to play around with the transpiling process interactively, simply visit the TypeScript Playgound[^note9] - it's an online tool where you can write TypeScript on the left side, and it immediately shows you the resulting JavaScript code on the right side of the page.
+
+
+
 
 https://stackoverflow.com/a/29918884
 
@@ -1880,3 +1907,5 @@ In addition, interaction of the user with the graphical representation of the DO
 [^note7]: There is no theoretical limit to how deep objects can be nested, but there usually is a practical limit, because nesting objects within objects means storing data after all, and our computers do not have unlimited storage space.
 
 [^note8]: See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NaN for more details.
+
+[^note9]: See https://www.typescriptlang.org/play?#code/MYewdgzgLgBA5gJwKZKgMQQSyWAJgGwE8YBeGACjAEMBbJALhmizDgEpSA+GAbwFgAUDGExQkEPiQA6fCDjkARAAkk+WTAUwA1DGp02AbkEBfIwMGIU6LDgKFFAKSpgkCw4KA.
