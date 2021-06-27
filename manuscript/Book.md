@@ -1913,7 +1913,7 @@ As expected, the TypeScript Compiler bails out with an error and won't create an
 https://stackoverflow.com/a/29918884
 
 
-# Part 3: React - Rich web applications with JavaScript
+# Part 3: React - Rich and interactive user interfaces with JavaScript
 
 
 At its core, Redux is a function that takes an existing state and an action, and returns an updated state as a result of applying the action on the existing state.
