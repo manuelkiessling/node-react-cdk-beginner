@@ -1786,7 +1786,7 @@ Here's the thing: if value types obviously play an important role to avoid bugs 
 
 Of course, we could accept the situation as it is and trust our knowledge and keen eye to spot and avoid these kinds of bugs ourselves.
 
-But in terms of software quality, *knowing* about a bug and *being able* to fix, while certainly an important capability, is not the same as *being explicitly told* about a bug and being *forced* to fix it by the programming language itself!
+But in terms of software quality, only *knowing* about a bug and *being able* to fix, while certainly an important capability, is not the same as *being explicitly told* about a bug and being *forced* to fix it by the programming language itself!
 
 Turns out a lot of people think the same way, and saw the shortcomings of JavaScript in this area as serious enough that they decided to do something about it. These people wanted to put complex JavaScript applications into production with confidence, and saw the lack of type-safety as such a crucial show-stopper that they created a new programming language - a beautiful and elegant language that can be summarized as "JavaScript, but with type-safety": TypeScript.
 
