@@ -1695,12 +1695,12 @@ This offers a way to work around the bug, in file *index.js*. Instead of just pa
     const server = http.createServer((req, res) => {
         const myUrl = new url.URL("http://localhost:8000" + req.url);
 
-        const number = myUrl.searchParams.get("number");
+        const num = myUrl.searchParams.get("number");
 
         if (Number.isNaN(parseInt(number))) {
             res.end(
                 "Value "
-                + number
+                + num
                 + " cannot be interpreted as an integer value!"
             );
         }
@@ -1708,18 +1708,18 @@ This offers a way to work around the bug, in file *index.js*. Instead of just pa
         if (myUrl.pathname === "/duplicate") {
             res.end(
                 "The duplicate of "
-                + number
+                + num
                 + " is "
-                + calculator.duplicateNumber(myUrl.searchParams.get("number"))
+                + calculator.duplicateNumber(num)
             );
         }
 
         if (myUrl.pathname === "/square") {
             res.end(
                 "The square of "
-                + number
+                + num
                 + " is "
-                + calculator.squareNumber(myUrl.searchParams.get("number"))
+                + calculator.squareNumber(num)
             );
         }
     });
@@ -1729,6 +1729,8 @@ This offers a way to work around the bug, in file *index.js*. Instead of just pa
         "localhost",
         () => console.log("HTTP server started and available at http://localhost:8000.")
     );
+
+Additionally, to make the code more readable, the value of the *number* parameter is now assigned to const `num` on line 8, reducing the number of `myUrl.searchParams.get("number")` function calls needed to only one.
 
 Note: you might be tempted to simply do a comparison to check if something is `NaN`, like this: `if (parseInt(number) === NaN) { ... }`. However, comparing something to `NaN` will *always* yield `false`. Yes, this means that `NaN === NaN` is `false`. `NaN` is the only value that is not equal to itself. Sounds weird? That's because it is. Use the `Number.isNaN` function and you will be fine.
 
@@ -1750,7 +1752,7 @@ and JavaScript won't bat an eye. To add injury to insult, the second function ca
 
 Running into the kind of bugs resulting from this kind of negligence in a production application with thousands of users isn't exactly fun.
 
-While JavaScript has a notion of types, as we've learned, it doesn't have any language constructs to define which types are expected in a given situation. Let's look at the `duplicateNumber` function again:
+While JavaScript has a notion of types, as we've learned, it doesn't have any language constructs to define and limit which types are expected or allowed in a given situation. Let's look at the `duplicateNumber` function again:
 
     const duplicateNumber = (num) => num * 2;
 
@@ -1782,11 +1784,11 @@ With this, JavaScript would have the knowledge it needs to deny running a code f
 
 Before even running this code, the interpreter would be able to identify the mismatch, that the `num` parameter must be of type `number`, and that the type of the the value it is called with on the second line is `string`, and it could deny running this code, preventing a runtime bug.
 
-Here's the thing: if value types obviously play an important role to avoid bugs in our applications, but at the same time, the language we use doesn't really care about them when it is time to decide if an application should be allowed to start or not, then something is off.
+Here's the thing: if value types obviously play an important role to avoid bugs in our applications, but at the same time, the language we use doesn't really care about them when it is time to decide if an application should be allowed to run or not, then something is off.
 
 Of course, we could accept the situation as it is and trust our knowledge and keen eye to spot and avoid these kinds of bugs ourselves.
 
-But in terms of software quality, only *knowing* about a bug and *being able* to fix, while certainly an important capability, is not the same as *being explicitly told* about a bug and being *forced* to fix it by the programming language itself!
+But in terms of software quality, merely *knowing* about a bug and *being able* to fix, while certainly an important capability, is not the same as *being explicitly told* about a bug and being *forced* to fix it by the programming language itself!
 
 Turns out a lot of people think the same way, and saw the shortcomings of JavaScript in this area as serious enough that they decided to do something about it. These people wanted to put complex JavaScript applications into production with confidence, and saw the lack of type-safety as such a crucial show-stopper that they created a new programming language - a beautiful and elegant language that can be summarized as "JavaScript, but with type-safety": TypeScript.
 
@@ -1810,7 +1812,7 @@ If we wanted to create a TypeScript file that is functionally equivalent to the 
 
     greetFriendly("Jane");
 
-It's the exact same code! Writing TypeScript means writing JavaScript code exactly like we did before, but *optionally* adding type-safety if and only if we want to.
+It's the exact same code! Writing TypeScript means writing JavaScript code exactly like we did before, but also being able to *optionally* add type-safety if and only if we want to.
 
 This means that while we could simply keep the TypeScript code above as it is, we now *can* improve it in terms of type-safety, like this:
 
