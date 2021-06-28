@@ -1,19 +1,13 @@
+import { IncomingMessage, ServerResponse } from 'http';
+
 const http = require("http");
 const url = require("url");
 const calculator = require("./calculator");
 
-const server = http.createServer((req, res) => {
+const server = http.createServer((req: IncomingMessage, res: ServerResponse) => {
     const myUrl = new url.URL("http://localhost:8000" + req.url);
 
     const number = myUrl.searchParams.get("number");
-
-    if (Number.isNaN(parseInt(number))) {
-        res.end(
-            "Value "
-            + number
-            + " cannot be interpreted as an integer value!"
-        );
-    }
 
     if (myUrl.pathname === "/duplicate") {
         res.end(

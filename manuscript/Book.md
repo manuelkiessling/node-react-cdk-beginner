@@ -1916,6 +1916,39 @@ Let's now see how TypeScript can help us to improve our Node.js webserver code.
 
 
 
+
+    % npm init
+    This utility will walk you through creating a package.json file.
+
+    Press ^C at any time to quit.
+    package name: (nodejs-webserver)
+    version: (1.0.0)
+    description:
+    entry point: (index.js)
+    test command:
+    git repository:
+    keywords:
+    author:
+    license: (ISC)
+    About to write to nodejs-webserver/package.json:
+    
+    {
+    "name": "nodejs-webserver",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "ISC"
+    }
+    
+    
+    Is this OK? (yes)
+
+
+
 https://stackoverflow.com/a/29918884
 
 
