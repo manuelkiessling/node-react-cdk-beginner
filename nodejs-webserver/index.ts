@@ -1,29 +1,27 @@
-import { IncomingMessage, ServerResponse } from 'http';
+import http from "http";
+import url from "url";
+import calculator from "./calculator"
 
-const http = require("http");
-const url = require("url");
-const calculator = require("./calculator");
-
-const server = http.createServer((req: IncomingMessage, res: ServerResponse) => {
+const server = http.createServer((req, res) => {
     const myUrl = new url.URL("http://localhost:8000" + req.url);
 
-    const number = myUrl.searchParams.get("number");
+    const num = myUrl.searchParams.get("number");
 
     if (myUrl.pathname === "/duplicate") {
         res.end(
             "The duplicate of "
-            + number
+            + num
             + " is "
-            + calculator.duplicateNumber(myUrl.searchParams.get("number"))
+            + calculator.duplicateNumber(num)
         );
     }
 
     if (myUrl.pathname === "/square") {
         res.end(
             "The square of "
-            + number
+            + num
             + " is "
-            + calculator.squareNumber(myUrl.searchParams.get("number"))
+            + calculator.squareNumber(num)
         );
     }
 });
