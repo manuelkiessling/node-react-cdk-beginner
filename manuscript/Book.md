@@ -1849,7 +1849,7 @@ Sure enough, Node.js won't be able to run this code:
     
 In order to transpile this code into code that Node.js can understand, we need to install the TypeScript Compiler. It is part of a software package called `typescript`, which is made available through the NPM package distribution ecosystem.
 
-When we installed Node.js through NVM before, we also installed the `npm` tool, and we can therefore use this to pull the `typescript` package code onto our local system and, like this:
+When we installed Node.js through NVM before, we also installed the `npm` tool, and we can therefore use this to pull the `typescript` package code onto our local system, like this:
 
     % npm install -g typescript
 
@@ -1886,7 +1886,7 @@ We haven't met the `var` keyword before, and instead of `greetFriendly = (name: 
 
 Another observation: While our TypeScript code enforced type-safety for the parameter of the greetFriendly function, there is no type-checking logic in the resulting JavaScript code (using `typeof` or similar mechanisms). That's the point of TypeScript - it allows you to *write* type-safe code, but doesn't make the *running* code type-safe.
 
-In this sense, TypeScript's goal is to support type-safety when *authoring* code - it is a tool that for the humans that create applications, not a tool for the machines running it.
+In this sense, TypeScript's goal is to support type-safety when *authoring* code - it is a tool for the humans that *create* applications, not a tool for the machines *running* it.
 
 While this sounds like only a very minor value proposition, it is in fact very powerful. The earlier potential bugs are identified in the software development lifecycle, the smaller their impact. And authoring code is obviously one of the earliest steps in this lifecycle (preceded only by requirements analysis and software design).
 
@@ -1909,6 +1909,8 @@ Try to run `tsc` with this input code, and you will see the following:
     Found 1 error.
 
 As expected, the TypeScript Compiler bails out with an error and won't create any JavaScript code. Our TypeScript code defined parameter `name` to be of type `string`, and the compiler therefore won't allow to create JavaScript code that calls function `greetFriendly` with a parameter of type `number`, although such a function call would be perfectly possible in JavaScript.
+
+Depending on the code editor you use, you don't need to wait for a `tsc` run to identify type-safety issues. For example, IntelliJ IDE ships with a TypeScript plugin which marks invalid function calls and other problems right in the code editor.
 
 It was stated earlier that "in terms of software quality, only *knowing* about a bug and *being able* to fix, while certainly an important capability, is not the same as *being explicitly told* about a bug and being *forced* to fix it by the programming language itself!"
 

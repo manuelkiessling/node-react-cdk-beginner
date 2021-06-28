@@ -1,9 +1,9 @@
-import http from "http";
-import url from "url";
+import { createServer } from "http";
+import { URL } from "url";
 import calculator from "./calculator"
 
-const server = http.createServer((req, res) => {
-    const myUrl = new url.URL("http://localhost:8000" + req.url);
+const server = createServer((req, res) => {
+    const myUrl = new URL("http://localhost:8000" + req.url);
 
     const num = myUrl.searchParams.get("number");
 
@@ -12,7 +12,7 @@ const server = http.createServer((req, res) => {
             "The duplicate of "
             + num
             + " is "
-            + calculator.duplicateNumber(num)
+            + calculator.duplicateNumber(5)
         );
     }
 
@@ -21,13 +21,13 @@ const server = http.createServer((req, res) => {
             "The square of "
             + num
             + " is "
-            + calculator.squareNumber(num)
+            + calculator.squareNumber(5)
         );
     }
 });
 
 server.listen(
-    "8000",
+    8000,
     "localhost",
     () => console.log("HTTP server started and available at http://localhost:8000.")
 );
