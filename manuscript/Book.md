@@ -1326,7 +1326,7 @@ As said, we always return the same resource when responding to a request, no mat
     });
 
     server.listen(
-        "8000",
+        8000,
         "localhost",
         () => console.log("HTTP server started and available at http://localhost:8000.")
     );
@@ -1361,7 +1361,7 @@ We can use the request-handling code to take a look at all the attributes and me
     });
 
     server.listen(
-        "8000",
+        8000,
         "localhost",
         () => console.log("HTTP server started and available at http://localhost:8000.")
     );
@@ -1380,7 +1380,7 @@ Most of these attributes don't look too useful, though. But there are some that 
     });
 
     server.listen(
-        "8000",
+        8000,
         "localhost",
         () => console.log("HTTP server started and available at http://localhost:8000.")
     );
@@ -1536,7 +1536,7 @@ And thus, an updated webserver implementation that shows the contents of the URL
     });
 
     server.listen(
-        "8000",
+        8000,
         "localhost",
         () => console.log("HTTP server started and available at http://localhost:8000.")
     );
@@ -1614,7 +1614,7 @@ To make this request handler work (and also the one handling "square" requests),
     });
 
     server.listen(
-        "8000",
+        8000,
         "localhost",
         () => console.log("HTTP server started and available at http://localhost:8000.")
     );
@@ -1725,7 +1725,7 @@ This offers a way to work around the bug, in file *index.js*. Instead of just pa
     });
 
     server.listen(
-        "8000",
+        8000,
         "localhost",
         () => console.log("HTTP server started and available at http://localhost:8000.")
     );
