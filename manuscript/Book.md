@@ -1748,7 +1748,7 @@ However, it doesn't care about types in the same way. We can easily write an app
 
     console.log(duplicateNumber(true));
 
-and JavaScript won't bat an eye. To add injury to insult, the second function call, `duplicateNumber(true)`, will even return a numeric result - multiplying the boolean value `true` with the number value `2` results in the number value `2`, because why not?
+and JavaScript won't bat an eye. To add insult to injury, the second function call, `duplicateNumber(true)`, will even return a numeric result - multiplying the boolean value `true` with the number value `2` results in the number value `2`, because why not?
 
 Running into the kind of bugs resulting from this kind of negligence in a production application with thousands of users isn't exactly fun.
 
