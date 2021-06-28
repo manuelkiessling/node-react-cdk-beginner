@@ -1886,9 +1886,9 @@ Another observation: While our TypeScript code enforced type-safety for the para
 
 In this sense, TypeScript's goal is to support type-safety when *authoring* code - it is a tool that for the humans that create applications, not a tool for the machines running it.
 
-While this sounds like only a very minor value proposition, it is in fact very powerful. The earlier potential bugs are identified in the software development lifecycle, the smaller their impact. And authoring code is obviously one of the earliest steps in this lifecycle (with only requirements analysis and software design coming before it).
+While this sounds like only a very minor value proposition, it is in fact very powerful. The earlier potential bugs are identified in the software development lifecycle, the smaller their impact. And authoring code is obviously one of the earliest steps in this lifecycle (preceded only by requirements analysis and software design).
 
-Thus, while the TypeScript Compiler does create code that isn't type-safe, it cannot create this code from TypeScript code that violates encoded type hints, which can be proved by trying to transpile the following code (again, in file `index.ts`):
+Thus, while the TypeScript Compiler *does* create code that isn't type-safe, it *cannot* create such code from TypeScript code that violates its encoded type hints, which can be proved by trying to transpile the following code (again, in file `index.ts`):
 
     const greetFriendly = (name: string) => {
         console.log("Hello " + name);
@@ -1906,7 +1906,13 @@ Try to run `tsc` with this input code, and you will see the following:
 
     Found 1 error.
 
-As expected, the TypeScript Compiler bails out with an error and won't create any JavaScript code. Our TypeScript code defined parameter `name` to be of type `string`, and the compiler therefore won't allow to create JavaScript code that calls function `greetFriendly` with a parameter of type `number`.
+As expected, the TypeScript Compiler bails out with an error and won't create any JavaScript code. Our TypeScript code defined parameter `name` to be of type `string`, and the compiler therefore won't allow to create JavaScript code that calls function `greetFriendly` with a parameter of type `number`, although such a function call would be perfectly possible in JavaScript.
+
+It was stated earlier that "in terms of software quality, only *knowing* about a bug and *being able* to fix, while certainly an important capability, is not the same as *being explicitly told* about a bug and being *forced* to fix it by the programming language itself!"
+
+The above example shows this principle in action. While as an author, you *might* be able to spot and avoid a misguided and potentially problematic function call, using TypeScript and its type-safety annotations *enforces* correct function calls. One can easily imagine how this becomes a huge safety factor when working on code bases with thousand of lines of codes and hundreds of functions.
+
+Let's now see how TypeScript can help us to improve our Node.js webserver code.
 
 
 
