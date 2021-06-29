@@ -1916,7 +1916,9 @@ It was stated earlier that "in terms of software quality, only *knowing* about a
 
 The above example shows this principle in action. While as an author, you *might* be able to spot and avoid a misguided and potentially problematic function call, using TypeScript and its type-safety annotations *enforces* correct function calls. One can easily imagine how this becomes a huge safety factor when working on code bases with thousand of lines of codes and hundreds of functions.
 
-Let's now see how TypeScript can help us to improve our Node.js webserver code.
+Let's now see how TypeScript can help us to improve our Node.js webserver code. We need to reorganize and change the project files a bit, but as promised, we will stay really close to the original JavaScript code.
+
+
 
 
 

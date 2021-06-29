@@ -12,7 +12,7 @@ const server = createServer((req, res) => {
             "The duplicate of "
             + num
             + " is "
-            + calculator.duplicateNumber(5)
+            + calculator.duplicateNumber(num)
         );
     }
 
@@ -21,7 +21,7 @@ const server = createServer((req, res) => {
             "The square of "
             + num
             + " is "
-            + calculator.squareNumber(5)
+            + calculator.squareNumber(num)
         );
     }
 });
