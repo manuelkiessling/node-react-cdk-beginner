@@ -1,6 +1,6 @@
-const duplicateNumber = (num: number) => num * 2;
+const duplicateNumber = (x: number) => x * 2;
 
-const squareNumber = (num: number) => num * num;
+const squareNumber = (x: number) => x * x;
 
 export default {
     duplicateNumber,

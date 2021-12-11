@@ -828,13 +828,13 @@ In order to allow for better readable code snippets, let's introduce another con
 
 Note how JavaScript won't stop you from getting fancy, especially with anonymous function declarations. This is perfectly valid code:
 
-    console.log( ( (num) => num * 2 )( ( (num) => num * num )(8) ) );
+    console.log( ( (x) => x * 2 )( ( (x) => x * x )(8) ) );
 
 But... yeah. Let's just remember that most of the times, software source code is written exactly once, but read often. Thus, my advice is to optimize your code for reading:
 
-    const duplicateNumber = (num) => num * 2;
+    const duplicateNumber = (x) => x * 2;
 
-    const squareNumber = (num) => num * num;
+    const squareNumber = (x) => x * x;
 
     console.log(
         duplicateNumber(
@@ -880,9 +880,9 @@ Quick exercise for illustration purpose: let's create and then require our own m
 
 To do so, first create another file within `nodejs-webserver`, called `calculator.js`, with the following content:
 
-    const duplicateNumber = (num) => num * 2;
+    const duplicateNumber = (x) => x * 2;
 
-    const squareNumber = (num) => num * num;
+    const squareNumber = (x) => x * x;
 
     module.exports = {
         duplicateNumber,
@@ -1409,7 +1409,7 @@ Okay, we now have a basic web server application, and we have a basic idea of wh
 
 We previously wrote module *calculator* in file *calculator.js*. Let's use this to write a web server application that can do calculations based on an incoming request. For example, if we request the server with *curl* like this:
 
-    > curl "http://localhost:8000/duplicate?number=42"
+    > curl "http://localhost:8000/duplicate?x=42"
 
 then we want the server to respond like this:
 
@@ -1417,7 +1417,7 @@ then we want the server to respond like this:
 
 And if we request it like this:
 
-    > curl "http://localhost:8000/square?number=42"
+    > curl "http://localhost:8000/square?x=42"
 
 then we want the server to respond like this:
 
@@ -1433,9 +1433,9 @@ Lastly, we need to use the functions provided by the *calculator* module to do t
 
 As always, we tackle this step by step.
 
-First, an observation: in its current implementation, the server responds to `curl "http://localhost:8000/duplicate?number=42"` like this:
+First, an observation: in its current implementation, the server responds to `curl "http://localhost:8000/duplicate?x=42"` like this:
 
-    The request method was GET, and the requested resource was /duplicate?number=42
+    The request method was GET, and the requested resource was /duplicate?x=42
 
 This shows that `req.url` contains all the information we are interested in - but we need to break this string into useful pieces.
 
@@ -1492,7 +1492,7 @@ As you can see, the resulting URL object provides several attributes, and they a
 
 Ok, looks like we can use this module to get our hands on the different parts of the request URL.
 
-There is one catch, though - creating a URL object only works by providing a "full" URL string. This means we cannot simply pass `req.url` into `new URL()`, because in our example, `req.url` is only the string `"/duplicate?number=42"`, without `http` and `localhost:8000` etc.
+There is one catch, though - creating a URL object only works by providing a "full" URL string. This means we cannot simply pass `req.url` into `new URL()`, because in our example, `req.url` is only the string `"/duplicate?x=42"`, without `http` and `localhost:8000` etc.
 
 If we try to do this on the Node.js CLI, we get an error:
 
@@ -1502,8 +1502,8 @@ If we try to do this on the Node.js CLI, we get an error:
 
     > const url = require("url");
 
-    > const myUrl = new url.URL("/duplicate?number=42");
-    Uncaught TypeError [ERR_INVALID_URL]: Invalid URL: /duplicate?number=42
+    > const myUrl = new url.URL("/duplicate?x=42");
+    Uncaught TypeError [ERR_INVALID_URL]: Invalid URL: /duplicate?x=42
         at onParseError (internal/url.js:259:9)
         at new URL (internal/url.js:335:5)
         at REPL2:1:15
@@ -1514,7 +1514,7 @@ If we try to do this on the Node.js CLI, we get an error:
         at REPLServer.onLine (repl.js:817:10)
         at REPLServer.emit (events.js:327:22)
         at REPLServer.EventEmitter.emit (domain.js:467:12) {
-      input: '/duplicate?number=42',
+      input: '/duplicate?x=42',
       code: 'ERR_INVALID_URL'
     }
 
@@ -1541,10 +1541,10 @@ And thus, an updated webserver implementation that shows the contents of the URL
         () => console.log("HTTP server started and available at http://localhost:8000.")
     );
 
-When we start this server code and run `curl "http://localhost:8000/duplicate?number=42"`, the server application will show the following output on the command line:
+When we start this server code and run `curl "http://localhost:8000/duplicate?x=42"`, the server application will show the following output on the command line:
 
     URL {
-      href: 'http://localhost:8000/duplicate?number=42',
+      href: 'http://localhost:8000/duplicate?x=42',
       origin: 'http://localhost:8000',
       protocol: 'http:',
       username: '',
@@ -1553,12 +1553,12 @@ When we start this server code and run `curl "http://localhost:8000/duplicate?nu
       hostname: 'localhost',
       port: '8000',
       pathname: '/duplicate',
-      search: '?number=42',
-      searchParams: URLSearchParams { 'number' => '42' },
+      search: '?x=42',
+      searchParams: URLSearchParams { 'x' => '42' },
       hash: ''
     }
 
-We are definitely getting closer. Attribute `pathname` carries value `"/duplicate"`, and will carry value `"/square"` if we run `curl "http://localhost:8000/square?number=42"`. We can thus use this attribute to differentiate between both request types, like this:
+We are definitely getting closer. Attribute `pathname` carries value `"/duplicate"`, and will carry value `"/square"` if we run `curl "http://localhost:8000/square?x=42"`. We can thus use this attribute to differentiate between both request types, like this:
 
     if (myUrl.pathname === '/duplicate') {
         // handle the "duplicate" request
@@ -1568,18 +1568,18 @@ We are definitely getting closer. Attribute `pathname` carries value `"/duplicat
         // handle the "square" request
     }
 
-The url module also conveniently splits up the so-called *search* parameters for us, by providing another object on attribute `searchParams`. This object is based on a class called *URLSearchParams*, and it allows us to retrieve the `number` value through the `get` function  provided on the object, like this:
+The url module also conveniently splits up the so-called *search* parameters for us, by providing another object on attribute `searchParams`. This object is based on a class called *URLSearchParams*, and it allows us to retrieve the `x` value through the `get` function  provided on the object, like this:
 
-    `URL.searchParams.get("number")`.
+    `URL.searchParams.get("x")`.
 
 This should allow us to write the code handling a "duplicate" request, like this:
 
         if (myUrl.pathname === "/duplicate") {
             res.end(
                 "The duplicate of "
-                + myUrl.searchParams.get("number")
+                + myUrl.searchParams.get("x")
                 + " is "
-                + calculator.duplicateNumber(myUrl.searchParams.get("number"))
+                + calculator.duplicateNumber(myUrl.searchParams.get("x"))
             );
         }
 
@@ -1597,18 +1597,18 @@ To make this request handler work (and also the one handling "square" requests),
         if (myUrl.pathname === "/duplicate") {
             res.end(
                 "The duplicate of "
-                + myUrl.searchParams.get("number")
+                + myUrl.searchParams.get("x")
                 + " is "
-                + calculator.duplicateNumber(myUrl.searchParams.get("number"))
+                + calculator.duplicateNumber(myUrl.searchParams.get("x"))
             );
         }
 
         if (myUrl.pathname === "/square") {
             res.end(
                 "The square of "
-                + myUrl.searchParams.get("number")
+                + myUrl.searchParams.get("x")
                 + " is "
-                + calculator.squareNumber(myUrl.searchParams.get("number"))
+                + calculator.squareNumber(myUrl.searchParams.get("x"))
             );
         }
     });
@@ -1630,7 +1630,7 @@ The body of this inline function does the heavy lifting required to handle a req
 
 This is followed by two `if` statements. If statements execute the code in their curly braces enclosed body block if the expression in the parentheses following the `if` keyword resolves to the boolean value `true`. On line 8, this is the case if the string contained in attribute `myUrl.pathname` is equal to the string value `"/duplicate"`, and it's the case on line 17 if `myUrl.pathname` is `"/square"`.
 
-Depending on which of the two if statements is true, our code responds to the request (by executing `res.end()`) by either running `calculator.duplicate()` or `calculator.square()`. These functions need a number to calculate a result, and we want to pass the number part of a request like `http://localhost:8000/duplicate?number=42`. We get this value by using function `get` from object `searchParams` on object `myUrl`, on lines 13 and 22.
+Depending on which of the two if statements is true, our code responds to the request (by executing `res.end()`) by either running `calculator.duplicate()` or `calculator.square()`. These functions need a number to calculate a result, and we want to pass the number part of a request like `http://localhost:8000/duplicate?x=42`. We get this value by using function `get` from object `searchParams` on object `myUrl`, on lines 13 and 22.
 
 Last but not least, as it's not enough to set up HTTP request handling, we also set up the server to listen on port *8000* of address *localhost*, on the final five lines of our code file.
 
@@ -1641,14 +1641,14 @@ As always, Node.js will parse our code file from top to bottom. It loads the cod
 
 ### The bug
 
-If you play around with the new server application, for example by running `curl "http://localhost:8000/duplicate?number=42"`, you will see how everything works as expected. And yet, our implementation has a big problem. And this problem - this fundamental bug, really - has to do with types, as so many JavaScript code bugs do.
+If you play around with the new server application, for example by running `curl "http://localhost:8000/duplicate?x=42"`, you will see how everything works as expected. And yet, our implementation has a big problem. And this problem - this fundamental bug, really - has to do with types, as so many JavaScript code bugs do.
 
 Let's first analyze and understand the problem, and then solve it. Spoiler alert: the solution is to not write our webserver with JavaScript, but with another programming language. This might sound very radical, but as we will see, it's a very elegant and natural solution. But let's take it step by step.
 
 
 We start by demonstrating the bug. To do so, start another `curl` request, like this:
 
-    curl "http://localhost:8000/duplicate?number=five"
+    curl "http://localhost:8000/duplicate?x=five"
 
 While this works, it doesn't work as expected. This is the response:
 
@@ -1656,7 +1656,7 @@ While this works, it doesn't work as expected. This is the response:
 
 `"five"`, of course, is not a number - this is what *NaN* means, literally: *Not a Number*[^note8]. Instead, it is a string with value `"five"`.
 
-But here is an important detail: if we send the request `curl "http://localhost:8000/duplicate?number=42"`, then `"42"` isn't a number either! It too is a string, with value `"42"`.
+But here is an important detail: if we send the request `curl "http://localhost:8000/duplicate?x=42"`, then `"42"` isn't a number either! It too is a string, with value `"42"`.
 
 The reason our code works with string `"42"` but not with string `"five"` has to do with JavaScript's type system, its lack of strict type checking, and its ability to implicitly and automatically transform values from one type into another - at least in some cases.
 
@@ -1695,32 +1695,34 @@ This offers a way to work around the bug, in file *index.js*. Instead of just pa
     const server = http.createServer((req, res) => {
         const myUrl = new url.URL("http://localhost:8000" + req.url);
 
-        const num = myUrl.searchParams.get("number");
+        const x = myUrl.searchParams.get("x");
 
-        if (Number.isNaN(parseInt(number))) {
+        if (Number.isNaN(parseInt(x))) {
             res.end(
                 "Value "
-                + num
+                + x
                 + " cannot be interpreted as an integer value!"
             );
-        }
+        } else {
 
-        if (myUrl.pathname === "/duplicate") {
-            res.end(
-                "The duplicate of "
-                + num
-                + " is "
-                + calculator.duplicateNumber(num)
-            );
-        }
+            if (myUrl.pathname === "/duplicate") {
+                res.end(
+                    "The duplicate of "
+                    + x
+                    + " is "
+                    + calculator.duplicateNumber(x)
+                );
+            }
 
-        if (myUrl.pathname === "/square") {
-            res.end(
-                "The square of "
-                + num
-                + " is "
-                + calculator.squareNumber(num)
-            );
+            if (myUrl.pathname === "/square") {
+                res.end(
+                    "The square of "
+                    + x
+                    + " is "
+                    + calculator.squareNumber(x)
+                );
+            }
+
         }
     });
 
@@ -1730,9 +1732,9 @@ This offers a way to work around the bug, in file *index.js*. Instead of just pa
         () => console.log("HTTP server started and available at http://localhost:8000.")
     );
 
-Additionally, to make the code more readable, the value of the *number* parameter is now assigned to const `num` on line 8, reducing the number of `myUrl.searchParams.get("number")` function calls needed to only one.
+Additionally, to make the code more readable, the value of the *x* parameter is now assigned to const `x` on line 8, reducing the number of required `myUrl.searchParams.get("x")` function calls to only one.
 
-Note: you might be tempted to simply do a comparison to check if something is `NaN`, like this: `if (parseInt(number) === NaN) { ... }`. However, comparing something to `NaN` will *always* yield `false`. Yes, this means that `NaN === NaN` is `false`. `NaN` is the only value that is not equal to itself. Sounds weird? That's because it is. Use the `Number.isNaN` function and you will be fine.
+Note: you might be tempted to simply do a comparison to check if something is `NaN`, like this: `if (parseInt(x) === NaN) { ... }`. However, comparing something to `NaN` will *always* yield `false`. Yes, this means that `NaN === NaN` is `false`. `NaN` is the only value that is not equal to itself. Sounds weird? That's because it is. Use the `Number.isNaN` function and you will be fine.
 
 With this, we avoid running into the bug, and all is fine, right? No it's not. Because the *actual* problem here lies much deeper.
 
@@ -1742,7 +1744,7 @@ While a programming language cannot prevent each and every possible bug, it shou
 
 However, it doesn't care about types in the same way. We can easily write an application like this:
 
-    const duplicateNumber = (num) => num * 2;
+    const duplicateNumber = (x) => x * 2;
 
     console.log(duplicateNumber("So what?"));
 
@@ -1754,45 +1756,45 @@ Running into the kind of bugs resulting from this kind of negligence in a produc
 
 While JavaScript has a notion of types, as we've learned, it doesn't have any language constructs to define and limit which types are expected or allowed in a given situation. Let's look at the `duplicateNumber` function again:
 
-    const duplicateNumber = (num) => num * 2;
+    const duplicateNumber = (x) => x * 2;
 
-We, the developers, know and understand that passing anything but a value of type number for parameter `num` doesn't make sense. But we have no way to tell JavaScript.
+We, the developers, know and understand that passing anything but a value of type *number* for parameter `x` doesn't make sense. But we have no way to tell JavaScript about this limitation.
 
 What we *can* do, of course, is check the type of a passed value within the function, using `typeof`, like this:
 
-    const duplicateNumber = (num) => {
-        if (typeof(num) !== "number") {
+    const duplicateNumber = (x) => {
+        if (typeof(x) !== "number") {
             // do something
         } else {
-            return num * 2;
+            return x * 2;
         }
     }
 
-But once again, this doesn't really prevent us from running an application where we pass a string for `num` although that doesn't make any sense, a problem that is only handled when the application is already running.
+But once again, this doesn't really prevent us from running an application where we pass a string for `x` although that doesn't make any sense, a problem that is only handled when the application is already running.
 
 What we really want is something like this:
 
-    const duplicateNumber = (num: number) => num * 2;
+    const duplicateNumber = (x: number) => x * 2;
 
 This way, we would define the function parameter more precisely: we give it a name, but we *also* declare, on the language level, that only values of type `number` are accepted when calling the function.
 
 With this, JavaScript would have the knowledge it needs to deny running a code file like this:
 
-        const duplicateNumber = (num: number) => num * 2;
+        const duplicateNumber = (x: number) => x * 2;
 
         duplicateNumber("So what?");
 
-Before even running this code, the interpreter would be able to identify the mismatch, that the `num` parameter must be of type `number`, and that the type of the the value it is called with on the second line is `string`, and it could deny running this code, preventing a runtime bug.
+Before even running this code, the interpreter would be able to identify the mismatch, that the `num` parameter must be of type `number`, and that the type of the the value it is called with on the second line is `string`, and it could deny running this code, preventing a runtime bug before we even started the application.
 
 Here's the thing: if value types obviously play an important role to avoid bugs in our applications, but at the same time, the language we use doesn't really care about them when it is time to decide if an application should be allowed to run or not, then something is off.
 
 Of course, we could accept the situation as it is and trust our knowledge and keen eye to spot and avoid these kinds of bugs ourselves.
 
-But in terms of software quality, merely *knowing* about a bug and *being able* to fix, while certainly an important capability, is not the same as *being explicitly told* about a bug and being *forced* to fix it by the programming language itself!
+But in terms of software quality, merely *knowing* about a bug and *being able* to fix it, while certainly an important capability, is not the same as *being explicitly told* about a bug and being *forced* to fix it by the programming language itself!
 
-Turns out a lot of people think the same way, and saw the shortcomings of JavaScript in this area as serious enough that they decided to do something about it. These people wanted to put complex JavaScript applications into production with confidence, and saw the lack of type-safety as such a crucial show-stopper that they created a new programming language - a beautiful and elegant language that can be summarized as "JavaScript, but with type-safety": TypeScript.
+Turns out a lot of people think the same way, and saw the shortcomings of JavaScript in this area as serious enough that they decided to do something about it. These people wanted to put complex JavaScript applications into production with confidence, and saw the lack of type-safety as such a crucial show-stopper that they created a new programming language - a beautiful and elegant language that can be summarized as "JavaScript, but with type-safety": **TypeScript**.
 
-Now, let me get the most pressing issue out of the way right here: No, everything you've learned so far was not learned in vain. Quite the opposite! That's because TypeScript has a very clever approach: It isn't a completely new language. Instead, it is based on JavaScript, and merely extends it with the type-safety language constructs asked for above.
+Now, let me get the most pressing issue out of the way right here: No, everything you've learned so far was not learned in vain. Quite the opposite! That's because TypeScript has a very clever approach: It isn't a completely new language. Instead, it is 100%  based on JavaScript, and simply extends it with the type-safety language constructs asked for above.
 
 This means that every valid JavaScript code is also valid TypeScript code.
 
@@ -1824,7 +1826,7 @@ This means that while we could simply keep the TypeScript code above as it is, w
 
 All we did was add the `: string` type declaration to the `greetFriendly` function definition. While JavaScript cannot understand and use this additional information, TypeScript can, making our code type-safe.
 
-We are now facing one minor challenge now: Node.js only runs JavaScript code, and doesn't understand TypeScript code. So how can we create a Node.js application using TypeScript?
+We are facing one minor challenge now: Node.js only runs JavaScript code, and doesn't understand TypeScript code. So how can we create a Node.js application using TypeScript?
 
 The TypeScript project has a simple solution for this: It ships with `tsc`, the TypeScript Compiler. This compiler takes TypeScript code and translates it into valid JavaScript code. This process is called *transpiling*.
 
@@ -1882,7 +1884,7 @@ Let's see what the JavaScript code looks like that is generated by `tsc`, by eit
     };
     greetFriendly("Jane");
 
-We haven't met the `var` keyword before, and instead of `greetFriendly = (name: string) => {` the function is declared with `greetFriendly = function (name) {` - that's because by default, `tsc` generated the most compatible JavaScript code possible, using JavaScript language version *ES3*, which dates from December 1999. This version uses language constructs that are out of fashion by now, but not invalid - Node.js will happily digest and run this kind of code.
+We haven't met the `var` keyword before, and instead of `greetFriendly = (name) => {` the function is declared with `greetFriendly = function (name) {` - that's because by default, `tsc` generated the most compatible JavaScript code possible, using JavaScript language version *ES3*, which dates from December 1999. This version uses language constructs that are out of fashion by now, but not invalid - Node.js will happily digest and run this kind of code.
 
 Another observation: While our TypeScript code enforced type-safety for the parameter of the greetFriendly function, there is no type-checking logic in the resulting JavaScript code (using `typeof` or similar mechanisms). That's the point of TypeScript - it allows you to *write* type-safe code, but doesn't make the *running* code type-safe.
 
@@ -1912,50 +1914,105 @@ As expected, the TypeScript Compiler bails out with an error and won't create an
 
 Depending on the code editor you use, you don't need to wait for a `tsc` run to identify type-safety issues. For example, IntelliJ IDE ships with a TypeScript plugin which marks invalid function calls and other problems right in the code editor.
 
-It was stated earlier that "in terms of software quality, only *knowing* about a bug and *being able* to fix, while certainly an important capability, is not the same as *being explicitly told* about a bug and being *forced* to fix it by the programming language itself!"
+It was stated earlier that "in terms of software quality, only *knowing* about a bug and *being able* to fix it, while certainly an important capability, is not the same as *being explicitly told* about a bug and being *forced* to fix it by the programming language itself".
 
 The above example shows this principle in action. While as an author, you *might* be able to spot and avoid a misguided and potentially problematic function call, using TypeScript and its type-safety annotations *enforces* correct function calls. One can easily imagine how this becomes a huge safety factor when working on code bases with thousand of lines of codes and hundreds of functions.
 
 Let's now see how TypeScript can help us to improve our Node.js webserver code. We need to reorganize and change the project files a bit, but as promised, we will stay really close to the original JavaScript code.
 
 
+We begin by turning the existing `nodejs-webserver` codebase into a proper NPM-based project structure. This allows us to manage installation of additional external Node.js packages. We will need those to improve our TypeScript development experience.
 
-
-
+Doing so is very simple. Make sure you are within folder `nodejs-webserver` in your terminal session, and then run the following command:
 
     % npm init
-    This utility will walk you through creating a package.json file.
 
-    Press ^C at any time to quit.
+    This will put you into a text dialogue with nine questions. Answer them as follows:
+
     package name: (nodejs-webserver)
     version: (1.0.0)
     description:
-    entry point: (index.js)
+    entry point: (src/index.js)
     test command:
     git repository:
     keywords:
     author:
     license: (ISC)
+
+If there is no text after the colon, this means you should simply hit enter and don't provide any answer.
+
+Once you have answered all questions, you are presented with a summary:
+
     About to write to nodejs-webserver/package.json:
-    
+
     {
-    "name": "nodejs-webserver",
-    "version": "1.0.0",
-    "description": "",
-    "main": "index.js",
-    "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "author": "",
-    "license": "ISC"
+        "name": "nodejs-webserver",
+        "version": "1.0.0",
+        "description": "",
+        "main": "index.js",
+        "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+        },
+        "author": "",
+        "license": "ISC"
     }
-    
-    
+
     Is this OK? (yes)
 
+Hit enter to signal that yes, this is ok. After doing to, NPM will create file `package.json` within our project folder.
+
+This file turns our project folder into an NPM package. NPM packages are Node.js applications and libraries that can be shared with other developers through the NPM ecosystem. We have already seen this in action: someone created an NPM package named "typescript" and released it into the NPM ecosystem. This allowed us to download and install that package onto our computer by running `npm install -g typescript`.
+
+Our goal here is not to release our webserver application into the world. Still, it's useful to have it set up as an NPM package. Releasing software is just one functionality provided by NPM. We are interested in one of the other many goodies that NPM provides - namely, dependency management. When extending our webserver application, we want to make use of other NPM packages, and file `package.json` allows us to define the names and versions of these packages. This is called "dependency management" because this way, we can *manage*, in a structured way, what the software packages are that our own software package *depends on* to work correctly.
+
+Let's see this in action right away. As we are going to transform our JavaScript application into a TypeScript application, it would be nice if we were able to not only define the types of the parameters of our own functions, but to also see what the types are of parameters of the internal Node.js functions that we are calling from our own code.
+
+For example, here is line of of our own code, where we call a function from the built-in "url" module of Node.js:
+
+    const x = myUrl.searchParams.get("x");
+
+It would be nice if we knew, during development, what type of parameter is allowed to be passed to the `get()` function.
+
+To make this information available within our project, we need an NPM package that contains these type information for all the functions provided by Node.js and its internal modules. This package is called "@types/node".
+
+Using NPM, we can install this package as a module available within our project, and we can also store the fact that our project depends on this package in our `package.json` file.
+
+To do so, run the following command:
+
+    % npm install "@types/node" --save-dev
+
+This will download the package and put its contents into a subfolder called `node_modules`: there, a subfolder called `@types` will be created, and within that, another subfolder called `node`. This contains the contents of the package.
+
+Additionally, our `package.json` file has been extended and now looks like this:
+
+    {
+      "name": "nodejs-webserver",
+      "version": "1.0.0",
+      "description": "",
+      "main": "build/index.js",
+      "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+      },
+      "author": "",
+      "license": "ISC",
+      "devDependencies": {
+        "@types/node": "^15.12.5"
+      }
+    }
+
+A new section has been added, called `devDependencies`. This section contains a list of all NPM packages that are defined as "needed during development of this project". As type information is only needed during software development, and is irrelevant when the application is running, it's a perfect fit for a devDependency. Dependencies that are needed while an application is executed go into a section called `dependencies` - we will encounter those later.
+
+As you can see, a version definition - `^15.12.5` - has been added after the package name, even though we didn't define that while running `npm install`. The version shown just happens to be the most recent version of the package at the time of installation, and NPM uses this version for the version definition. A version definition can simply be a version number, but it may also include special characters which tell NPM how to handle updates. The leading `^` sign, for example, means "include any version that does not increment the the leading 15 of the version definition".
+
+The NPM project provides an interactive "semver calculator" at https://semver.npmjs.com which explains all the possible definitions and their meaning in detail. Also, make sure to read up on https://semver.org to understand how software in the NPM ecosystem (and elsewhere) is versioned.
+
+Let's continue to build out the new project structure
 
 
-https://stackoverflow.com/a/29918884
+
+
+
+
 
 
 # Part 3: React - Rich and interactive user interfaces with JavaScript

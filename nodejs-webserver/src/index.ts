@@ -5,24 +5,34 @@ import calculator from "./calculator"
 const server = createServer((req, res) => {
     const myUrl = new URL("http://localhost:8000" + req.url);
 
-    const num = myUrl.searchParams.get("number");
+    const x = myUrl.searchParams.get("x");
 
-    if (myUrl.pathname === "/duplicate") {
+    if (Number.isNaN(parseInt(x))) {
         res.end(
-            "The duplicate of "
-            + num
-            + " is "
-            + calculator.duplicateNumber(num)
+            "Value "
+            + x
+            + " cannot be interpreted as an integer value!"
         );
-    }
+    } else {
 
-    if (myUrl.pathname === "/square") {
-        res.end(
-            "The square of "
-            + num
-            + " is "
-            + calculator.squareNumber(num)
-        );
+        if (myUrl.pathname === "/duplicate") {
+            res.end(
+                "The duplicate of "
+                + x
+                + " is "
+                + calculator.duplicateNumber(parseInt(x))
+            );
+        }
+
+        if (myUrl.pathname === "/square") {
+            res.end(
+                "The square of "
+                + x
+                + " is "
+                + calculator.squareNumber(parseInt(x))
+            );
+        }
+
     }
 });
 
