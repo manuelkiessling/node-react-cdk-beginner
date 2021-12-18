@@ -876,33 +876,40 @@ Next question: What is a Node.js module?
 
 A module is a piece of JavaScript code that is stored somewhere on our hard disk, and which therefore isn't immediately available for us, but can be made available by "requiring" it within our own code.
 
-Quick exercise for illustration purpose: let's create and then require our own module!
+Quick exercise to illustration this: let's create and then require our own module!
 
-To do so, first create another file within `nodejs-webserver`, called `calculator.js`, with the following content:
+To do so, first create another file within `nodejs-webserver`, called `greeter.js`, with the following content:
 
-    const duplicateNumber = (x) => x * 2;
-
-    const squareNumber = (x) => x * x;
-
+    const welcome = (name, formally) => {
+        if (formally) {
+            return "Good day to you, " + name
+        } else {
+            return "Hello " + name
+        }
+    };
+    
+    const seeOff = (name) => "Goodbye " + name;
+    
     module.exports = {
-        duplicateNumber,
-        squareNumber
+        welcome,
+        seeOff
     };
 
-As we did earlier, we declare two functions, `duplicateNumber` and `squareNumber`, but we do not use them within this file - instead, we *export* them, which is kind of the counterpart of `require` - it makes elements declared within a module available for use elsewhere.
+We declare two functions, `welcome` and `seeOff`, but we do not use them within this file - instead, we *export* them, which is kind of the counterpart of `require` - it makes elements declared within one file available for use in other files.
 
-This setup implicitly turns `calculator.js` into a Node.js module - every JavaScript file which exports something can be used a module within a Node.js codebase.
+This setup implicitly turns `greeter.js` into a Node.js module - every JavaScript file which exports something can be used as a module within a Node.js codebase.
 
 To do so, switch back to file `index.js` and replace its content as follows:
 
-    const calculator = require("./calculator");
+    const calculator = require("./greeter");
 
-    console.log(calculator.duplicateNumber(5));
-    console.log(calculator.squareNumber(5));
+    console.log(greeter.welcome("John", false));
+    console.log(greeter.welcome("John", true));
+    console.log(greeter.seeOff("John"));
 
-You will notice a subtle difference - while "http" is an internal module that ships with Node.js, "calculator" is a module written by us, and we need to tell *require* where to find the module file; therefore, the leading `./` path is necessary. *Not* necessary, on the other hand, is the file extension. While we could write `const calculator = require("./calculator.js");`, we don't have to - the `.js` extension can be left out.
+You will notice a subtle difference - while "http" is an internal module that ships with Node.js, "greeter" is a module written by us, and we need to tell *require* exactly where to find the module file; therefore, the leading `./` path is necessary. *Not* necessary, on the other hand, is the file extension. While we could write `const greeter = require("./greeter.js");`, we don't have to - the `.js` extension can be left out.
 
-The "thing" we get from calling `require("./calculator")`, and which we assign to constant `calculator`, is of type *object*. An object is, at its core, a very simple key-value store, with the keys being of type *string* - or at least values that can be converted to strings.
+The "thing" we get from calling `require("./greeter")`, and which we assign to constant `greeter`, is of type *object*. An object is, at its core, a very simple key-value store, with the keys being of type *string* - or at least values that can be converted to strings.
 
 For example, this is a simple object:
 
@@ -933,7 +940,7 @@ It's much more common to access object keys using the dot notation, as in `obj.f
 
 You must, however, use the bracket notation if e.g. the key is a string with a space: `obj.first name` or `obj."first name"` won't work - in such a case, you need to write `obj["first name"]`.[^note3]
 
-However, when we assigned an object to `module.exports` in module calculator / file `calculator.js`, we did *not* specify any keys, only values. This worked because the values where already available under a name - const *duplicateNumber* and const *squareNumber* - and thus, providing these values via their named variables, JavaScript can infer the object keys by simply using the variable names as key names.
+However, when we assigned an object to `module.exports` in module `greeter`, we did *not* specify any keys, only values. This worked because the values where already available under a name - const *welcome* and const *seeOff* - and thus, by providing these values via their named variables, JavaScript can infer the object keys by simply using the variable names as key names.
 
 This works with any type of value, not only function values:
 
@@ -969,7 +976,7 @@ The HTTP server code will call this function whenever the HTTP server receives a
 
 The pattern works like this: A certain piece of code - in our case, it's the `createServer` function - takes care of something happening "behind the scenes". In our cases, it's accepting new incoming HTTP requests - something that our own code doesn't need to take care of.
 
-However, the exact way how a new incoming HTTP should be *handled*, after it has been *accepted*, is something we want to define with own code.
+However, the exact way how a new incoming HTTP should be *handled*, after it has been *accepted*, is something we want to define with our own code.
 
 It's a bit like asking for a callback in real life. Imagine you plan to buy something from your local dealer on the other side of the town, but you know that the item you are looking for is out of stock on most days.
 
@@ -981,11 +988,11 @@ Lines 3 to 5 in the above code do exactly the same thing. The `http` module is y
 
 In this sense, the `(req, res) => { ... }` inline function is like the telephone number under which your dealer can reach you.
 
-This way, you and your dealer, or your own code and the *http* module code, are becoming integrated while also being decoupled. They are now integrated, because the HTTP server code from module *http* will now call your own code whenever an HTTP request comes in - but they are also decoupled: your own code doesn't care what the *http* module does under the hood or what it does while no HTTP request are coming in, in the same way you don't need to care what your dealer does all day and how exactly he will check for new inventory items, as long as he calls you back once your item becomes available. And the *http* module code doesn't care what you do with the HTTP requests it passes into your callback function - all it cares about is that the callback function exists and can be called.
+This way, you and your dealer, or your own code and the *http* module code, are becoming integrated while also being decoupled. They are now integrated, because the HTTP server code from module *http* will now call your own code whenever an HTTP request comes in - but they are also decoupled: your own code doesn't care what the *http* module does under the hood or what it does while no HTTP requests are coming in, in the same way you don't need to care about what your dealer does all day and how exactly he will check for new inventory items, as long as he calls you back once your item becomes available. And the *http* module code doesn't care what you do with the HTTP requests it passes into your callback function - all it cares about is that the callback function exists and can be called.
 
-Let's stress another point to make sure it is completely clear: This inline callback function of yours is NOT called immediately when running `node index.js`. It is called IF and WHEN an HTTP request comes in. This also means it is potentially called again and again - if you send 100 HTTP requests to your server, your own code, the inline callback function, will run 100 times, and if your start the server application, but never send an HTTP request to this server, it will run exactly zero times.
+Let's stress another point to make sure it is completely clear: This inline callback function of yours is NOT called immediately when running `node index.js`. It is called IF and WHEN an HTTP request comes in. This also means it is potentially called again and again - if you send 100 HTTP requests to your server, your own code, the inline callback function, will run 100 times, and if you start the server application, but never send any HTTP request to this server, it will never run.
 
-Let's now look at this anonymous (or "inline") callback function in detail: It expects to be called with two parameters: we call the first one `req`, because it is an object containing information about the incoming *request*, and the second one `res`, because this is an object containing functions which allow use to *respond* to the incoming request - like the function `end` that is used to send an HTTP response and immediately finish response handling.
+Let's now look at this anonymous (or "inline") callback function in detail: It expects to be called with two parameters: we call the first one `req`, because it is an object containing information about the incoming *request*, and the second one `res`, because this is an object containing functions which allow us to *respond* to the incoming request - like the function `end` that is used to send an HTTP response and immediately finish response handling.
 
 Still, running `node index.js` simply throws us back to the command line, with nothing happening.
 
@@ -1011,7 +1018,7 @@ You can now open URL *http://localhost:8000/* in a browser of your choice, and y
 
 When a request is handled, you won't see any further output on the command line though, because we didn't add any `console.log` calls within the `http.createServer` anonymous function parameter.
 
-At this point, depending on your previous knowledge, you may wonder what we are talking about here: What exactly is HTTP, what is a request and a response, a TCP port and IP address? In other words: How does the World Wide Web work under the hood?
+At this point, depending on your previous knowledge, you may wonder what we are talking about here: What exactly is HTTP, what is a request and a response, a TCP port and an IP address? In other words: How does the World Wide Web work under the hood?
 
 If you feel like you lack a solid understanding of these basics, simply continue reading - what follows is a breakout session describing some fundamentals of the Web that are not specific to JavaScript or Node.js.
 
@@ -1366,7 +1373,7 @@ We can use the request-handling code to take a look at all the attributes and me
         () => console.log("HTTP server started and available at http://localhost:8000.")
     );
 
-After restarting the server application, another *curl* request makes the server application output (in its console window, not on the HTTP response!) a large list of the *req* object keys and values. It's quite a long and daunting list, to be honest, but you may be able to find the *method* and *url* attributes if you look closely.
+After restarting the server application, another *curl* request makes the server application output (in its console window, not in its HTTP response!) a large list of the *req* object keys and values. It's quite a long and daunting list, to be honest, but you may be able to find the *method* and *url* attributes if you look closely.
 
 Most of these attributes don't look too useful, though. But there are some that might come handy for implementing a more complex server application. For example, there is one called *headers*. Let's output only that one:
 
@@ -1407,39 +1414,39 @@ As mentioned earlier, not all key names can be accessed through the dot notation
 
 Okay, we now have a basic web server application, and we have a basic idea of what the *req* object looks like. How can we use this to create a server that does something useful?
 
-We previously wrote module *calculator* in file *calculator.js*. Let's use this to write a web server application that can do calculations based on an incoming request. For example, if we request the server with *curl* like this:
+We previously wrote module *greeter* by creating file *greeter.js*. Let's use this to write a web server application that can do greetings based on an incoming request. For example, if we request the server with *curl* like this:
 
-    > curl "http://localhost:8000/duplicate?x=42"
+    > curl "http://localhost:8000/welcome?name=John"
 
 then we want the server to respond like this:
 
-    The duplicate of 42 is 84.
+    Hello John
 
 And if we request it like this:
 
-    > curl "http://localhost:8000/square?x=42"
+    > curl "http://localhost:8000/seeOff?name=John"
 
 then we want the server to respond like this:
 
-    The square of 42 is 1764.
+    Goodbye John
 
 (We now started to put the URL in double quotes "" because `?` and `=` have a special meaning on the command line).
 
-To achieve this, we need to solve several problems. First, we need to teach our server to distinguish between *duplicate* and *square* requests, and handle them accordingly.
+To achieve this, we need to solve several problems. First, we need to teach our server to distinguish between *welcome* and *seeOff* requests, and handle them accordingly.
 
-Then, we need to extract the number provided with the request - `42` in the above example -  from the request object.
+Then, we need to extract the name provided with the request - `John` in the above example - from the request object.
 
-Lastly, we need to use the functions provided by the *calculator* module to do the calculation that has been requested, and with the result, we need to formulate an HTTP response.
+Lastly, we need to use the functions provided by the *greeter* module to do the greeting that has been requested, and with the result, we need to formulate an HTTP response.
 
 As always, we tackle this step by step.
 
-First, an observation: in its current implementation, the server responds to `curl "http://localhost:8000/duplicate?x=42"` like this:
+First, an observation: in its current implementation, the server responds to `curl "http://localhost:8000/welcome?name=John"` like this:
 
-    The request method was GET, and the requested resource was /duplicate?x=42
+    The request method was GET, and the requested resource was /welcome?name=John
 
-This shows that `req.url` contains all the information we are interested in - but we need to break this string into useful pieces.
+This shows that `req.url` contains all the information we are interested in - but we need to break it into useful pieces.
 
-Parsing a URL to split into it's different parts isn't exactly trivial. But fortunately, Node.js ships with a module that does the heavy lifting. It is called *url*, and is based on the [WHATWG URL API](https://nodejs.org/api/url.html#url_the_whatwg_url_api). This is a standard that describes the different parts a URL can possibly have. Here is a visualization of the different parts of example URL `https://user:pass@sub.host.com:80/p/a/t/h?query=string#hash`:
+Parsing a URL to split it into its different parts isn't exactly trivial. But fortunately, Node.js ships with a module that does the heavy lifting. It is called *url*, and is based on the [WHATWG URL API](https://nodejs.org/api/url.html#url_the_whatwg_url_api). This is a standard that describes the different parts a URL can possibly have. Here is a visualization of the different parts of example URL `https://user:pass@sub.host.com:80/p/a/t/h?query=string#hash`:
 
     "  https:   //  user : pass @ sub.host.com : 80   /p/a/t/h  ?  query=string   #hash "
     │          │  │      │      │   hostname   │port│          │                │       │
@@ -1492,7 +1499,7 @@ As you can see, the resulting URL object provides several attributes, and they a
 
 Ok, looks like we can use this module to get our hands on the different parts of the request URL.
 
-There is one catch, though - creating a URL object only works by providing a "full" URL string. This means we cannot simply pass `req.url` into `new URL()`, because in our example, `req.url` is only the string `"/duplicate?x=42"`, without `http` and `localhost:8000` etc.
+There is one catch, though - creating a URL object only works by providing a "full" URL string. This means we cannot simply pass `req.url` into `new URL()`, because in our example, `req.url` is only the string `"/welcome?name=John"`, without `http` and `localhost:8000` etc.
 
 If we try to do this on the Node.js CLI, we get an error:
 
@@ -1502,8 +1509,8 @@ If we try to do this on the Node.js CLI, we get an error:
 
     > const url = require("url");
 
-    > const myUrl = new url.URL("/duplicate?x=42");
-    Uncaught TypeError [ERR_INVALID_URL]: Invalid URL: /duplicate?x=42
+    > const myUrl = new url.URL("/welcome?name=John");
+    Uncaught TypeError [ERR_INVALID_URL]: Invalid URL: /welcome?name=John
         at onParseError (internal/url.js:259:9)
         at new URL (internal/url.js:335:5)
         at REPL2:1:15
@@ -1514,11 +1521,11 @@ If we try to do this on the Node.js CLI, we get an error:
         at REPLServer.onLine (repl.js:817:10)
         at REPLServer.emit (events.js:327:22)
         at REPLServer.EventEmitter.emit (domain.js:467:12) {
-      input: '/duplicate?x=42',
+      input: '/welcome?name=John',
       code: 'ERR_INVALID_URL'
     }
 
-This can be easily fixed, though - we just need to prefix our `req.url` string with the missing information. While these need to have the correct syntax, the actual values are not relevant, because it's only the `pathname` and `search` parts that are relevant for us. Such a solution would look like this:
+This can be easily fixed, though - we just need to prefix our `req.url` string with the missing information. While these need to have the correct syntax, the actual values are not relevant, because it's only the `pathname` and `search` parts that are important for us. Such a solution would look like this:
 
     const myUrl = new url.URL("http://localhost:8000" + req.url);
 
@@ -1541,10 +1548,10 @@ And thus, an updated webserver implementation that shows the contents of the URL
         () => console.log("HTTP server started and available at http://localhost:8000.")
     );
 
-When we start this server code and run `curl "http://localhost:8000/duplicate?x=42"`, the server application will show the following output on the command line:
+When we start this server code and run `curl "http://localhost:8000/welcome?name=John"`, the server application will show the following output on the command line:
 
     URL {
-      href: 'http://localhost:8000/duplicate?x=42',
+      href: 'http://localhost:8000/welcome?name=John',
       origin: 'http://localhost:8000',
       protocol: 'http:',
       username: '',
@@ -1552,67 +1559,50 @@ When we start this server code and run `curl "http://localhost:8000/duplicate?x=
       host: 'localhost:8000',
       hostname: 'localhost',
       port: '8000',
-      pathname: '/duplicate',
-      search: '?x=42',
-      searchParams: URLSearchParams { 'x' => '42' },
+      pathname: '/welcome',
+      search: '?name=John',
+      searchParams: URLSearchParams { 'name' => 'John' },
       hash: ''
     }
 
-We are definitely getting closer. Attribute `pathname` carries value `"/duplicate"`, and will carry value `"/square"` if we run `curl "http://localhost:8000/square?x=42"`. We can thus use this attribute to differentiate between both request types, like this:
+We are definitely getting closer. Attribute `pathname` carries value `"/welcome"`, and will carry value `"/seeOff"` if we run `curl "http://localhost:8000/seeOff?name=John"`. We can thus use this attribute to differentiate between both request types, like this:
 
-    if (myUrl.pathname === '/duplicate') {
-        // handle the "duplicate" request
+    if (myUrl.pathname === '/welcome') {
+        // handle the "welcome" request
     }
 
-    if (myUrl.pathname === '/square') {
-        // handle the "square" request
+    if (myUrl.pathname === '/seeOff') {
+        // handle the "seeOff" request
     }
 
-The url module also conveniently splits up the so-called *search* parameters for us, by providing another object on attribute `searchParams`. This object is based on a class called *URLSearchParams*, and it allows us to retrieve the `x` value through the `get` function  provided on the object, like this:
+The url module also conveniently splits up the so-called *search* parameters for us, by providing another object on attribute `searchParams`. This object is based on a class called *URLSearchParams*, and it allows us to retrieve the `name` value through the `get` function provided on the object, like this:
 
-    `URL.searchParams.get("x")`.
+    `URL.searchParams.get("name")`.
 
-This should allow us to write the code handling a "duplicate" request, like this:
+This allows us to write the code handling a "welcome" request, like this:
 
-        if (myUrl.pathname === "/duplicate") {
-            res.end(
-                "The duplicate of "
-                + myUrl.searchParams.get("x")
-                + " is "
-                + calculator.duplicateNumber(myUrl.searchParams.get("x"))
-            );
+        if (myUrl.pathname === "/welcome") {
+            res.end(greeter.welcome(myUrl.searchParams.get("name")));
         }
 
-Note how I've distributed the string parameter passed to `res.end` over several lines. This avoids ending up with a very long and hard to read code line. When concatenating several strings into one large string with `+`, it's easy to put each part on its own line.
-
-To make this request handler work (and also the one handling "square" requests), we need to rework our `index.js` webserver code quite a bit. We need to `require` our *calculator* module, remove the existing `res.write` and `res.end` lines, and add the code for handling both request types. The result looks like this:
+To make this request handler work (and also the one handling "seeOff" requests), we need to rework our `index.js` webserver code quite a bit. We need to `require` our *greeter* module, remove the existing `res.write` and `res.end` lines, and add the code for handling both request types. The result looks like this:
 
     const http = require("http");
     const url = require("url");
-    const calculator = require("./calculator");
-
+    const greeter = require("./greeter");
+    
     const server = http.createServer((req, res) => {
         const myUrl = new url.URL("http://localhost:8000" + req.url);
-
-        if (myUrl.pathname === "/duplicate") {
-            res.end(
-                "The duplicate of "
-                + myUrl.searchParams.get("x")
-                + " is "
-                + calculator.duplicateNumber(myUrl.searchParams.get("x"))
-            );
+    
+        if (myUrl.pathname === "/welcome") {
+            res.end(greeter.welcome(myUrl.searchParams.get("name")));
         }
 
-        if (myUrl.pathname === "/square") {
-            res.end(
-                "The square of "
-                + myUrl.searchParams.get("x")
-                + " is "
-                + calculator.squareNumber(myUrl.searchParams.get("x"))
-            );
+        if (myUrl.pathname === "/seeOff") {
+            res.end(greeter.seeOff(myUrl.searchParams.get("name")));
         }
     });
-
+    
     server.listen(
         8000,
         "localhost",
@@ -1622,33 +1612,34 @@ To make this request handler work (and also the one handling "square" requests),
 
 Things are now getting more complex, so let's recapitulate what each part of this code does.
 
-The first three lines declare consts `http`, `url`, and `calculator`, by "requiring" internal Node.js modules *http* and *url*, as well as our own local module *calculator* (note once again how the latter is referenced as a local file path beginning with `./`, while the internal modules are referenced by their name only).
+The first three lines declare consts `http`, `url`, and `greeter`, by "requiring" internal Node.js modules *http* and *url*, as well as our own local module *greeter* (note once again how the latter is referenced as a local file path beginning with `./`, while the internal modules are referenced by their name only).
 
 We then declare const `server`, by calling function `createServer` of object `http`. The one and only parameter we pass into this function is an anonymous or inline callback function of form `(req, res) => { ... }`. The running HTTP server will trigger this function whenever it receives a new incoming HTTP request.
 
 The body of this inline function does the heavy lifting required to handle a request. First, on line 6, we create an object called `myUrl`, by passing the `req.url` string attribute to class `url.URL`. Because `url.URL` is a class, and not a function, we need to call it using the `new` operator. This results in an object of type `URL` being created and assigned to const `myUrl`.
 
-This is followed by two `if` statements. If statements execute the code in their curly braces enclosed body block if the expression in the parentheses following the `if` keyword resolves to the boolean value `true`. On line 8, this is the case if the string contained in attribute `myUrl.pathname` is equal to the string value `"/duplicate"`, and it's the case on line 17 if `myUrl.pathname` is `"/square"`.
+This is followed by two `if` statements. If statements execute the code in their curly-braces-enclosed body block if the expression in the parentheses following the `if` keyword resolves to the boolean value `true`. On line 8, this is the case if the string contained in attribute `myUrl.pathname` is equal to the string value `"/welcome"`, and it's the case on line 12 if `myUrl.pathname` is `"/seeOff"`.
 
-Depending on which of the two if statements is true, our code responds to the request (by executing `res.end()`) by either running `calculator.duplicate()` or `calculator.square()`. These functions need a number to calculate a result, and we want to pass the number part of a request like `http://localhost:8000/duplicate?x=42`. We get this value by using function `get` from object `searchParams` on object `myUrl`, on lines 13 and 22.
+Depending on which of the two if statements is true, our code responds to the request (by executing `res.end()`) by either running `greeter.welcome` or `greeter.seeOff`. These functions need a name to greet as their parameter, and we thus want to pass the "name" part of a request like `http://localhost:8000/welcome?name=John`. We get this value by using function `get` from object `searchParams` on object `myUrl`, on lines 9 and 13.
 
 Last but not least, as it's not enough to set up HTTP request handling, we also set up the server to listen on port *8000* of address *localhost*, on the final five lines of our code file.
 
 Let's also reiterate what happens when we start this server application by running `node index.js`.
 
-As always, Node.js will parse our code file from top to bottom. It loads the code in modules *http*, *url*, and *./calculator*. It then executes the `http.createServer` function, followed by function `server.listen` on line 27. At this point, that's all that is being executed. The code between lines 6 and 24 is, at this point, NOT yet being executed! Instead, the code in module *http* waits for an HTTP request to come in, and whenever this happens - and *only* whenever that happens - our code between lines 6 and 24 (that is, the body of the inline callback function), will be called (and will be called again and again for each incoming HTTP request).
+As always, Node.js will parse our code file from top to bottom. It loads the code in modules *http*, *url*, and *./greeter*. It then executes the `http.createServer` function, followed by function `server.listen` on line 17. At this point, that's all that is being executed. The code between lines 6 and 14 is, at this point, NOT yet being executed! Instead, the code in module *http* waits for an HTTP request to come in, and whenever this happens - and *only* whenever that happens - our code between lines 6 and 14 (that is, the body of the inline callback function), will be called (and will be called again and again for each incoming HTTP request).
+
 
 
 ### The bug
 
-If you play around with the new server application, for example by running `curl "http://localhost:8000/duplicate?x=42"`, you will see how everything works as expected. And yet, our implementation has a big problem. And this problem - this fundamental bug, really - has to do with types, as so many JavaScript code bugs do.
+If you play around with the new server application, for example by running `curl "http://localhost:8000/welcome?name=John"`, you will see how everything works as expected. And yet, our implementation has a big problem. And this problem - this fundamental bug, really - has to do with *value types*, as so many JavaScript code bugs do.
 
 Let's first analyze and understand the problem, and then solve it. Spoiler alert: the solution is to not write our webserver with JavaScript, but with another programming language. This might sound very radical, but as we will see, it's a very elegant and natural solution. But let's take it step by step.
 
 
 We start by demonstrating the bug. To do so, start another `curl` request, like this:
 
-    curl "http://localhost:8000/duplicate?x=five"
+    curl "http://localhost:8000/welcome?x=five"
 
 While this works, it doesn't work as expected. This is the response:
 
@@ -1656,7 +1647,7 @@ While this works, it doesn't work as expected. This is the response:
 
 `"five"`, of course, is not a number - this is what *NaN* means, literally: *Not a Number*[^note8]. Instead, it is a string with value `"five"`.
 
-But here is an important detail: if we send the request `curl "http://localhost:8000/duplicate?x=42"`, then `"42"` isn't a number either! It too is a string, with value `"42"`.
+But here is an important detail: if we send the request `curl "http://localhost:8000/welcome?name=John"`, then `"42"` isn't a number either! It too is a string, with value `"42"`.
 
 The reason our code works with string `"42"` but not with string `"five"` has to do with JavaScript's type system, its lack of strict type checking, and its ability to implicitly and automatically transform values from one type into another - at least in some cases.
 
@@ -1695,7 +1686,7 @@ This offers a way to work around the bug, in file *index.js*. Instead of just pa
     const server = http.createServer((req, res) => {
         const myUrl = new url.URL("http://localhost:8000" + req.url);
 
-        const x = myUrl.searchParams.get("x");
+        const x = myUrl.searchParams.get("name");
 
         if (Number.isNaN(parseInt(x))) {
             res.end(
@@ -1705,7 +1696,7 @@ This offers a way to work around the bug, in file *index.js*. Instead of just pa
             );
         } else {
 
-            if (myUrl.pathname === "/duplicate") {
+            if (myUrl.pathname === "/welcome") {
                 res.end(
                     "The duplicate of "
                     + x
@@ -1714,7 +1705,7 @@ This offers a way to work around the bug, in file *index.js*. Instead of just pa
                 );
             }
 
-            if (myUrl.pathname === "/square") {
+            if (myUrl.pathname === "/seeOff") {
                 res.end(
                     "The square of "
                     + x
@@ -1732,7 +1723,7 @@ This offers a way to work around the bug, in file *index.js*. Instead of just pa
         () => console.log("HTTP server started and available at http://localhost:8000.")
     );
 
-Additionally, to make the code more readable, the value of the *x* parameter is now assigned to const `x` on line 8, reducing the number of required `myUrl.searchParams.get("x")` function calls to only one.
+Additionally, to make the code more readable, the value of the *x* parameter is now assigned to const `x` on line 8, reducing the number of required `myUrl.searchParams.get("name")` function calls to only one.
 
 Note: you might be tempted to simply do a comparison to check if something is `NaN`, like this: `if (parseInt(x) === NaN) { ... }`. However, comparing something to `NaN` will *always* yield `false`. Yes, this means that `NaN === NaN` is `false`. `NaN` is the only value that is not equal to itself. Sounds weird? That's because it is. Use the `Number.isNaN` function and you will be fine.
 
@@ -1969,7 +1960,7 @@ Let's see this in action right away. As we are going to transform our JavaScript
 
 For example, here is line of of our own code, where we call a function from the built-in "url" module of Node.js:
 
-    const x = myUrl.searchParams.get("x");
+    const x = myUrl.searchParams.get("name");
 
 It would be nice if we knew, during development, what type of parameter is allowed to be passed to the `get()` function.
 
