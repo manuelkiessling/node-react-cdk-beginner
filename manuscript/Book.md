@@ -1577,12 +1577,23 @@ We are definitely getting closer. Attribute `pathname` carries value `"/welcome"
 
 The url module also conveniently splits up the so-called *search* parameters for us, by providing another object on attribute `searchParams`. This object is based on a class called *URLSearchParams*, and it allows us to retrieve the `name` value through the `get` function provided on the object, like this:
 
-    `URL.searchParams.get("name")`.
+    `URL.searchParams.get("name")`
 
 This allows us to write the code handling a "welcome" request, like this:
 
+        const name = myUrl.searchParams.get("name");
+
         if (myUrl.pathname === "/welcome") {
-            res.end(greeter.welcome(myUrl.searchParams.get("name")));
+            res.end(greeter.welcome(name));
+        }
+
+The *welcome* allows us to also greet someone more formally, by passing a boolean `true` value on its second parameter. Let's give our web server application the ability to make use of this if a second *search parameter* is provided on a request, like this: `curl "http://localhost:8000/welcome?name=John&formally=true"`. As you can see, additional search parameters are added on the URL with the ampersand sign `&`. The code to recognize and use this additional parameter would look like this:
+
+        const name = myUrl.searchParams.get("name");
+        const formally = myUrl.searchParams.get("formally");
+
+        if (myUrl.pathname === "/welcome") {
+            res.end(greeter.welcome(name, formally));
         }
 
 To make this request handler work (and also the one handling "seeOff" requests), we need to rework our `index.js` webserver code quite a bit. We need to `require` our *greeter* module, remove the existing `res.write` and `res.end` lines, and add the code for handling both request types. The result looks like this:
@@ -1593,13 +1604,16 @@ To make this request handler work (and also the one handling "seeOff" requests),
     
     const server = http.createServer((req, res) => {
         const myUrl = new url.URL("http://localhost:8000" + req.url);
+
+        const name = myUrl.searchParams.get("name");
+        const formally = myUrl.searchParams.get("formally");
     
         if (myUrl.pathname === "/welcome") {
-            res.end(greeter.welcome(myUrl.searchParams.get("name")));
+            res.end(greeter.welcome(name, formally));
         }
 
         if (myUrl.pathname === "/seeOff") {
-            res.end(greeter.seeOff(myUrl.searchParams.get("name")));
+            res.end(greeter.seeOff(name));
         }
     });
     
@@ -1614,68 +1628,85 @@ Things are now getting more complex, so let's recapitulate what each part of thi
 
 The first three lines declare consts `http`, `url`, and `greeter`, by "requiring" internal Node.js modules *http* and *url*, as well as our own local module *greeter* (note once again how the latter is referenced as a local file path beginning with `./`, while the internal modules are referenced by their name only).
 
-We then declare const `server`, by calling function `createServer` of object `http`. The one and only parameter we pass into this function is an anonymous or inline callback function of form `(req, res) => { ... }`. The running HTTP server will trigger this function whenever it receives a new incoming HTTP request.
+We then declare const `server`, by calling function `createServer` of object `http` on line 5. The one and only parameter we pass into this function is an anonymous or inline callback function of form `(req, res) => { ... }`. The running HTTP server will trigger this function whenever it receives a new incoming HTTP request.
 
 The body of this inline function does the heavy lifting required to handle a request. First, on line 6, we create an object called `myUrl`, by passing the `req.url` string attribute to class `url.URL`. Because `url.URL` is a class, and not a function, we need to call it using the `new` operator. This results in an object of type `URL` being created and assigned to const `myUrl`.
 
-This is followed by two `if` statements. If statements execute the code in their curly-braces-enclosed body block if the expression in the parentheses following the `if` keyword resolves to the boolean value `true`. On line 8, this is the case if the string contained in attribute `myUrl.pathname` is equal to the string value `"/welcome"`, and it's the case on line 12 if `myUrl.pathname` is `"/seeOff"`.
+On lines 8 and 9, we extract the `name` and `formally` parameters from the request, and make them available in our code as const `name` and `formally` respectively.
 
-Depending on which of the two if statements is true, our code responds to the request (by executing `res.end()`) by either running `greeter.welcome` or `greeter.seeOff`. These functions need a name to greet as their parameter, and we thus want to pass the "name" part of a request like `http://localhost:8000/welcome?name=John`. We get this value by using function `get` from object `searchParams` on object `myUrl`, on lines 9 and 13.
+This is followed by two `if` statements. If statements execute the code in their curly-braces-enclosed body block if the expression in the parentheses following the `if` keyword resolves to the boolean value `true`. On line 11, this is the case if the string contained in attribute `myUrl.pathname` is equal to the string value `"/welcome"`, and it's the case on line 15 if `myUrl.pathname` is `"/seeOff"`.
 
-Last but not least, as it's not enough to set up HTTP request handling, we also set up the server to listen on port *8000* of address *localhost*, on the final five lines of our code file.
+Depending on which of the two if statements is true, our code responds to the request (by executing `res.end()`) by either running `greeter.welcome` or `greeter.seeOff`. We pass the `name` and `formally` values to function `welcome` - because `seeOff` only cares about the `name` parameter, we don't pass `formally` there.
+
+Last but not least, as it's not enough to set up HTTP request handling, we also set up the server to listen on port *8000* of address *localhost*, on the final five lines 20 to 24 of our code file.
 
 Let's also reiterate what happens when we start this server application by running `node index.js`.
 
-As always, Node.js will parse our code file from top to bottom. It loads the code in modules *http*, *url*, and *./greeter*. It then executes the `http.createServer` function, followed by function `server.listen` on line 17. At this point, that's all that is being executed. The code between lines 6 and 14 is, at this point, NOT yet being executed! Instead, the code in module *http* waits for an HTTP request to come in, and whenever this happens - and *only* whenever that happens - our code between lines 6 and 14 (that is, the body of the inline callback function), will be called (and will be called again and again for each incoming HTTP request).
+As always, Node.js will parse our code file from top to bottom. It loads the code in modules *http*, *url*, and *./greeter*. It then executes the `http.createServer` function, followed by function `server.listen` on line 20. At this point, that's all that is being executed. The code between lines 6 and 17 is, at this point, NOT yet being executed! Instead, the code in module *http* waits for an HTTP request to come in, and whenever this happens - and *only* whenever that happens - our code between lines 6 and 14 (that is, the body of the inline callback function), will be called (and will be called again and again for each incoming HTTP request).
 
+At this point, with the server application running, executing `curl "http://127.0.0.1:8000/welcome?name=John"` on the command line should return `Hello John`, while `curl "http://127.0.0.1:8000/welcome?name=John&formally=true"` will return `Good day to you, John`, and `curl "http://127.0.0.1:8000/seeOff?name=John"` will return `Goodbye John`.
 
 
 ### The bug
 
-If you play around with the new server application, for example by running `curl "http://localhost:8000/welcome?name=John"`, you will see how everything works as expected. And yet, our implementation has a big problem. And this problem - this fundamental bug, really - has to do with *value types*, as so many JavaScript code bugs do.
+It seems like everything works as expected. And yet, our implementation has a fatal flaw. And this problem - this fundamental bug, really - has to do with *value types*, as so many JavaScript code bugs do.
 
 Let's first analyze and understand the problem, and then solve it. Spoiler alert: the solution is to not write our webserver with JavaScript, but with another programming language. This might sound very radical, but as we will see, it's a very elegant and natural solution. But let's take it step by step.
 
 
 We start by demonstrating the bug. To do so, start another `curl` request, like this:
 
-    curl "http://localhost:8000/welcome?x=five"
+    curl "http://127.0.0.1:8000/welcome?name=John&formally=false"
 
 While this works, it doesn't work as expected. This is the response:
 
-    The square of five is NaN
+    Good day to you, John
 
-`"five"`, of course, is not a number - this is what *NaN* means, literally: *Not a Number*[^note8]. Instead, it is a string with value `"five"`.
+When looking at the code in file *greeter.js*, one would expect the response to be `Hello John`, because we passed `false` as the value of search parameter `formally`, which should result in the `else` branch of the `if` statement being executed, as `if (formally)` should resolve to `false`:
 
-But here is an important detail: if we send the request `curl "http://localhost:8000/welcome?name=John"`, then `"42"` isn't a number either! It too is a string, with value `"42"`.
+    const welcome = (name, formally) => {
+        if (formally) {
+            return "Good day to you, " + name
+        } else {
+            return "Hello " + name
+        }
+    };
 
-The reason our code works with string `"42"` but not with string `"five"` has to do with JavaScript's type system, its lack of strict type checking, and its ability to implicitly and automatically transform values from one type into another - at least in some cases.
+
+But here is an important detail: if we send the request `http://127.0.0.1:8000/welcome?name=John&formally=false`, then *false* isn't a boolean value! It too, like `name`, is a value of type `string`: `"false"`.
+
+The reason our code does work at all, even in this case, has to do with JavaScript's type system, its lack of strict type checking, and its ability to implicitly and silently transform values from one type into another - at least in some cases.
 
 We can easily demonstrate this on the Node.js CLI (reminder: just run `node` on the Terminal command line to get into the Node.js CLI).
 
-Type `"42" * 2` into the CLI, and the result is `84`. Type `"five" * 2`, and the result is `NaN`:
+Start by running a simple `if` statment with an if clause that really is `false` in the boolean sense:
 
     % node
     Welcome to Node.js v14.16.1.
     Type ".help" for more information.
 
-    > "42" * 2
-    84
+    > if (false) { console.log("This is not logged to the console"); }
+    
+    undefined
 
-    > "five" * 2
-    NaN
+The `console.log` statement is not executed, as expected.
 
-A computer cannot multiply a string with a number. If calculating `"42" * 2` works, it means that the string value is transformed into a number value before the actual multiplication happens. This happens implicitly, but we can do so explicitly, using function `parseInt`:
+Now, run the `if` statement again, but with a subtle change: use the string value `"false"` instead of the boolean value `false`:
 
-    > parseInt("42")
-    42
+    % node
+    Welcome to Node.js v14.16.1.
+    Type ".help" for more information.
 
-Trying the same with string value `"five"` yields `NaN`:
+    > if ("false") { console.log("This is not logged to the console"); }
+    
+    This is not logged to the console
+    undefined
 
-    > parseInt("five")
-    NaN
+This time, the `console.log` statement is executed. Why is that?
 
-Note: `parseInt` will try to interpret a given value as an integer number, that is, a number without a fractional part, like -1, 0, 1, 2 etc. There is also `parseFloat`, which will try to interpret a given value as a floating point number, like -1.0, 0.0, 0.123 etc.
+
+
+
 
 This offers a way to work around the bug, in file *index.js*. Instead of just passing the *number* parameter to the *calculator* functions, we can first ensure that its value can be interpreted as a number, and bail out if that's not the case:
 
