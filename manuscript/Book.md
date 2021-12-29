@@ -1499,7 +1499,7 @@ As you can see, the resulting URL object provides several attributes, and they a
 
 Ok, looks like we can use this module to get our hands on the different parts of the request URL.
 
-There is one catch, though - creating a URL object only works by providing a "full" URL string. This means we cannot simply pass `req.url` into `new URL()`, because in our example, `req.url` is only the string `"/welcome?name=John"`, without `http` and `localhost:8000` etc.
+There is one catch, though - creating a URL object only works by providing a "full" URL string. This means we cannot simply pass `req.url` into `new URL()`, because in our example, `req.url` is only the string `"/welcome?name=John"`, without the `http://` and `localhost:8000` parts.
 
 If we try to do this on the Node.js CLI, we get an error:
 
@@ -1525,7 +1525,7 @@ If we try to do this on the Node.js CLI, we get an error:
       code: 'ERR_INVALID_URL'
     }
 
-This can be easily fixed, though - we just need to prefix our `req.url` string with the missing information. While these need to have the correct syntax, the actual values are not relevant, because it's only the `pathname` and `search` parts that are important for us. Such a solution would look like this:
+This can be easily fixed, though - we just need to prefix our `req.url` string with the missing information. While these need to have the correct *syntax*, the actual *values* are not relevant, because it's only the `pathname` and `search` parts that are important for us. Such a solution would look like this:
 
     const myUrl = new url.URL("http://localhost:8000" + req.url);
 
@@ -1548,7 +1548,7 @@ And thus, an updated webserver implementation that shows the contents of the URL
         () => console.log("HTTP server started and available at http://localhost:8000.")
     );
 
-When we start this server code and run `curl "http://localhost:8000/welcome?name=John"`, the server application will show the following output on the command line:
+When we start this server code and run `curl "http://localhost:8000/welcome?name=John"`, then thanks to the `console.log` on line 9, the server application will show the following output on the command line:
 
     URL {
       href: 'http://localhost:8000/welcome?name=John',
@@ -1567,25 +1567,25 @@ When we start this server code and run `curl "http://localhost:8000/welcome?name
 
 We are definitely getting closer. Attribute `pathname` carries value `"/welcome"`, and will carry value `"/seeOff"` if we run `curl "http://localhost:8000/seeOff?name=John"`. We can thus use this attribute to differentiate between both request types, like this:
 
-    if (myUrl.pathname === '/welcome') {
+    if (myUrl.pathname === "/welcome") {
         // handle the "welcome" request
     }
 
-    if (myUrl.pathname === '/seeOff') {
+    if (myUrl.pathname === "/seeOff") {
         // handle the "seeOff" request
     }
 
 The url module also conveniently splits up the so-called *search* parameters for us, by providing another object on attribute `searchParams`. This object is based on a class called *URLSearchParams*, and it allows us to retrieve the `name` value through the `get` function provided on the object, like this:
 
-    `URL.searchParams.get("name")`
+    URL.searchParams.get("name")
 
 This allows us to write the code handling a "welcome" request, like this:
 
-        const name = myUrl.searchParams.get("name");
+    const name = myUrl.searchParams.get("name");
 
-        if (myUrl.pathname === "/welcome") {
-            res.end(greeter.welcome(name));
-        }
+    if (myUrl.pathname === "/welcome") {
+        res.end(greeter.welcome(name));
+    }
 
 The *welcome* allows us to also greet someone more formally, by passing a boolean `true` value on its second parameter. Let's give our web server application the ability to make use of this if a second *search parameter* is provided on a request, like this: `curl "http://localhost:8000/welcome?name=John&formally=true"`. As you can see, additional search parameters are added on the URL with the ampersand sign `&`. The code to recognize and use this additional parameter would look like this:
 
@@ -1673,13 +1673,13 @@ When looking at the code in file *greeter.js*, one would expect the response to 
     };
 
 
-But here is an important detail: if we send the request `http://127.0.0.1:8000/welcome?name=John&formally=false`, then *false* isn't a boolean value! It too, like `name`, is a value of type `string`: `"false"`.
+But here the catch: if we send the request `http://127.0.0.1:8000/welcome?name=John&formally=false` to the server, then *false* isn't a boolean value! It too, like `name`, is a value of type `string`: `"false"`.
 
 The reason our code does work at all, even in this case, has to do with JavaScript's type system, its lack of strict type checking, and its ability to implicitly and silently transform values from one type into another - at least in some cases.
 
 We can easily demonstrate this on the Node.js CLI (reminder: just run `node` on the Terminal command line to get into the Node.js CLI).
 
-Start by running a simple `if` statment with an if clause that really is `false` in the boolean sense:
+Start by running a simple `if` statement with an if clause that actually resolves to `false` in the boolean sense:
 
     % node
     Welcome to Node.js v14.16.1.
@@ -1689,7 +1689,7 @@ Start by running a simple `if` statment with an if clause that really is `false`
     
     undefined
 
-The `console.log` statement is not executed, as expected.
+The `console.log` statement is *not* executed, as expected.
 
 Now, run the `if` statement again, but with a subtle change: use the string value `"false"` instead of the boolean value `false`:
 
@@ -1704,7 +1704,64 @@ Now, run the `if` statement again, but with a subtle change: use the string valu
 
 This time, the `console.log` statement is executed. Why is that?
 
+To answer this question, we need to have a closer look at the *condition* part of an `if` statement. The condition is the part of the `if` statement which is enclosed in braces: `if (condition) { ... }`.
 
+The condition is the part that decides whether the code in the body of the `if` statement will be executed or not. There are only two possible conditions: the condition is either `true` or `false`. These two values are *boolean values*. You can use these values directly, as in `if (true) { ... }` or `if (false) { ... }`.
+
+But you can also write a condition which isn't one of the two boolean values itself, but which resolves to a boolean *result*!
+
+A simple example would be `if (1 < 2) { ... }`. Neither `1` nor `<` nor `2` is a boolean value, but the combination of the three, `1 < 2`, creates an expression which has a boolean result and can thus be used as a condition in an if statement. Because `1` is indeed less than `2`, the expression resolves to boolean value `true`, and the body of the `if` statement is executed. 
+
+This shows how JavaScript knows how to resolve an expression in the condition part of an `if` statement to a boolean result, and *JavaScript tries really hard to do this in as many cases a possible*!
+
+Even when we do not provide a mathematical comparison between two numbers, but instead only provide a string value, JavaScript still wants to do its job and tries to resolve it into a boolean value.
+
+We already talked about how JavaScript is able to translate a value of one type into matching value of another type - remember how `2 * "3"` results in number value `6` because JavaScript knows how to convert string value `"3"` into number value `3` before the addition happens.
+
+In the same vein, JavaScript knows that because the `if` condition `"false"` is not a boolean value, but a string value, it must first be translated, or *cast*, into a boolean value. For a statement like `if ("false") { ... }`, JavaScript does this automatically.
+
+We are now getting closer to the core of our bug.
+
+In JavaScript, some "translate a non-boolean value into a boolean value in an `if` statement" operations work as expected.
+
+For example, the number value `0` is translated into boolean value `false`, and `1` is translated into `true`.
+
+For strings, it works like this: The empty string `""` translates to `false`, while *any other* string value translates to `true`.
+
+And this is what causes the bug!
+
+In all of these examples, the `if` body is executed:
+
+    if ("hello") { ... }
+    
+    if ("true") { ... }
+    
+    if ("false") { ... }
+
+We can now follow the bug step by step.
+
+In file *index.js*, line 9 looks like this:
+
+    const formally = myUrl.searchParams.get("formally");
+
+
+For curl request `http://127.0.0.1:8000/welcome?name=John&formally=false`, this creates a variable `formally` with value `"false"` of type `string`.
+
+On line 12, we call the greeter function and pass this variable as the second parameter:
+
+    greeter.welcome(name, formally)
+
+We thus actually call `greeter.welcome("John", "false")`.
+
+In file *greeter.js* on line 2, this becomes relevant:
+
+    if (formally) {
+
+is executed as
+
+    if ("false") {
+
+and because `"false"` is a non-empty string, it is translated to boolean value `true` - the `if` body is thus executed, and the user is greeted formally.
 
 
 
