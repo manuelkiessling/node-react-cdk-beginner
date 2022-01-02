@@ -1,5 +1,5 @@
-const greetFriendly = (name: string) => {
+const greet = (name: string) => {
     console.log("Hello " + name);
 };
 
-greetFriendly(42);
+greet("Jane");

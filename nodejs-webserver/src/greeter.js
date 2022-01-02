@@ -1,5 +1,5 @@
 const welcome = (name, formally) => {
-    if (formally) {
+    if (formally === true || formally === "true") {
         return "Good day to you, " + name
     } else {
         return "Hello " + name

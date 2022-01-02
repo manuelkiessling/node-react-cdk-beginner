@@ -1,4 +1,4 @@
-var greetFriendly = function (name) {
+var greet = function (name) {
     console.log("Hello " + name);
 };
-greetFriendly(42);
+greet("Jane");

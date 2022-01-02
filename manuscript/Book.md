@@ -1711,13 +1711,13 @@ The condition is the part that decides whether the code in the body of the `if` 
 
 But you can also write a condition which isn't one of the two boolean values itself, but which resolves to a boolean *result*!
 
-A simple example would be `if (1 < 2) { ... }`. Neither `1` nor `<` nor `2` is a boolean value, but the combination of the three, `1 < 2`, creates an expression which has a boolean result and can thus be used as a condition in an if statement. Because `1` is indeed less than `2`, the expression resolves to boolean value `true`, and the body of the `if` statement is executed. 
+A simple example would be `if (1 < 2) { ... }`. Neither `1` nor `<` nor `2` is a boolean value, but the combination of the three, `1 < 2`, creates an expression which has a boolean result and can thus be used as a condition in an `if` statement. Because `1` is indeed less than `2`, the expression resolves to boolean value `true`, and the body of the `if` statement is executed. 
 
 This shows how JavaScript knows how to resolve an expression in the condition part of an `if` statement to a boolean result, and *JavaScript tries really hard to do this in as many cases a possible*!
 
-Even when we do not provide a mathematical comparison between two numbers, but instead only provide a string value, JavaScript still wants to do its job and tries to resolve it into a boolean value.
+Even when we do not provide a mathematical comparison between two numbers, but instead only provide a string value, JavaScript still wants to do its job and tries to resolve that into a boolean value.
 
-We already talked about how JavaScript is able to translate a value of one type into matching value of another type - remember how `2 * "3"` results in number value `6` because JavaScript knows how to convert string value `"3"` into number value `3` before the addition happens.
+We already talked about how JavaScript is able to translate a value of one type into the matching value of another type - remember how `2 * "3"` results in number value `6` because JavaScript knows how to convert string value `"3"` into number value `3` before the addition with `2` happens.
 
 In the same vein, JavaScript knows that because the `if` condition `"false"` is not a boolean value, but a string value, it must first be translated, or *cast*, into a boolean value. For a statement like `if ("false") { ... }`, JavaScript does this automatically.
 
@@ -1731,7 +1731,7 @@ For strings, it works like this: The empty string `""` translates to `false`, wh
 
 And this is what causes the bug!
 
-In all of these examples, the `if` body is executed:
+In **all* of these examples, the `if` body is executed:
 
     if ("hello") { ... }
     
@@ -1739,14 +1739,15 @@ In all of these examples, the `if` body is executed:
     
     if ("false") { ... }
 
+That's because string value `"false"` is not empty, and is therefore converted to boolean `true`.
+
 We can now follow the bug step by step.
 
 In file *index.js*, line 9 looks like this:
 
     const formally = myUrl.searchParams.get("formally");
 
-
-For curl request `http://127.0.0.1:8000/welcome?name=John&formally=false`, this creates a variable `formally` with value `"false"` of type `string`.
+The `get` method on object `myUrl.searchParams` always returns a string value, so for curl request `http://127.0.0.1:8000/welcome?name=John&formally=false`, this creates a variable `formally` with the string value `"false"`.
 
 On line 12, we call the greeter function and pass this variable as the second parameter:
 
@@ -1765,64 +1766,29 @@ is executed as
 and because `"false"` is a non-empty string, it is translated to boolean value `true` - the `if` body is thus executed, and the user is greeted formally.
 
 
+Working around this bug is not terribly complicated. Remember how we talked about *boolean operators* in the first part of the book. Within the condition statement of an `if` statement, multiple boolean conditions can be combined. For example, the "or" operator `||` combines two boolean conditions, and if one of these two is true, the whole condition becomes true.
 
-This offers a way to work around the bug, in file *index.js*. Instead of just passing the *number* parameter to the *calculator* functions, we can first ensure that its value can be interpreted as a number, and bail out if that's not the case:
+We can make use of this to rewrite line 2 of file *greeter.js* as follows:
 
-    const http = require("http");
-    const url = require("url");
-    const calculator = require("./calculator");
+    if (formally === true || formally === "true") {
 
-    const server = http.createServer((req, res) => {
-        const myUrl = new url.URL("http://localhost:8000" + req.url);
+After (re-)starting the webserver application, things now work as expected:
 
-        const x = myUrl.searchParams.get("name");
+    % curl "http://127.0.0.1:8000/welcome?name=John&formally=false"
+    Hello John%
 
-        if (Number.isNaN(parseInt(x))) {
-            res.end(
-                "Value "
-                + x
-                + " cannot be interpreted as an integer value!"
-            );
-        } else {
+    % curl "http://127.0.0.1:8000/welcome?name=John&formally=true"
+    Good day to you, John%
 
-            if (myUrl.pathname === "/welcome") {
-                res.end(
-                    "The duplicate of "
-                    + x
-                    + " is "
-                    + calculator.duplicateNumber(x)
-                );
-            }
-
-            if (myUrl.pathname === "/seeOff") {
-                res.end(
-                    "The square of "
-                    + x
-                    + " is "
-                    + calculator.squareNumber(x)
-                );
-            }
-
-        }
-    });
-
-    server.listen(
-        8000,
-        "localhost",
-        () => console.log("HTTP server started and available at http://localhost:8000.")
-    );
-
-Additionally, to make the code more readable, the value of the *x* parameter is now assigned to const `x` on line 8, reducing the number of required `myUrl.searchParams.get("name")` function calls to only one.
-
-Note: you might be tempted to simply do a comparison to check if something is `NaN`, like this: `if (parseInt(x) === NaN) { ... }`. However, comparing something to `NaN` will *always* yield `false`. Yes, this means that `NaN === NaN` is `false`. `NaN` is the only value that is not equal to itself. Sounds weird? That's because it is. Use the `Number.isNaN` function and you will be fine.
+That's because now, we check the `formally` parameter more precisely: its value must either be boolean value `true` OR string value `"true"` to make the whole `if` condition become `true`.
 
 With this, we avoid running into the bug, and all is fine, right? No it's not. Because the *actual* problem here lies much deeper.
 
-The problem, or rather its root cause, is not that our code cannot *handle* strings that don't contain a number. The problem is that JavaScript didn't *tell us* as early as possible, and we could only find out by running and testing the server application.
+The problem, or rather its root cause, is not that our code cannot *handle* string values in `if` statements. The problem is that JavaScript didn't *tell us*, as early as possible, that we are working with a string value where we expected a boolean value, and we could only find out by running and testing the server application.
 
 While a programming language cannot prevent each and every possible bug, it should support us in writing bug-free code as much as possible. Let's say we would mistype the first line of code in file index.js, and write `connst` instead of `const`. If we'd try to run this code, Node.js would bail out with a `SyntaxError: Unexpected identifier` message and refuse to run our code. So JavaScript clearly cares about correctly written identifiers.
 
-However, it doesn't care about types in the same way. We can easily write an application like this:
+However, it doesn't care about types in the same way. And this does not only apply to boolean values. We can easily write an application like this:
 
     const duplicateNumber = (x) => x * 2;
 
@@ -1834,37 +1800,47 @@ and JavaScript won't bat an eye. To add insult to injury, the second function ca
 
 Running into the kind of bugs resulting from this kind of negligence in a production application with thousands of users isn't exactly fun.
 
-While JavaScript has a notion of types, as we've learned, it doesn't have any language constructs to define and limit which types are expected or allowed in a given situation. Let's look at the `duplicateNumber` function again:
+While JavaScript has a notion of types, as we've learned, it doesn't have any language constructs to define and limit which types are expected or allowed in a given situation. Let's look at our first `welcome` function again:
 
-    const duplicateNumber = (x) => x * 2;
+    const welcome = (name, formally) => {
+        if (formally) {
+            return "Good day to you, " + name
+        } else {
+            return "Hello " + name
+        }
+    };
 
-We, the developers, know and understand that passing anything but a value of type *number* for parameter `x` doesn't make sense. But we have no way to tell JavaScript about this limitation.
+We, the developers, know and understand that passing anything but a value of type *boolean* for parameter `formally` doesn't make sense. But we have no way to tell JavaScript about this limitation.
 
 What we *can* do, of course, is check the type of a passed value within the function, using `typeof`, like this:
 
-    const duplicateNumber = (x) => {
-        if (typeof(x) !== "number") {
-            // do something
+    const welcome = (name, formally) => {
+        if (typeof(formally) !== "boolean") {
+            // report an error or something
         } else {
-            return x * 2;
+            // run the actual "welcome" logic
         }
     }
 
-But once again, this doesn't really prevent us from running an application where we pass a string for `x` although that doesn't make any sense, a problem that is only handled when the application is already running.
+But once again, this doesn't really *prevent* us from running an application where we pass a string for `formally` although that doesn't make any sense. It this is a problem that is only handled when the application is already running.
 
-What we really want is something like this:
+What we really want - but in JavaScript, cannot do - is something like this:
 
-    const duplicateNumber = (x: number) => x * 2;
+    // this is not actually possible in JavaScript...
 
-This way, we would define the function parameter more precisely: we give it a name, but we *also* declare, on the language level, that only values of type `number` are accepted when calling the function.
+    const welcome = (name: string, formally: boolean) => { ... }
+
+This way, we would define the function parameters more precisely: we give them a name, but we *also* declare that for these parameters, only values of a certain *type* are accepted when calling the function.
 
 With this, JavaScript would have the knowledge it needs to deny running a code file like this:
 
-        const duplicateNumber = (x: number) => x * 2;
+        // this is not actually possible in JavaScript...
 
-        duplicateNumber("So what?");
+        const welcome = (name: string, formally: boolean) => { ... }
 
-Before even running this code, the interpreter would be able to identify the mismatch, that the `num` parameter must be of type `number`, and that the type of the the value it is called with on the second line is `string`, and it could deny running this code, preventing a runtime bug before we even started the application.
+        welcome("John", "false");
+
+Before even running this code, the interpreter would be able to identify the mismatch: that the `formally` parameter must be of type `boolean`, and that the type of the the value it is called with on the second line is `string`, and it could deny running this code, preventing a runtime bug before we even started running the application.
 
 Here's the thing: if value types obviously play an important role to avoid bugs in our applications, but at the same time, the language we use doesn't really care about them when it is time to decide if an application should be allowed to run or not, then something is off.
 
@@ -1874,39 +1850,39 @@ But in terms of software quality, merely *knowing* about a bug and *being able* 
 
 Turns out a lot of people think the same way, and saw the shortcomings of JavaScript in this area as serious enough that they decided to do something about it. These people wanted to put complex JavaScript applications into production with confidence, and saw the lack of type-safety as such a crucial show-stopper that they created a new programming language - a beautiful and elegant language that can be summarized as "JavaScript, but with type-safety": **TypeScript**.
 
-Now, let me get the most pressing issue out of the way right here: No, everything you've learned so far was not learned in vain. Quite the opposite! That's because TypeScript has a very clever approach: It isn't a completely new language. Instead, it is 100%  based on JavaScript, and simply extends it with the type-safety language constructs asked for above.
+Now, let me get the most pressing issue out of the way right away: No, everything you've learned so far was NOT learned in vain. Quite the opposite! That's because TypeScript has a very clever approach: It isn't a completely new language. Instead, it is 100% based on JavaScript, and simply *extends* it with the type-safety language constructs asked for above.
 
 This means that every valid JavaScript code is also valid TypeScript code.
 
 Let's assume we have the following JavaScript code:
 
-    const greetFriendly = (name) => {
+    const greet = (name) => {
         console.log("Hello " + name);
     };
 
-    greetFriendly("Jane");
+    greet("Jane");
 
 If we wanted to create a TypeScript file that is functionally equivalent to the JavaScript code above, this would be the result:
 
-    const greetFriendly = (name) => {
+    const greet = (name) => {
         console.log("Hello " + name);
     };
 
-    greetFriendly("Jane");
+    greet("Jane");
 
 It's the exact same code! Writing TypeScript means writing JavaScript code exactly like we did before, but also being able to *optionally* add type-safety if and only if we want to.
 
 This means that while we could simply keep the TypeScript code above as it is, we now *can* improve it in terms of type-safety, like this:
 
-    const greetFriendly = (name: string) => {
+    const greet = (name: string) => {
         console.log("Hello " + name);
     };
 
-    greetFriendly("Jane");
+    greet("Jane");
 
-All we did was add the `: string` type declaration to the `greetFriendly` function definition. While JavaScript cannot understand and use this additional information, TypeScript can, making our code type-safe.
+All we did was add the `: string` type declaration to the `greet` function definition. While JavaScript cannot understand and use this additional information, TypeScript can, making our code type-safe.
 
-We are facing one minor challenge now: Node.js only runs JavaScript code, and doesn't understand TypeScript code. So how can we create a Node.js application using TypeScript?
+We are facing one challenge though: Node.js only runs JavaScript code, and doesn't understand TypeScript code. So how can we create a Node.js application using TypeScript?
 
 The TypeScript project has a simple solution for this: It ships with `tsc`, the TypeScript Compiler. This compiler takes TypeScript code and translates it into valid JavaScript code. This process is called *transpiling*.
 
@@ -1914,22 +1890,22 @@ Let's see how this works. First, create a new project folder, called `typescript
 
 Within this folder, create file `index.ts` (note the `.ts` file suffix instead of `.js`), and fill it with our type-safe greet code:
 
-    const greetFriendly = (name: string) => {
+    const greet = (name: string) => {
         console.log("Hello " + name);
     };
 
-    greetFriendly("Jane");
+    greet("Jane");
 
 Sure enough, Node.js won't be able to run this code:
 
     % node index.ts
     index.ts:1
-    const greetFriendly = (name: string) => {
-    ^
+    const greet = (name: string) => {
+                       ^
     
     SyntaxError: Unexpected token ':'
     
-In order to transpile this code into code that Node.js can understand, we need to install the TypeScript Compiler. It is part of a software package called `typescript`, which is made available through the NPM package distribution ecosystem.
+In order to transpile this code into code that Node.js *can* understand, we need to install the TypeScript Compiler. It is part of a software package called `typescript`, which is made available through the NPM package distribution ecosystem.
 
 When we installed Node.js through NVM before, we also installed the `npm` tool, and we can therefore use this to pull the `typescript` package code onto our local system, like this:
 
@@ -1941,9 +1917,9 @@ Once NPM has finished installing the package, the application `tsc` that is part
 
     % tsc --version
     
-    Version 4.3.4
+    Version 4.5.4
 
-Using `tsc` is very simple - you just feed it a TypeScript input file, and it will create a valid JavaScript output file under the same filename, ending with .js instead of .ts. So all we need to run while in folder `typescript-hello-world` is this:
+Using `tsc` is very simple - you just feed it a TypeScript input file, and it will create a valid JavaScript output file under the same filename, ending with `.js` instead of `.ts`. So all we need to run while in folder `typescript-hello-world` is this:
 
     % tsc index.ts
 
@@ -1959,14 +1935,14 @@ Let's see what the JavaScript code looks like that is generated by `tsc`, by eit
 
     % cat index.js
 
-    var greetFriendly = function (name) {
+    var greet = function (name) {
         console.log("Hello " + name);
     };
-    greetFriendly("Jane");
+    greet("Jane");
 
-We haven't met the `var` keyword before, and instead of `greetFriendly = (name) => {` the function is declared with `greetFriendly = function (name) {` - that's because by default, `tsc` generated the most compatible JavaScript code possible, using JavaScript language version *ES3*, which dates from December 1999. This version uses language constructs that are out of fashion by now, but not invalid - Node.js will happily digest and run this kind of code.
+We haven't met the `var` keyword before, and instead of `greet = (name) => {` the function is declared with `greet = function (name) {` - that's because by default, `tsc` generates the most compatible JavaScript code possible, using JavaScript language version *ES3*, which dates from December 1999. This version uses language constructs that are out of fashion by now, but not invalid - Node.js will happily digest and run this kind of code.
 
-Another observation: While our TypeScript code enforced type-safety for the parameter of the greetFriendly function, there is no type-checking logic in the resulting JavaScript code (using `typeof` or similar mechanisms). That's the point of TypeScript - it allows you to *write* type-safe code, but doesn't make the *running* code type-safe.
+Another observation: While our TypeScript code enforced type-safety for the parameter of the greet function, there is no type-checking logic in the resulting JavaScript code (using `typeof` or similar mechanisms). That's the point of TypeScript - it allows you to *write* type-safe code, but doesn't make the *running* code type-safe.
 
 In this sense, TypeScript's goal is to support type-safety when *authoring* code - it is a tool for the humans that *create* applications, not a tool for the machines *running* it.
 
@@ -1974,23 +1950,23 @@ While this sounds like only a very minor value proposition, it is in fact very p
 
 Thus, while the TypeScript Compiler *does* create code that isn't type-safe, it *cannot* create such code from TypeScript code that violates its encoded type hints, which can be proved by trying to transpile the following code (again, in file `index.ts`):
 
-    const greetFriendly = (name: string) => {
+    const greet = (name: string) => {
         console.log("Hello " + name);
     };
     
-    greetFriendly(42);
+    greet(42);
 
 Try to run `tsc` with this input code, and you will see the following:
 
     % tsc index.ts
     index.ts:5:15 - error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
     
-    5 greetFriendly(42);
+    5 greet(42);
     ~~
 
     Found 1 error.
 
-As expected, the TypeScript Compiler bails out with an error and won't create any JavaScript code. Our TypeScript code defined parameter `name` to be of type `string`, and the compiler therefore won't allow to create JavaScript code that calls function `greetFriendly` with a parameter of type `number`, although such a function call would be perfectly possible in JavaScript.
+As expected, the TypeScript Compiler bails out with an error and won't create any JavaScript code. Our TypeScript code defined parameter `name` to be of type `string`, and the compiler therefore won't allow to create JavaScript code that calls function `greet` with a parameter of type `number`, although such a function call would be perfectly possible in JavaScript.
 
 Depending on the code editor you use, you don't need to wait for a `tsc` run to identify type-safety issues. For example, IntelliJ IDE ships with a TypeScript plugin which marks invalid function calls and other problems right in the code editor.
 
