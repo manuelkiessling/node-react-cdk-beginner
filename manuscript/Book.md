@@ -26,6 +26,7 @@ Finally, it will teach you how to put all of your newly gained JavaScript, TypeS
 
 ## Who this book is for
 
+tbd
 
 ## Recommended working environment
 
