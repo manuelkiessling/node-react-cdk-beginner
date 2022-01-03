@@ -1,13 +1,13 @@
-"use strict";
-const welcome = (name, formally) => {
+const welcome = (name: string, formally: boolean) => {
     if (formally) {
         return "Good day to you, " + name;
-    }
-    else {
+    } else {
         return "Hello " + name;
     }
 };
-const seeOff = (name) => "Goodbye " + name;
+
+const seeOff = (name: string) => "Goodbye " + name;
+
 module.exports = {
     welcome,
     seeOff

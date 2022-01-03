@@ -1,8 +1,10 @@
+import { IncomingMessage, ServerResponse } from 'http';
+
 const http = require("http");
 const url = require("url");
 const greeter = require("./greeter");
 
-const server = http.createServer((req, res) => {
+const server = http.createServer((req: IncomingMessage, res: ServerResponse) => {
     const myUrl = new url.URL("http://localhost:8000" + req.url);
 
     const name = myUrl.searchParams.get("name");

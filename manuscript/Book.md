@@ -883,9 +883,9 @@ To do so, first create another file within `nodejs-webserver`, called `greeter.j
 
     const welcome = (name, formally) => {
         if (formally) {
-            return "Good day to you, " + name
+            return "Good day to you, " + name;
         } else {
-            return "Hello " + name
+            return "Hello " + name;
         }
     };
     
@@ -1667,9 +1667,9 @@ When looking at the code in file *greeter.js*, one would expect the response to 
 
     const welcome = (name, formally) => {
         if (formally) {
-            return "Good day to you, " + name
+            return "Good day to you, " + name;
         } else {
-            return "Hello " + name
+            return "Hello " + name;
         }
     };
 
@@ -1804,9 +1804,9 @@ While JavaScript has a notion of types, as we've learned, it doesn't have any la
 
     const welcome = (name, formally) => {
         if (formally) {
-            return "Good day to you, " + name
+            return "Good day to you, " + name;
         } else {
-            return "Hello " + name
+            return "Hello " + name;
         }
     };
 
@@ -1972,7 +1972,7 @@ Depending on the code editor you use, you don't need to wait for a `tsc` run to 
 
 It was stated earlier that "in terms of software quality, only *knowing* about a bug and *being able* to fix it, while certainly an important capability, is not the same as *being explicitly told* about a bug and being *forced* to fix it by the programming language itself".
 
-The above example shows this principle in action. While as an author, you *might* be able to spot and avoid a misguided and potentially problematic function call, using TypeScript and its type-safety annotations *enforces* correct function calls. One can easily imagine how this becomes a huge safety factor when working on code bases with thousand of lines of codes and hundreds of functions.
+The above example shows this principle in action. While as an author, you *might* be able to spot and avoid a misguided and potentially problematic function call, using TypeScript and its type-safety annotations *enforces* correct function calls. One can easily imagine how this becomes a huge safety factor when working on codebases with thousand of lines of code and hundreds of functions.
 
 Let's now see how TypeScript can help us to improve our Node.js webserver code. We need to reorganize and change the project files a bit, but as promised, we will stay really close to the original JavaScript code.
 
@@ -2017,15 +2017,15 @@ Once you have answered all questions, you are presented with a summary:
 
 Hit enter to signal that yes, this is ok. After doing to, NPM will create file `package.json` within our project folder.
 
-This file turns our project folder into an NPM package. NPM packages are Node.js applications and libraries that can be shared with other developers through the NPM ecosystem. We have already seen this in action: someone created an NPM package named "typescript" and released it into the NPM ecosystem. This allowed us to download and install that package onto our computer by running `npm install -g typescript`.
+This file turns our project folder into an NPM package. NPM packages are Node.js applications or libraries that can be shared with other developers through the NPM ecosystem. We have already seen this in action: someone created an NPM package named "typescript" and released it into the NPM ecosystem. This allowed us to download and install that package onto our computer by running `npm install -g typescript`.
 
-Our goal here is not to release our webserver application into the world. Still, it's useful to have it set up as an NPM package. Releasing software is just one functionality provided by NPM. We are interested in one of the other many goodies that NPM provides - namely, dependency management. When extending our webserver application, we want to make use of other NPM packages, and file `package.json` allows us to define the names and versions of these packages. This is called "dependency management" because this way, we can *manage*, in a structured way, what the software packages are that our own software package *depends on* to work correctly.
+Our goal here is not to release our webserver application into the world - still, it's useful to have it set up as an NPM package. Releasing software is just one functionality provided by NPM. We are interested in one of the other many goodies that NPM provides - namely, *dependency management*. When extending our webserver application, we want to make use of other NPM packages, and file `package.json` allows us to define the names and versions of these packages. This is called "dependency management" because this way, we can *manage*, in a structured way, what the software packages are that our own software package *depends on* to work correctly.
 
 Let's see this in action right away. As we are going to transform our JavaScript application into a TypeScript application, it would be nice if we were able to not only define the types of the parameters of our own functions, but to also see what the types are of parameters of the internal Node.js functions that we are calling from our own code.
 
-For example, here is line of of our own code, where we call a function from the built-in "url" module of Node.js:
+For example, here is a line of our own code, where we call a function from the built-in Node.js "url" module:
 
-    const x = myUrl.searchParams.get("name");
+    const name = myUrl.searchParams.get("name");
 
 It would be nice if we knew, during development, what type of parameter is allowed to be passed to the `get()` function.
 
@@ -2052,19 +2052,40 @@ Additionally, our `package.json` file has been extended and now looks like this:
       "author": "",
       "license": "ISC",
       "devDependencies": {
-        "@types/node": "^15.12.5"
+        "@types/node": "^17.0.7"
       }
     }
 
 A new section has been added, called `devDependencies`. This section contains a list of all NPM packages that are defined as "needed during development of this project". As type information is only needed during software development, and is irrelevant when the application is running, it's a perfect fit for a devDependency. Dependencies that are needed while an application is executed go into a section called `dependencies` - we will encounter those later.
 
-As you can see, a version definition - `^15.12.5` - has been added after the package name, even though we didn't define that while running `npm install`. The version shown just happens to be the most recent version of the package at the time of installation, and NPM uses this version for the version definition. A version definition can simply be a version number, but it may also include special characters which tell NPM how to handle updates. The leading `^` sign, for example, means "include any version that does not increment the the leading 15 of the version definition".
+As you can see, a version definition - `^17.0.7` - has been added after the package name, even though we didn't define that while running `npm install`. The version shown just happens to be the most recent version of the package at the time of installation, and NPM uses this version for the version definition. A version definition can simply be a version number, but it may also include special characters which tell NPM how to handle updates. The leading `^` sign, for example, means "include any version that does not increment the leading 15 of the version definition".
 
 The NPM project provides an interactive "semver calculator" at https://semver.npmjs.com which explains all the possible definitions and their meaning in detail. Also, make sure to read up on https://semver.org to understand how software in the NPM ecosystem (and elsewhere) is versioned.
 
-Let's continue to build out the new project structure
+Let's continue to build out the new project structure. First, we need to turn our JavaScript files into TypeScript files. That's easy, we just need to rename them, like this:
 
+    % mv src/greeter.js src/greeter.ts ; mv src/index.js src/index.ts
 
+Remember how we learned earlier that every valid JavaScript file is also a valid TypeScript file. The renamed files thus contain perfectly valid TypeScript code, although we only changed their names and not a single letter of their content.
+
+Of course, switching to TypeScript code without adding any type definitions to the codebase is pointless, so let's do just that now. We start with file `src/greeter.js`, and rewrite it like this:
+
+    const welcome = (name: string, formally: boolean) => {
+        if (formally) {
+            return "Good day to you, " + name;
+        } else {
+            return "Hello " + name;
+        }
+    };
+    
+    const seeOff = (name: string) => "Goodbye " + name;
+    
+    module.exports = {
+        welcome,
+        seeOff
+    };
+
+With this, we do not change the code logic itself. We merely add type definitions where it makes sense: to the parameters of functions `welcome` and `seeOff`.
 
 
 
