@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const welcome = (name, formally) => {
     if (formally) {
         return "Good day to you, " + name;
@@ -8,7 +9,7 @@ const welcome = (name, formally) => {
     }
 };
 const seeOff = (name) => "Goodbye " + name;
-module.exports = {
+exports.default = {
     welcome,
     seeOff
 };

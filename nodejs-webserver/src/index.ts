@@ -1,14 +1,14 @@
-import { IncomingMessage, ServerResponse } from 'http';
+import { IncomingMessage, ServerResponse } from "http";
 
-const http = require("http");
-const url = require("url");
-const greeter = require("./greeter");
+import http from "http";
+import url from "url";
+import greeter from "./greeter";
 
 const server = http.createServer((req: IncomingMessage, res: ServerResponse) => {
     const myUrl = new url.URL("http://localhost:8000" + req.url);
 
-    const name = myUrl.searchParams.get("name");
-    const formally = myUrl.searchParams.get("formally");
+    const name = myUrl.searchParams.get("name") || "John";
+    const formally = myUrl.searchParams.get("formally") === "true";
 
     if (myUrl.pathname === "/welcome") {
         res.end(greeter.welcome(name, formally));

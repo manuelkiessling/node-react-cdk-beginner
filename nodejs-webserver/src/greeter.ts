@@ -8,7 +8,7 @@ const welcome = (name: string, formally: boolean) => {
 
 const seeOff = (name: string) => "Goodbye " + name;
 
-module.exports = {
+export default {
     welcome,
     seeOff
 };
