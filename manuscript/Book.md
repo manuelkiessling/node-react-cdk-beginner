@@ -2068,7 +2068,7 @@ Let's continue to build out the new project structure. First, we need to turn ou
 
 Remember how we learned earlier that every valid JavaScript file is also a valid TypeScript file. The renamed files thus contain perfectly valid TypeScript code, although we only changed their names and not a single letter of their content.
 
-Of course, switching to TypeScript code without adding any type definitions to the codebase is pointless, so let's do just that now. We start with file `src/greeter.js`, and rewrite it like this:
+Of course, switching to TypeScript code without adding any type definitions to the codebase is pointless, so let's do just that now. We start with file `src/greeter.ts`, and rewrite it like this:
 
     const welcome = (name: string, formally: boolean) => {
         if (formally) {
@@ -2087,8 +2087,45 @@ Of course, switching to TypeScript code without adding any type definitions to t
 
 With this, we do not change the code logic itself. We merely add type definitions where it makes sense: to the parameters of functions `welcome` and `seeOff`.
 
+File `greeter.ts` holds a part of the codebase that is used by another part in the codebase, file `index.ts`. Switching from JavaScript to TypeScript doesn't change this. What does change, though, is the mechanism used to *import* elements from another code file where these elements have been *exported*.
 
+For Node.js applications written in JavaScript, the mechanism is called the *CommonJS module system*, which offers `module.exports` and `require` as the tools to use on both ends of an export-import construct.
 
+TypeScript supports a newer mechanism from the JavaScript ecosystem called *ES Modules*. It offers the `export` keyword, to be used in files that want to make code available, and the `import` keyword, to be used in files that want to use the exported code.
+
+The big advantage is that by using the *ES Modules* mechanisms, type definitions from the exporting side become known on the importing side, which allows the TypeScript compiler to ensure that correct types are used even if code is used across files.
+
+In order switch from a CommonJS setup to an ES Modules setup, we simply need to rewrite those parts of our code files where code is exported and required. For file `greeter.ts`, this means changing this:
+
+    module.exports = {
+        welcome,
+        seeOff
+    };
+
+to this:
+
+    export default {
+        welcome,
+        seeOff
+    };
+
+We can now continue with file `src/index.ts`, and we start by rewriting it from the `require`-based CommonJS approach to the `import`-based ES Modules approach, too. Thus, this:
+
+    const http = require("http");
+    const url = require("url");
+    const greeter = require("./greeter");
+
+becomes this:
+
+    import http from "http";
+    import url from "url";
+    import greeter from "./greeter";
+
+The syntax is quite different in some areas, and some aspects remain similar.
+
+While `require` is provided as a function that needs to be called with a module name or filename as its parameter, `import` is a dedicated keyword, not a function. Instead of explicitly declaring a `const` with the return value of the `require` function call, with `import` a named variable is created implicitly. 
+
+As before, modules are simply identified by their name, while references to a file, like `greeter.ts`, need a file path component like `./`, and the file extension can be left out.
 
 
 
