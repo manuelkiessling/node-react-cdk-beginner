@@ -1,14 +1,12 @@
-import { IncomingMessage, ServerResponse } from "http";
-
 import http from "http";
 import url from "url";
 import greeter from "./greeter";
 
-const server = http.createServer((req: IncomingMessage, res: ServerResponse) => {
+const server = http.createServer((req, res) => {
     const myUrl = new url.URL("http://localhost:8000" + req.url);
 
-    const name = myUrl.searchParams.get("name") || "John";
-    const formally = myUrl.searchParams.get("formally") === "true";
+    const name = myUrl.searchParams.get("name");
+    const formally = myUrl.searchParams.get("formally");
 
     if (myUrl.pathname === "/welcome") {
         res.end(greeter.welcome(name, formally));

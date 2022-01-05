@@ -2125,7 +2125,59 @@ The syntax is quite different in some areas, and some aspects remain similar.
 
 While `require` is provided as a function that needs to be called with a module name or filename as its parameter, `import` is a dedicated keyword, not a function. Instead of explicitly declaring a `const` with the return value of the `require` function call, with `import` a named variable is created implicitly. 
 
-As before, modules are simply identified by their name, while references to a file, like `greeter.ts`, need a file path component like `./`, and the file extension can be left out.
+As before, modules are simply identified by their name, while references to a file, like `greeter.ts`, need a file path component like `./`, and the file extension can be left out. Thus, importing `greeter` from `./greeter` makes the exported object from file `greeter.ts` available under name `greeter` in file `index.ts`, very much like with the `require` approach before.
+
+The remaining code in file `index.ts` doesn't need to change for now.
+
+Let's run the TypeScript compiler in folder `src` and see what it thinks of our new code:
+
+    % tsc
+    src/index.ts:1:8 - error TS1192: Module '"http"' has no default export.
+    
+    1 import http from "http";
+    ~~~~
+    
+    src/index.ts:2:8 - error TS1192: Module '"url"' has no default export.
+    
+    2 import url from "url";
+    ~~~
+    
+    Found 2 errors.
+
+Well, that's a bit disenchanting. Looks like the `import` statement isn't working as expected, at least when importing from the internal `http` and `url` modules.
+
+The reason is that while both modules do in fact export code, they do not provide a *default export*. Remember our own `export` statement in file `greeter.ts`:
+
+    export default {
+        welcome,
+        seeOff
+    };
+
+The ES Modules system knows two kinds of exports, normal exports and default exports. We will encounter normal exports later and will introduce them properly when we first use them. Here, we defined a default export - this means that while file `greeter.ts` could potentially export several different elements which could then be imported specifically as needed, the object holding the `welcome` and `seeOff` function is the element you get when importing nothing specifically from file `greeter.ts`, but simply the file itself.
+
+The internal Node.js modules `http` and `url` do not provide such a default export. They only provide specific single elements, like the `createServer` function. This is not a problem, though - for code modules that don't provide a default export, TypeScript can simulate that they do.  
+
+To achieve this, we simply need to add a TypeScript configuration, by creating file `tsconfig.json` in folder `nodejs-webserver`, with the following content:
+
+    {
+        "compilerOptions": {
+            "allowSyntheticDefaultImports": true
+        }
+    }
+
+This compiler options basically means that even for modules that do not provide a default export, TypeScript takes all "normal" exports from the module and makes them available as elements on a synthetically created object which it creates on-the-fly.
+
+Once again, we run `tsc` in folder `src`:
+
+    % tsc
+    index.ts:12:39 - error TS2345: Argument of type 'string' is not assignable to parameter of type 'boolean'.
+    
+    12         res.end(greeter.welcome(name, formally));
+    ~~~~~~~~
+    
+    Found 1 error.
+
+And that is exactly what we want to hear, an error message that cuts right to the chase of the matter: We are calling function `welcome` with a string parameter value where only a boolean value makes sense!
 
 
 
