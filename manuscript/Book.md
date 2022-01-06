@@ -2211,6 +2211,8 @@ This tells us:
 - it expects a parameter `name` of type `string`
 - it returns a value of type `string`
 
+Quick aside: the truth is a bit more complicated. The *actual* shape of function `get` looks like this: `get(name: string): string | null`. - that is, it returns either a value of type `string` or, if no URL parameter with the requested name exists, `null`. In TypeScript, a "pipe" symbol `|` in a type definition can be read as "or", as in `string or null`. In Visual Studio Code on macOS, you can see this additional information when pressing the "command" key while hovering over the `get` method with your mouse. I'm not entirely sure where the incomplete desccription comes from.
+
 
 
 
