@@ -2177,8 +2177,44 @@ Once again, we run `tsc` in folder `src`:
     
     Found 1 error.
 
-And that is exactly what we want to hear, an error message that cuts right to the chase of the matter: We are calling function `welcome` with a string parameter value where only a boolean value makes sense!
+And that is exactly what we want to see, an error message that cuts right to the chase of the matter: We are calling function `welcome` with a string parameter value where only a boolean value makes sense!
 
+Let's see how TypeScript can further help us to understand and solve this problem.
+
+If you are using a full-fledged IDE instead of a simple text editor, like Atom, Visual Studio Code, or IntelliJ IDEA, then you have probably seen that you don't need to run `tsc` to be informed about the problem. These IDEs use the rules that define what's possible in TypeScript and what's not under the hood to immediately inform you about problems in your code while writing it.
+
+These IDEs can do even more to support us. When hovering the mouse pointer over the `welcome` method name on line 12 of file `index.ts`, they show several useful information about this method, including the type hints. For example, in Visual Studio Code, the information looks like this:
+
+    (property) welcome: (name: string, formally: boolean) => string
+
+Thus, without visiting the method definition in file `greeter.ts`, we learn the following:
+
+- `welcome` is a property of an object (in this case, the object `greeter` which has been created through the `import` statement)
+- it is a function with two parameters and a return value of type string
+- its parameters are named `name` and `formally`, of type `string` and `boolean` respectively
+
+We can use the same tooling to investigate the "shape" of other code elements, even from codebases that we don't control ourselves. This can help us understand the root cause of our bug.
+
+The problem arises when passing a string value as the second parameter of method `welcome`, where a boolean value is expected. Where does the string value come from? It is stored in const `formally`, which is created on line 9:
+
+    const formally = myUrl.searchParams.get("formally");
+
+Here, `formally` is created with the value that is returned by calling the `get` method of object `myUrl.searchParams`. The string value has to come from there.
+
+And sure enough, hovering over the `get` method name in Visual Studio Code shows the following:
+
+    (method) URLSearchParams.get(name: string): string
+
+This tells us:
+
+- `get` is a method; in other words, is a function that is assigned to the attribute of an object
+- it expects a parameter `name` of type `string`
+- it returns a value of type `string`
+
+
+
+
+(property) welcome: (name: string, formally: boolean) => string
 
 
 # Part 3: React - Rich and interactive user interfaces with JavaScript
