@@ -2211,12 +2211,13 @@ This tells us:
 - it expects a parameter `name` of type `string`
 - it returns a value of type `string`
 
-Quick aside: the truth is a bit more complicated. The *actual* shape of function `get` looks like this: `get(name: string): string | null`. - that is, it returns either a value of type `string` or, if no URL parameter with the requested name exists, `null`. In TypeScript, a "pipe" symbol `|` in a type definition can be read as "or", as in `string or null`. In Visual Studio Code on macOS, you can see this additional information when pressing the "command" key while hovering over the `get` method with your mouse. I'm not entirely sure where the incomplete desccription comes from.
+Quick aside: the details are a bit more complicated. The *actual* shape of function `get` looks like this: `get(name: string): string | null`. - that is, it returns either a value of type `string` or, if no URL parameter with the requested name exists, `null`. In TypeScript, a "pipe" symbol `|` in a type definition can be read as "or", as in `string or null`. In Visual Studio Code on macOS, you can see this additional information when pressing the "command" key while hovering over the `get` method with your mouse. I'm not entirely sure where the incomplete description comes from.
+
+We now have identified, by following the relevant TypeScript type definitions, where the problem that leads to the bug arises.
+
+Because we are allowed to only pass a boolean value to the `welcome` method, but what we get from the `myUrl.searchParams.get` method is a string, we need an additional step where we get from the string value that we have to the boolean value that we need.
 
 
-
-
-(property) welcome: (name: string, formally: boolean) => string
 
 
 # Part 3: React - Rich and interactive user interfaces with JavaScript
