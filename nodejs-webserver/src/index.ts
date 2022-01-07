@@ -5,11 +5,11 @@ import greeter from "./greeter";
 const server = http.createServer((req, res) => {
     const myUrl = new url.URL("http://localhost:8000" + req.url);
 
-    const name = myUrl.searchParams.get("name");
+    const name = myUrl.searchParams.get("name") || "";
     const formally = myUrl.searchParams.get("formally");
 
     if (myUrl.pathname === "/welcome") {
-        res.end(greeter.welcome(name, formally));
+        res.end(greeter.welcome(name, formally === "true"));
     }
 
     if (myUrl.pathname === "/seeOff") {

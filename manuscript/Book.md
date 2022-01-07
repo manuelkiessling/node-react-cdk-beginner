@@ -2161,11 +2161,12 @@ To achieve this, we simply need to add a TypeScript configuration, by creating f
 
     {
         "compilerOptions": {
-            "allowSyntheticDefaultImports": true
+            "allowSyntheticDefaultImports": true,
+            "esModuleInterop": true
         }
     }
 
-This compiler options basically means that even for modules that do not provide a default export, TypeScript takes all "normal" exports from the module and makes them available as elements on a synthetically created object which it creates on-the-fly.
+This compiler option `allowSyntheticDefaultImports` basically means that even for modules that do not provide a default export, TypeScript takes all "normal" exports from the module and makes them available as elements on a synthetically created object which it creates on-the-fly. Because some incompatibility problems that can occur when working with CommonJS-based modules in an ES Modules codebase, we also add the `esModuleInterop`, which avoids these problems[^note10].
 
 Once again, we run `tsc` in folder `src`:
 
@@ -2215,8 +2216,23 @@ Quick aside: the details are a bit more complicated. The *actual* shape of funct
 
 We now have identified, by following the relevant TypeScript type definitions, where the problem that leads to the bug arises.
 
-Because we are allowed to only pass a boolean value to the `welcome` method, but what we get from the `myUrl.searchParams.get` method is a string, we need an additional step where we get from the string value that we have to the boolean value that we need.
+Because we are allowed to only pass a boolean value to the `welcome` method, while what we get from the `myUrl.searchParams.get` method is a string, we need an additional step where we get from the string value that we have to the boolean value that we need - and this time.
 
+One way to achieve this is to change line 12 of file `index.ts` to the following:
+
+    res.end(greeter.welcome(name, formally === "true"));
+
+This way, we do not pass the value of variable `formally` to the *welcome* method - instead, we pass the boolean result of a comparison expression; if the value of `formally` equals the string value `"true"`, then the boolean value `true` is passed to our method.
+
+That's it - we have successfully transformed our JavaScript codebase into a TypeScript codebase, fixed the bug for good, and are good to go. Simply `cd` to folder `src`, run `tsc`, and then `node index.js` to start the server again.
+
+This time, everything works as expected:
+
+    % curl "http://127.0.0.1:8000/welcome?name=John&formally=true"
+    Good day to you, John
+    
+    % curl "http://127.0.0.1:8000/welcome?name=John&formally=false"
+    Hello John
 
 
 
@@ -2252,3 +2268,5 @@ In addition, interaction of the user with the graphical representation of the DO
 [^note8]: See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NaN for more details.
 
 [^note9]: See https://www.typescriptlang.org/play?alwaysStrict=false&target=0#code/MYewdgzgLgBA5gJwKZKgMQQSyWAJgGwE8YBeGACjAEMBbJALhmizDgEpSA+GAbwFgAUDGExQkEPiQA6fCDjkARAAkk+WTAUwA1DGp02AbkEBfIwMGIU6LDgKFFAKSpgkCw4KA.
+
+[^note10]: See https://www.typescriptlang.org/tsconfig for the documentation of all available TypeScript compiler options.
