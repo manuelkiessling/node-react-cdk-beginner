@@ -1093,12 +1093,12 @@ The World Wide Web building set...
 ...which builds on different network building sets.
 ┌───────────────────────────────────────┐
 │                                       │
-│ Ethernet, ATM, IEEE 802.11...         │
+│ Ethernet, ATM, IEEE 802.11 (Wi-Fi)... │
 │                                       │
 └───────────────────────────────────────┘
 ```
 
-Which is another way to say that you browser uses Internet technology like IP and TCP, which allows it to send and receive data over network technology like Ethernet or ATM, to talk to a web server using the HTTP protocol, enabling the browser to request and download the collection of HTML, CSS and JavaScript (and other assets like images, audio files, or video files) that make up the web page which appears in your browser window.
+Which is another way to say that your browser uses Internet technology like IP and TCP, which allows it to send and receive data over network technology like Ethernet or ATM, to talk to a web server using the HTTP protocol, enabling the browser to request and download the collection of HTML, CSS and JavaScript (and other assets like images, audio files, or video files) that make up the web page which appears in your browser window.
 
 Ok, but how does that look in practice?
 
@@ -1339,7 +1339,7 @@ As said, we always return the same resource when responding to a request, no mat
         () => console.log("HTTP server started and available at http://localhost:8000.")
     );
 
-As always, don't forget to "stop" the currently running server application with CTRL-C, and re-start it using the changed code base with `node index.js`.
+As always, don't forget to "stop" the currently running server application with CTRL-c, and re-start it using the changed code base with `node index.js`.
 
 Interacting with the server through curl is now a tad more interesting:
 
@@ -2234,6 +2234,42 @@ This time, everything works as expected:
     % curl "http://127.0.0.1:8000/welcome?name=John&formally=false"
     Hello John
 
+
+Because we write TypeScript code but run JavaScript code, we now have a two-step build-and-run process: every time we want to start the most recent implementation of our webserver, we need to first run `tsc` in order to transpile the TypeScript code into JavaScript code, and then `node src/index.js` in order to start the server application.
+
+That's a bit involved for something we do so often, and it's also error-prone because it's easy to forget the `tsc` step and then wonder why an expected change does not show up when testing the application.
+
+This can be easily solved: NPM offers a functionality that is called "run scripts" - in the `scripts` section of file `package.json`, we can define a keyword-command pair, and running `npm run <keyword>` then executes the command mapped to `<keyword>`.
+
+By rewriting this section as follows, we can define keyword `start` as follows:
+
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "tsc && node src/index.js"
+    },
+
+Give it a try - stop the currently running server application process by hitting CTRL-c, and then simply execute `npm run start` on the command line. The result should look like this:
+
+    % npm run start
+    
+    > nodejs-webserver@1.0.0 start
+    > tsc && node src/index.js
+    
+    HTTP server started and available at http://localhost:8000.
+
+This shortcut first runs `tsc`, and if (and only if) this is successful, it runs `node src/index.js`. The `&&` looks similar to the boolean *and* used in JavaScript and TypeScript. On the command line, it's used to logically connect two commands: `first-command && second-command` means "run `first-command`, and if this works without resulting in an error, also run `second-command`". 
+
+With this, we can conclude an enormously important chapter of our journey. Here is what we learned:
+
+- Using NVM, it is possible to install Node.js onto our computer system, and manage the parallel installation of different Node.js versions.
+- Using Node.js, it is possible to run JavaScript code on the command line of our computer.
+- This allows us to write network applications, like an HTTP server.
+- The command line tool `curl` is a text-base HTTP client which allows us to request contents from our own local Node.js-based HTTP server application.
+- This so-called client/server architecture is at the heart of the global World Wide Web architecture, which in turn is based in several Internet technologies like DNS, TCP/IP, and others; these Internet technologies operate on low-level networking technologies like Ethernet, ATM, Wi-Fi etc.
+- Using Node.js, we are thus able to create Internet applications using JavaScript.
+- While JavaScript provides everything we need to build those applications, the weak type-safety of this language can quickly result in subtle bugs - this becomes a serious concern for writing even moderately complex applications.
+- TypeScript is a so-called superset of JavaScript - it uses the same syntax, keywords, and functionality as JavaScript, but it also allows us to optionally define type definitions on function parameters and in other places, allowing us to write code with strong type-safety; this avoids a whole family of bugs from the get-go, and offers many additional advantages as we will see.
+- Using NPM, we can define, install, and manage external software packages that help us to achieve the goals of our own codebase; additionally, it allows us to define "run scripts" to create shortcuts for our daily work.
 
 
 # Part 3: React - Rich and interactive user interfaces with JavaScript
