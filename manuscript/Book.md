@@ -2261,15 +2261,38 @@ This shortcut first runs `tsc`, and if (and only if) this is successful, it runs
 
 With this, we can conclude an enormously important chapter of our journey. Here is what we learned:
 
-- Using NVM, it is possible to install Node.js onto our computer system, and manage the parallel installation of different Node.js versions.
-- Using Node.js, it is possible to run JavaScript code on the command line of our computer.
+- Using NVM, it is possible to install Node.js onto our computer system, and manage the parallel installation of multiple different Node.js versions.
+- Using an installation of Node.js, it is possible to run JavaScript code on the command line of our computer.
 - This allows us to write network applications, like an HTTP server.
-- The command line tool `curl` is a text-base HTTP client which allows us to request contents from our own local Node.js-based HTTP server application.
-- This so-called client/server architecture is at the heart of the global World Wide Web architecture, which in turn is based in several Internet technologies like DNS, TCP/IP, and others; these Internet technologies operate on low-level networking technologies like Ethernet, ATM, Wi-Fi etc.
-- Using Node.js, we are thus able to create Internet applications using JavaScript.
+- The command line tool `curl` is a text-base HTTP client which allows us to request contents from our own Node.js-based HTTP server application.
+- This so-called client/server architecture is at the heart of the global World Wide Web architecture, which in turn is based on several Internet technologies like DNS, TCP/IP, and others; these Internet technologies operate on low-level networking technologies like Ethernet, ATM, Wi-Fi etc.
+- Using Node.js, we are thus able to create and run Internet applications using JavaScript.
 - While JavaScript provides everything we need to build those applications, the weak type-safety of this language can quickly result in subtle bugs - this becomes a serious concern for writing even moderately complex applications.
-- TypeScript is a so-called superset of JavaScript - it uses the same syntax, keywords, and functionality as JavaScript, but it also allows us to optionally define type definitions on function parameters and in other places, allowing us to write code with strong type-safety; this avoids a whole family of bugs from the get-go, and offers many additional advantages as we will see.
-- Using NPM, we can define, install, and manage external software packages that help us to achieve the goals of our own codebase; additionally, it allows us to define "run scripts" to create shortcuts for our daily work.
+- The programming language TypeScript is a superset of JavaScript - it uses the same syntax, keywords, and functionality as JavaScript, but it also allows us to optionally define type definitions on function parameters and in other places, enabling us to write code with strong type-safety; this avoids a whole family of bugs from the get-go, and offers many additional advantages as we will see.
+- Using NPM, we can declare, install, and manage external community-provided Node.js software packages that help us to achieve the goals of our own codebase; additionally, it allows us to define "run scripts" to create shortcuts for our daily work.
+
+
+## Exploring the possibilities of TypeScript
+
+When we want to learn TypeScript, we obviously don't need to start from scratch. Because it is a superset of JavaScript, we can simply carry over our existing JavaScript knowledge, and we already know 90% of TypeScript. An `if` statement is an `if` statement, a `const` is a `const`, a function is a function - TypeScript changes none of that.
+
+What we do need to learn, though, are the type definition capabilities and the type-safety measures that TypeScript brings to the table.
+
+We have already seen some of the more basic measurements at our disposal, namely adding type hints to function parameters. Writing `const greet = (name: string)` instead of only `const greet = (name)` ensures that no other part of our code can call function `greet` with a value that is not a string.
+
+We will now learn where else types can be used, and how we can even create and use our own types.
+
+Let's begin with an overview of the types that TypeScript supports. We start with the so-called *primitives*: `string`, `number`, `boolean`.
+
+Nothing surprising here - we already know these from chapter one, where we introduced the basic JavaScript value types. These TypeScript types map exactly to their JavaScript counterparts, and behave identical.
+
+
+
+
+- einführen, wo überall Typdefinitionen vorkommen dürfen 
+- https://github.com/TypeStrong/ts-node#installation
+- any einführen und sogleich auf noImplicitAny hinweisen, und damit im rest des buches arbeiten
+- 
 
 
 # Part 3: React - Rich and interactive user interfaces with JavaScript
