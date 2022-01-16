@@ -651,7 +651,7 @@ You may wonder what the type of const `greet` is after assigning it a function. 
 
 The output will be "function".
 
-When running this code you will realize how only the `console.log(typeof(greet));` line is actually executed. The function itself is *declared* and *assigned*, but its code, the part in the curly braces, isn't *run*.
+When running this code you will realize how only the `console.log(typeof(greet));` line is actually executed. The function itself is *declared* and *assigned* (to variable `greet`), but its code, the part in the curly braces, isn't *run*.
 
 This is because functions are only executed when they are *called* by another piece of code, like so:
 
@@ -2307,6 +2307,26 @@ But any of the following would fail the TypeScript Compiler checks:
     greet({ name: "John", age: 34, city: "New York" })
     # Error: additional undefined field city
 
+Note that the order of object attributes is irrelevant - this would work just fine:
+
+    greet({ age: 34, name: "John" })
+
+Another type that can be expressed with TypeScript's additional syntax is `function`. Let's assume we again have a `greet` function, but this time, the parameter it expects is not a `string` or an `object`, but another function which it then calls, like this:
+
+    const greet = (fn) => {
+        fn("Hello");
+    }
+
+We could call the greet function like this:
+
+    greet( (s) => console.log(s) )    
+
+This means that parameter `fn`, when calling `greet`, becomes the inline or anonymous function `(s) => console.log(s)`.
+
+
+
+
+We now have an overview of *what* kinds of types we can use - let's now see *where* we can use them.
 
 
 
