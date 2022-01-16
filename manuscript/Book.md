@@ -2286,6 +2286,27 @@ Let's begin with an overview of the types that TypeScript supports. We start wit
 
 Nothing surprising here - we already know these from chapter one, where we introduced the basic JavaScript value types. These TypeScript types map exactly to their JavaScript counterparts, and behave identical.
 
+Another type, which we already encountered in our JavaScript code, is `object`.
+
+Now, there isn't a type definition called `object` in TypeScript. Instead, TypeScript provides the syntax to define the *shape* of an object.
+
+Thus, instead of defining something like `const greet = (person: object)`, we can define which attributes we expect the person object parameter to have, like this: `const greet = (person: { name: string, age: number })`.
+
+In other words, we define an object's shape as the list of attribute names with a type definition for each attribute. The example above would allow to call `greet` like this:
+
+    greet({ name: "John", age: 34 })
+
+But any of the following would fail the TypeScript Compiler checks:
+
+    greet({ name: "John", age: "34" })
+    # Error: age is a string, not a number
+    
+    greet({ name: "John" })
+    # Error: required field age is missing
+
+    greet({ name: "John", age: 34, city: "New York" })
+    # Error: additional undefined field city
+
 
 
 
