@@ -2323,6 +2323,16 @@ We could call the greet function like this:
 
 This means that parameter `fn`, when calling `greet`, becomes the inline or anonymous function `(s) => console.log(s)`.
 
+With TypeScript, we can define the type of parameter `fn` as well. To do so, we need a so-called *function type expression*. For our example, where we expect a function with one parameter of type `string` and no return value, it looks like this:
+
+    const greet = (fn: (s: string) => void) => {
+        fn("Hello");
+    }
+
+A function type expression looks a lot like an inline function definition: a list of parameters, which too are typed, in parentheses, followed by an arrow, followed by the type of the return value of the function.
+
+This introduces a new keyword, `void`; it is used to define the return value type of functions that do not return any value (not even `null` or `undefined`, but actually nothing).
+
 
 
 
