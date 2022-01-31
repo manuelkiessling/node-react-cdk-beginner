@@ -2329,10 +2329,21 @@ With TypeScript, we can define the type of parameter `fn` as well. To do so, we 
         fn("Hello");
     }
 
-A function type expression looks a lot like an inline function definition: a list of parameters, which too are typed, in parentheses, followed by an arrow, followed by the type of the return value of the function.
+A function type expression looks a lot like an inline function definition: a list of parameters, which too are typed, in parentheses, followed by an arrow, which is followed by the type of the return value of the function.
 
-This introduces a new keyword, `void`; it is used to define the return value type of functions that do not return any value (not even `null` or `undefined`, but actually nothing).
+This introduces a new keyword, `void`; it is used to define the return value type of functions that do not return any value (not even `null`).
 
+If we wanted to define the type of a function that takes one `string` parameter and returns a `string` value, the type expression would look like this:
+
+    `(s: string) => string`
+
+The type of a function that takes two `number` parameters and returns a `boolean` value would look like this:
+
+    `(a: number, b: number) => boolean`
+
+And a function which takes one boolean parameter and returns an object with string attribute `name` and number attribute `age` would be described with the following type expression:
+
+    `(v: boolean) => { name: string, age: number }`
 
 
 
