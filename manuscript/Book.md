@@ -2358,7 +2358,7 @@ Probably the most basic place for a type definition is with a variable declarati
 
 This kind of type definition, however, isn't actually necessary. It's because by immediately assigning a value to a variable, its type become obvious - a variable `name` with string value `"J. Doe"` is without ambiguity a string. In situations like this, TypeScript can *infer* the type automatically, and an explicit type definition isn't needed to get type safety through the compiler.
 
-
+Another place where 
 
 
 - einführen, wo überall Typdefinitionen vorkommen dürfen 
