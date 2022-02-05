@@ -2356,9 +2356,34 @@ Probably the most basic place for a type definition is with a variable declarati
     const isValid: boolean = true;
     const person: { name: string, age: number } = { name: "J. Doe", age: 42 };
 
-This kind of type definition, however, isn't actually necessary. It's because by immediately assigning a value to a variable, its type become obvious - a variable `name` with string value `"J. Doe"` is without ambiguity a string. In situations like this, TypeScript can *infer* the type automatically, and an explicit type definition isn't needed to get type safety through the compiler.
+This kind of type definition, however, isn't actually necessary. It's because by immediately assigning a value to a variable, its type becomes obvious - a variable `name` with string value `"J. Doe"` is without ambiguity a string. In situations like this, TypeScript can *infer* the type automatically, and an explicit type definition isn't needed to get type safety through the compiler.
 
-Another place where 
+Another place for type definitions is already well known to us - we have by now seen multiple examples of typed function parameters.
+
+But you can (and should!) also type the *return value* of a function, like this:
+
+    const greet = (): string => {
+        return "Hello";
+    };
+
+This offers one of the most immediately useful benefits of using TypeScript instead of JavaScript. This way, the TypeScript compiler ensures two things at once: it warns us if we do not return a value of the type we declared we would return, and in the places of our codebase where the function is called, it knows what type to expect:
+
+    const greet = (): string => {
+        return "Hello"; // Returning something other than a string value
+                        // would immediately show a warning in our IDE.
+    }; 
+
+    const greeting = greet(); // TypeScript and our IDE know that
+                              // greeting is a string value.
+
+    let age = 42;
+    age = greet(); // TypeScript and our IDE will warn us that
+                   // we try to assign a string value to a variable
+                   // of type number.
+
+As with variable declarations, TypeScript can often infer the return value type of a function. Nevertheless, explicitly stating the desired return value type with a type definition is highly recommended. This makes it a lot easier to always see at a glance which type a function returns (without it, we would be forced to always read the complete function body, and not all functions are three-liners), and it prevents a whole category of programming errors, because once we declare the expected return type, we cannot mistakenly change the return value of a function to the wrong type without TypeScript preventing us from doing so. 
+
+
 
 
 - einführen, wo überall Typdefinitionen vorkommen dürfen 

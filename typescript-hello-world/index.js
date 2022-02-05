@@ -1,4 +1,5 @@
 var greet = function (name) {
-    console.log("Hello " + name);
+    return "";
 };
+var foo = greet("ihuj");
 greet("Jane");
