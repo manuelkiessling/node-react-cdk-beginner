@@ -2288,9 +2288,9 @@ Nothing surprising here - we already know these from chapter one, where we intro
 
 Another type, which we already encountered in our JavaScript code, is `object`.
 
-Now, there isn't a type definition called `object` in TypeScript. Instead, TypeScript provides the syntax to define the *shape* of an object.
+Now, there is also a *type* named `object` in TypeScript, but there isn't a type *definition* called `object` in TypeScript. Instead, TypeScript provides the syntax to define the exact *shape* of an object.
 
-Thus, instead of defining something like `const greet = (person: object)`, we can define which attributes we expect the person object parameter to have, like this: `const greet = (person: { name: string, age: number })`.
+Thus, instead of defining something like `const greet = (person: object)` (which wouldn't really tell as anything about how a `person` object looks like), we can define which attributes we expect the "person" object parameter to have, like this: `const greet = (person: { name: string, age: number })`.
 
 In other words, we define an object's shape as the list of attribute names with a type definition for each attribute. The example above would allow to call `greet` like this:
 
@@ -2347,7 +2347,17 @@ And a function which takes one boolean parameter and returns an object with stri
 
 
 
-We now have an overview of *what* kinds of types we can use - let's now see *where* we can use them.
+We now have an overview of *what* kinds of type definitions we can use - let's now see *where* we can use them.
+
+Probably the most basic place for a type definition is with a variable declaration:
+
+    const name: string = "J. Doe";
+    const age: number = 42;
+    const isValid: boolean = true;
+    const person: { name: string, age: number } = { name: "J. Doe", age: 42 };
+
+This kind of type definition, however, isn't actually necessary. It's because by immediately assigning a value to a variable, its type become obvious - a variable `name` with string value `"J. Doe"` is without ambiguity a string. In situations like this, TypeScript can *infer* the type automatically, and an explicit type definition isn't needed to get type safety through the compiler.
+
 
 
 
