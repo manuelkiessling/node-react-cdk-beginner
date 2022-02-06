@@ -2345,8 +2345,6 @@ And a function which takes one boolean parameter and returns an object with stri
 
     `(v: boolean) => { name: string, age: number }`
 
-
-
 We now have an overview of *what* kinds of type definitions we can use - let's now see *where* we can use them.
 
 Probably the most basic place for a type definition is with a variable declaration:
@@ -2383,7 +2381,55 @@ This offers one of the most immediately useful benefits of using TypeScript inst
 
 As with variable declarations, TypeScript can often infer the return value type of a function. Nevertheless, explicitly stating the desired return value type with a type definition is highly recommended. This makes it a lot easier to always see at a glance which type a function returns (without it, we would be forced to always read and comprehend the complete function body - and not all functions are three-liners), and it prevents a whole category of programming errors, because once we declare the expected return type, we cannot mistakenly change the return value of a function to the wrong type without TypeScript preventing us from doing so. 
 
+Of course, functions can also return values of type `object`, and you can define the desired shape of that object as the return type of a function in the same way you do with primitive types:
 
+    const getProduct = (): { name: string, weight: number, amount: number } => {
+        return { name: "Banana", weight: 0.23, amount: 42 };
+    };
+
+Writing object type definitions is always a bit unwieldy compared to writing just primitive type names, and it often doesn't make for very readably code files. This is especially true if an object's shape is used repeatedly, like this:
+
+    const getProduct = (): { name: string, weight: number, amount: number } => {
+        return { name: "Banana", weight: 0.2, amount: 10 };
+    };
+
+    const getTotalWeight(product: { name: string, weight: number, amount: number }): number => {
+        return product.weight * product.amount;
+    };
+
+    const decreaseAmount(product: { name: string, weight: number, amount: number }): void => {
+        if (product.amount > 0) {
+            product.amount = product.amount - 1;
+        }
+    };
+
+We need to deal with the same object shape in multiple places, simply because we are handling the same kind of thing again and again. Repeatedly writing out the shape of the thing we are expecting or returning is cumbersome at best, and error-prone at worst.
+
+Luckily, TypeScript offers a useful tool for this: the `interface` keyword. It allows us to define and name our own object type once, and re-use this definition in other places of our code, like this:
+
+    interface IProduct {
+        name: string;
+        weight: number;
+        amount: number;
+    };
+    
+    const getProduct = (): IProduct => {
+        return { name: "Banana", weight: 0.2, amount: 10 };
+    };
+
+    const getTotalWeight(product: IProduct): number => {
+        return product.weight * product.amount;
+    };
+
+    const decreaseAmount(product: IProduct): void => {
+        if (product.amount > 0) {
+            product.amount = product.amount - 1;
+        }
+    };
+
+This makes for a much leaner and more expressive code file. In a sense, it is also a lot less ambiguous - by giving the references shape a name, we really mean the same "thing" in all three places, and not three different things that just happen to have the same shape.
+
+Note how TypeScript doesn't enforce any kind of syntax for the name of an interface - starting with an uppercase `I` is just my personal preference.
 
 
 - einführen, wo überall Typdefinitionen vorkommen dürfen 
