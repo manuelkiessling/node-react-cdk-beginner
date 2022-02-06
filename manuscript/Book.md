@@ -2381,7 +2381,7 @@ This offers one of the most immediately useful benefits of using TypeScript inst
                    // we try to assign a string value to a variable
                    // of type number.
 
-As with variable declarations, TypeScript can often infer the return value type of a function. Nevertheless, explicitly stating the desired return value type with a type definition is highly recommended. This makes it a lot easier to always see at a glance which type a function returns (without it, we would be forced to always read the complete function body, and not all functions are three-liners), and it prevents a whole category of programming errors, because once we declare the expected return type, we cannot mistakenly change the return value of a function to the wrong type without TypeScript preventing us from doing so. 
+As with variable declarations, TypeScript can often infer the return value type of a function. Nevertheless, explicitly stating the desired return value type with a type definition is highly recommended. This makes it a lot easier to always see at a glance which type a function returns (without it, we would be forced to always read and comprehend the complete function body - and not all functions are three-liners), and it prevents a whole category of programming errors, because once we declare the expected return type, we cannot mistakenly change the return value of a function to the wrong type without TypeScript preventing us from doing so. 
 
 
 
@@ -2389,7 +2389,7 @@ As with variable declarations, TypeScript can often infer the return value type 
 - einführen, wo überall Typdefinitionen vorkommen dürfen 
 - https://github.com/TypeStrong/ts-node#installation
 - any einführen und sogleich auf noImplicitAny hinweisen, und damit im rest des buches arbeiten
-- 
+- arrays
 
 
 # Part 3: React - Rich and interactive user interfaces with JavaScript
