@@ -32,8 +32,11 @@ tbd
 
 Nearly all relevant JavaScript projects have been developed *on* Linux or macOS systems and *for* Linux or macOS systems, which regularly creates some kind of "impedance mismatch" in terms of availability and reliability of tools for Windows.
 
-If you absolutely must use Windows for developing JavaScript applications, then don't worry, you will be just fine. Note, however, that this book will not provide the same level of hand-holding as it does for readers working on Linux or macOS. At some points, you will have to use alternatives to the tools recommended and explained here, and while the book will point you in the right direction, you will be quite a bit more on your own.
+In case all you have is a Windows computer, don't worry - at least if you have Windows 10 or 11 installed. There is a thing called Windows Subsystem for Linux (WSL), which is a way to run a virtualized Linux environment on a Windows platform. WSL is maintained by Microsoft themselves and thus deeply integrated into Windows.
 
+When it's time to set those up, we will help you with it. And when anything has to be done on system level, we will always describe the Windows method too.
+
+If you're not running Windows 10 or 11, you can use the tools VirtualBox and Vagrant to run a virtualized Linux environment. The setup and usage of this flavor is not covered by this book at this time.
 
 # Part 1: Introduction to JavaScript
 
@@ -369,12 +372,68 @@ This enables application building: using the simple expressions we already know,
 
 Being able to build useful server applications is an important building block of knowledge on our journey, because it allows us to provide an HTTP-based REST API for the React-based Single-Page Application we are going to build in the third part of this book.
 
+## Preparing your Windows environment
+
+If your development is *not* Windows, you can skip this whole section and go straight to "Setting things up". If however you are running a flavor of Windows, first check your version. If you *don't* have Windows 10 or 11, you're out of luck for Windows Subsystem for Linux (WSL), which would be the preferred way of running a virtualized Linux platform, and you have to go the route of VirtualBox & Vagrant. The setup of VirtualBox & Vagrant is *not* covered by this book at this time.
+
+If you *do* have Windows 10 or 11, open a PowerShell (PS) with elevated permissions (admin permissions). PowerShell a command line tool, a bit like the browser console that you got to know in the first part of this book. You can use it to give simple, single commands to your Windows computer, or run complex scripts. To open an elevated PS window, tap (not hold) the Windows key, type "powershell" and press Shift-Ctrl-Enter. You'll have to click "Yes" to give it the requested elevated permissions.
+
+The most fundamental thing for a virtualized environment under Windows is that VT-X, also called a "Hypervisor", needs to be enabled. Many computer come with this feature already enabled, but some don't. To check if it's enabled, copy/paste the following line into PS, and hit enter. This should print "True" or "False".
+
+    Get-ComputerInfo -property "HyperVisorPresent"
+
+If this prints "False", you need to enable it. Unfortunately, this can only be done in the BIOS ("Basic Input/Output System"), a very small piece of software which is loaded right after the computer is started, and just before the actual operating system, whether it's Windows, Linux or something else, is started. There are quite a few flavors of BIOS, which all have a different hotkey to press during boot, to access their configuration interface. With this, we can't help you, but there are many tutorials on the internet - just google for *how to enable vt-x in bios*
+
+Now when VT-X is enabled, execute "winver" in the PS window. This should open a window that contains the information about your "OS Build", which is formatted xxxxx.yyy, for example 22000.675 or 15063.138. The first bit is your Windows Build Number, the last bit is the Minor Build Number.
+
+Next, you need to determine the "architecture" of your Windows installation. Paste these two lines into PS. The first determines your CPU architecture (AMD64 or ARM), the second one is the width of your address bus (32 or 64 bit).
+
+    $env:PROCESSOR_ARCHITECTURE
+    (Get-WmiObject Win32_OperatingSystem).OSArchitecture
+
+Now that you are equipped with your build numbers and your system architecture information, let's progress. If your build number is smaller than 19041 (18362 on an ARM architecture), you don't have Windows 10 or 11 after all, or you have to install the latest Windows updates: Tap the Windows button, type *updates* and click "Check for updates". After installing all updates, which may require one or more restarts, your build should be sufficiently recent.
+
+With this requirement out of the way, execute this in PS, to enable the WSL feature:
+
+    dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+
+This can take a while, and may require a restart. Once this is done, the virtualizuation platform has to be activated:
+
+    dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+
+At this point, you should restart your computer, and then update WSL to version 2, which is much more powerful. To do this, download and install the [update package](https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi) (for ARM: [update package](https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_arm64.msi))
+
+Now configure WSL so it will use version 2 by default:
+
+    wsl --set-default-version 2
+
+Next, we need to install a Linux distribution from the Microsoft Appstore. There are many different Linux distributions, optimized for performance or security, but as a local starter environment, we recommend the latest LTS ("Long Term Service") version of Ubuntu. The latest Ubuntu LTS right now is [22.04](https://www.microsoft.com/store/apps/9PN20MSR04DW). While installing, you'll have to set a username and password. Since you only get to access it when you already have access to your physical computer, you can just use dev/dev or local/local as credentials.
+
+As the final step, you'll have to take of the TCP port 8000 being available to your WSL installation. You will learn further down the road what that actually means. For this, we have created a [PowerShell script](https://home.ingmarheinrich.de/temp/network.ps1) @TODO for you. Save it to your Downloads folder and run it from within PS:
+
+    PS C:\windows\system32> cd C:\Users\$env:UserName\Downloads
+    PS C:\Users\Admin\Downloads> .\network.ps1
+
+    Security warning
+    Run only scripts that you trust. While scripts from the internet can be useful, this script can potentially harm your
+    computer. If you trust this script, use the Unblock-File cmdlet to allow the script to run without this warning
+    message. Do you want to run C:\Users\Admin\Downloads\network.ps1?
+    [D] Do not run  [R] Run once  [S] Suspend  [?] Help (default is "D"): r
+    WSL IP:
+    +
+    172.22.242.89
+
+    Listen on ipv4:             Connect to ipv4:
+
+    Address         Port        Address         Port
+    --------------- ----------  --------------- ----------
+    127.0.0.1       8000        172.22.242.89   8000
+
+You have a fully working WSL installation now! To access its command line, just tap the Windows key, type *wsl* and hit enter.
 
 ## Setting things up
 
 In order to be able to create Node.js applications, we need to set up some applications on our development system. Right now, the single best way to do this is to use a project called *NVM*, the Node Version Manager. It's a very useful utility from the Node.js ecosystem which allows to install and manage Node.js installations on your local system through a single command line tool. Among other things, it allows to easily switch between different versions of Node.js as needed - for example, you might want to generally use the latest version of Node.js on your system, but you may also need to use an older version only for a certain project in a certain folder. NVM makes this straightforward.
-
-There really is only one single downside regarding NVM: it is not available for the Windows platform. However, an alternative implementation exists at https://github.com/coreybutler/nvm-windows, which provides a similar experience.
 
 To install NVM on your Linux or macOS system, you need to first head over to https://github.com/nvm-sh/nvm. The README of this project features an *Installation and Update* section, which refers to an install script.
 
